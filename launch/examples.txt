@@ -1,0 +1,27 @@
+
+
+#launch move it setup manager
+roslaunch moveit_setup_assistant setup_assistant.launch
+
+#launch gazebo the moveit way
+roslaunch gazebo_ros empty_world.launch paused:=true use_sim_time:=false gui:=true throttled:=false recording:=false debug:=true
+
+# Load panda from moveit urdf
+rosrun gazebo_ros spawn_model -file /home/zy2016/ws_moveit/src/panda_moveit_config/config/panda.urdf -urdf -x 0 -y 0 -z 1 -model panda
+
+
+
+
+roslaunch gazebo_ros empty_world.launch
+
+roslaunch franka_gazebo panda_arm_hand.launch
+
+#launch panda move it
+
+roslaunch panda_moveit_config demo.launch rviz_tutorial:=true
+
+
+roslaunch /home/zy2016/ws_moveit/src/panda_moveit_config/launch/demo.launch rviz_tutorial:=true
+
+
+cd /home/zy2016/ws_moveit/src/panda_moveit_config/launch/ && roslaunch demo.launch rviz_tutorial:=true
