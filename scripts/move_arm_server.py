@@ -38,41 +38,25 @@ def plan_cartesian_path(goal):
     # Go from where ever you are current to where ever you want to be in a straight line
     #Convert all arrays in 7 array quaterions
     waypoints = []
-
     wpose = group.get_current_pose().pose
     waypoints.append(copy.deepcopy(wpose))
 
     #all code needed
     wpose.position.x = goal[0]
-    wpose.position.y -= goal[1]  # First move up (z)
-    wpose.position.z += goal[2]  # and sideways (y)
+    wpose.position.y = goal[1]  # First move up (z)
+    wpose.position.z = goal[2]  # and sideways (y)
     quaternion = tf.transformations.quaternion_from_euler(goal[3], goal[4], goal[5]) #(roll, pitch, yaw)
     wpose.orientation.x = quaternion[0]
     wpose.orientation.y = quaternion[1]
     wpose.orientation.z = quaternion[2]
     wpose.orientation.w = quaternion[3]
     waypoints.append(copy.deepcopy(wpose))
-
+    rospy.loginfo(goal)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
                                        0.01,        # eef_step
-                                       0.0)         # jump_threshold
+                                       15)         # jump_threshold
     return plan, fraction
-
-home = [0,1,2,3,4,1]
-pick = [0,1,2,1,1,1]
-place = [0,1,2,3,4,1]
-
-plan_cartesian_path(home, pick, place)
-
-def build_wall_handler(req):
-    home = [0,1,2,3,4,1]
-    pick = [0,1,2,1,1,1]
-    place = [0,1,2,3,4,1]
-
-    plan_cartesian_path(home, pick, place)
-
-    return True
 
 def place_brick_handler(req):
     eef_link = group.get_end_effector_link()
@@ -92,31 +76,36 @@ def attach_brick_handler():
 def attach_brick_handler():
 
     return wait_for_state_update(box_is_known=True, box_is_attached=False)
-
-def move_arm_handler(req):
-    # initial = [0, 0, 0, 0, 1, 1, 0.75]
-    # for i in range(7):
-    #     publishers[i].publish(initial[i])
-    #
-    # eef_link = group.get_end_effector_link()
-    # print "============ End effector: %s" % eef_link
+def move_arm_curve_handler(req):
     pose_goal = geometry_msgs.msg.Pose()
+    pose_goal.position.x = req.x
+    pose_goal.position.y = req.y  # First move up (z)
+    pose_goal.position.z = req.z # and sideways (y)
     quaternion = tf.transformations.quaternion_from_euler(req.rot_x, req.rot_y, req.rot_z) #(roll, pitch, yaw)
-    #type(pose) = geometry_msgs.msg.Pose
     pose_goal.orientation.x = quaternion[0]
     pose_goal.orientation.y = quaternion[1]
     pose_goal.orientation.z = quaternion[2]
     pose_goal.orientation.w = quaternion[3]
-
-    pose_goal.position.x = req.x
-    pose_goal.position.y = req.y
-    pose_goal.position.z = req.z
     group.set_pose_target(pose_goal)
+    ## Now, we call the planner to compute the plan and execute it.
     plan = group.go(wait=True)
-    # Calling `stop()` ensures that there is no residual movement
+    # print(plan)
     group.stop()
-    # It is always good to clear your targets after planning with poses.
-    # Note: there is no equivalent function for clear_joint_value_targets()
+    group.clear_pose_targets()
+    return True
+
+def move_arm_handler(req):
+
+    goal = [req.x,req.y,req.z,req.rot_x,req.rot_y,req.rot_z]
+    # goal = [0.5,-0.5,0.5,0,3.14,0]
+
+    group.set_goal_position_tolerance(0.001)
+    group.set_goal_orientation_tolerance(0.1)
+    plan, frac = plan_cartesian_path(goal)
+    group.set_max_velocity_scaling_factor(0.25)
+    group.set_max_acceleration_scaling_factor(0.25)
+    group.execute(plan, wait=True)
+    group.stop()
     group.clear_pose_targets()
     return True
 
@@ -145,7 +134,6 @@ def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):
     return False
 
 move_arm_s = rospy.Service('move_arm', MoveArm, move_arm_handler)
-place_brick_s = rospy.Service('place_brick', MoveArm, place_brick_handler)
-place_brick_s = rospy.Service('build_wall', QueryPPBrick, build_wall_handler)
+move_arm_curve_s = rospy.Service('move_arm_curve', MoveArm, move_arm_curve_handler)
 
 rospy.spin()

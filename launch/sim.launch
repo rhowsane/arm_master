@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find gazebo_ros)/launch/empty_world.launch"/>
+  <include file="$(find franka_gazebo)/launch/panda_arm_hand.launch"/>
+  <node name="brick_gen" pkg="spawn_mnger" type="spawn.py" output="screen"/>
+
+</launch>

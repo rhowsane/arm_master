@@ -4,10 +4,11 @@ import rospy
 from std_msgs.msg import Float64
 from sensor_msgs.msg import JointState
 
+publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1) for i in range(1, 8)]
 
 def callback(data):
     print 'get data'
-
+    publishers
     '''
     pub1 = rospy.Publisher('/franka/joint1_position_controller/command', Float64, queue_size=1)
     pub2 = rospy.Publisher('/franka/joint2_position_controller/command', Float64, queue_size=1)
@@ -47,11 +48,10 @@ def callback(data):
 
     '''
     pos = data.position
-    publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1) for i in range(1, 8)]
 
     for i in range(7):
         publishers[i].publish(pos[i])
-    print 'published'
+        print("Joint: " + str(i) + "Angle: " + str(pos[i]))
 
 
 
@@ -59,8 +59,8 @@ def callback(data):
 
 def talker():
 
-    rospy.init_node('talker', anonymous=False)
-    rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, callback)
+    rospy.init_node('panda_publisher', anonymous=False)
+    rospy.Subscriber("/move_sim/move_group/fake_controller_joint_states", JointState, callback)
     rospy.spin()
 
 
