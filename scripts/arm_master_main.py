@@ -54,6 +54,8 @@ def get_goal_pos():
 
 def get_home_pos():
     return [0, 0.5, 0.5, 3.14, 0, 0]
+def get_over_pos():
+    return [0, 0, 1, 3.14*2, 0, 3.14/4]
 
 def get_num_bricks():
     return 10
@@ -125,14 +127,23 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         brick = get_brick_pos()
         goal = get_goal_pos()
         home = get_home_pos()
+        over_head = get_over_pos()
 
+        #Issue trying to place brick directly behind you must go up first
         #generate Brick
         gen_brick()
 
         #Pick Place operation then return home
         pick_up(brick)
-        place_down(goal)
-        go_to(home)
+        #temp fix to move to goal position
+        move_arm_curve(over_head)
+        move_arm_curve(goal)
+        open_gripper()
+        move_arm_curve(home)
+        move_arm_curve(over_head)
+
+        # place_down(goal)
+        # go_to(home)
 
         print("Placed")
         #Place another brick from stack onto wall

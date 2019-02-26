@@ -27,10 +27,10 @@ class SamRowan():
             xstart = -0.5
             ystart = 0.5
 
-        zstart=0
-        xtheta=0
+        zstart=0.2 #add a small offset
+        xtheta= 3.14 #THIS MEANS THE GRIPPER WILL BE FACING downward
         ytheta=0
-        ztheta=0
+        ztheta= 3.14/4 #AT THIS VALUE THE GRIPPER IS straight with respect to base
 
         blength = 0.2+0.005                                                       #geometries of the brick
         bwidth = 0.09+0.005

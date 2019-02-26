@@ -51,7 +51,7 @@ def callback(data):
 
     for i in range(7):
         publishers[i].publish(pos[i])
-        print("Joint: " + str(i) + "Angle: " + str(pos[i]))
+        # print("Joint: " + str(i) + "Angle: " + str(pos[i]))
 
 
 
