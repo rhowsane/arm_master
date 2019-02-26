@@ -1,5 +1,5 @@
 from samrowan import *
-GoalManager = SamRowan(20,4)
+GoalManager = SamRowan(5,4)
 
 #MANUAL TESTING :
 for i in list(range(10)):

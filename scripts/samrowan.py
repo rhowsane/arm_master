@@ -1,7 +1,7 @@
 class SamRowan():
     def __init__(self, width, height):
         print("Instantiating")
-        self.locations = self.generate_simple_wall(num_brick, height)
+        self.locations, number_of_brick = self.generate_simple_wall(width, height)
         print("Generated Wall")
         self.pointer = 0
         self.h = height
@@ -12,7 +12,7 @@ class SamRowan():
         self.pointer += 1
         return loc
 
-    def generate_simple_wall(self, num_brick=20, height=4): #COPY PASTE SAMS FUNCTINO IN HERE AND RETURN THE DESIRED VALUE
+    def generate_simple_wall(self, width=5, height=4): #COPY PASTE SAMS FUNCTINO IN HERE AND RETURN THE DESIRED VALUE
 
         xpickup=0.5
         ypickup=0.5
