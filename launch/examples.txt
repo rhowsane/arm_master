@@ -25,3 +25,12 @@ roslaunch /home/zy2016/ws_moveit/src/panda_moveit_config/launch/demo.launch rviz
 
 
 cd /home/zy2016/ws_moveit/src/panda_moveit_config/launch/ && roslaunch demo.launch rviz_tutorial:=true
+
+
+###################################################################
+TO LAUNCH CODE ENTER THE FOLLOWING LAUNCH COMMANDS IN ORDER
+###################################################################
+
+roslaunch arm_master panda_one_brick.launch
+roslaunch arm_master sim.launch
+roslaunch arm_master light.launch

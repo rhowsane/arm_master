@@ -5,6 +5,8 @@
   <group ns="move_sim">
     <node name="move_arm_server" pkg="arm_master" type="move_arm_server.py" output="screen"/>
     <node name="main" pkg="arm_master" type="arm_master_main.py" output="screen"/>
-    
+    <node name="brick_manager_server" pkg="arm_master" type="brick_manager_server.py" output="screen"/>
   </group>
+
+
 </launch>

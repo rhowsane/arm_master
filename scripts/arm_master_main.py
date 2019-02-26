@@ -5,6 +5,7 @@ import rospy
 from de_msgs.srv import QueryNextPos, MoveArm
 from std_msgs.msg import Float64
 from std_srvs.srv import Trigger, TriggerRequest
+from de_msgs.srv import QueryBrickLoc, QueryBrickLocRequest
 from arm_utils import *
 import numpy as np
 rospy.init_node('arm_master', anonymous=True)
@@ -14,23 +15,42 @@ rospy.init_node('arm_master', anonymous=True)
 pub_gripper = rospy.Publisher('/franka/gripper_width',
                           Float64, queue_size=1)
 
-rospy.wait_for_service('move_arm')
-move_arm_wrapper = rospy.ServiceProxy('move_arm', MoveArm)
+#Get all Services
 
-rospy.wait_for_service('move_arm_curve')
-move_arm_curve_wrapper = rospy.ServiceProxy('move_arm_curve', MoveArm)
+#Services for Moving arm
+def connect_srv(name, msg_type):
+    rospy.loginfo("Searching for " + name + " .... ")
+    rospy.wait_for_service(name)
+    srv_wrapper = rospy.ServiceProxy(name, msg_type)
+    rospy.loginfo(name + " CONNECTED")
+    return srv_wrapper
 
-rospy.wait_for_service('/gen_brick')
-gen_brick_wrapper = rospy.ServiceProxy('/gen_brick', Trigger)
+#Services for moving arm
+move_arm_wrapper = connect_srv('move_arm', MoveArm)
+move_arm_curve_wrapper = connect_srv('move_arm_curve', MoveArm)
 
+#gen_brick generates a brick in Gazebo
+gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
+
+#Services for querying pick and place locations
+get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
+get_place_lock_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
+
+#Functinos to further wrap function calls
 def gen_brick():
     gen_brick_wrapper(TriggerRequest())
 
 def get_brick_pos():
-    return [0.5, 0.5, 0.05 + 0.1, 3.14, 0, 3.14/4]
+    loc = get_pick_loc_wrapper(QueryBrickLocRequest())
+    p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
+    # return [0.5, 0.5, 0.05 + 0.1, 3.14, 0, 3.14/4]
+    return p
 
 def get_goal_pos():
-    return [-0.5, 0.5, 0.2,  3.14, 0, 0]
+    loc = get_place_lock_wrapper(QueryBrickLocRequest())
+    p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
+    # return [-0.5, 0.5, 0.2,  3.14, 0, 0]
+    return p
 
 def get_home_pos():
     return [0, 0.5, 0.5, 3.14, 0, 0]
@@ -42,6 +62,7 @@ def move_arm(pos):
     msg = MoveArm()
     success = move_arm_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
+
 def move_arm_curve(pos):
     success = move_arm_curve_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
@@ -86,27 +107,35 @@ def close_gripper():
 
 rate = rospy.Rate(1)
 
-
+###################################################################
+#MAIN CODE
+###################################################################
 num_bricks = get_num_bricks()
 placed = 0
+
+#MOVE ARM TO STARTING LOCATION
 move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
 move_arm_curve(get_home_pos())
 
-while not rospy.is_shutdown():
-    if placed < num_bricks:
+while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
+    if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
         placed += 1
-        # place_brick()
 
+        #Query Positions
         brick = get_brick_pos()
         goal = get_goal_pos()
         home = get_home_pos()
+
+        #generate Brick
         gen_brick()
+
+        #Pick Place operation then return home
         pick_up(brick)
         place_down(goal)
         go_to(home)
+
         print("Placed")
         #Place another brick from stack onto wall
-    else:
-
+    else: #When done just wait
         rospy.loginfo("Done, " +str(placed) + " bricks placed")
     rate.sleep()
