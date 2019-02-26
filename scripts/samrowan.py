@@ -1,11 +1,11 @@
 class SamRowan():
-    def __init__(self, num_brick, height):
+    def __init__(self, width, height):
         print("Instantiating")
         self.locations = self.generate_simple_wall(num_brick, height)
         print("Generated Wall")
         self.pointer = 0
         self.h = height
-        self.n = num_brick
+        self.n = width
 
     def get_next_goal_loc(self): #TODO DEAL WITH OVERFLOW CASE
         loc = self.locations[self.pointer]
@@ -37,40 +37,33 @@ class SamRowan():
         bheight = 0.062
 
         bstart=[xstart,ystart,zstart,xtheta,ytheta,ztheta]     #first brick position mirrors position of where we place the bricks
-        pos_list = []
+        pos_final = []
 
-        # input_nos = input()
-        input_nos = num_brick #Pass in from class variable
-        brick_number = int(input_nos)                                                 #number of bricks being placed into the wall
         n = 1
 
         xnos = 0
         znos = 0
 
+        # input_nos = input()
+        input_width = width #Pass in from class variable
+        wall_width = int(input_width)
+
         # input_height = input()
         input_height = height #preset for now
         wall_height = int(input_height)
 
-        if wall_height == int(brick_number/wall_height):
-            removal = 0
-        else:
-            removal = round(wall_height-(brick_number/wall_height - int(brick_number/wall_height))*wall_height)
+        brick_number = wall_width*wall_height
 
-        round_up = brick_number+removal
-        width = (round_up/wall_height)-1
+        for i in range(0, brick_number):
 
-        for i in range(1, int(round_up)):
+            pos_final.append([round(bstart[0]+xnos*blength, 3),bstart[1],round(bstart[2]+znos*bheight, 3),bstart[3],bstart[4],bstart[5]]) #edit this so the alignment is always correct
 
-            pos_list.append([round(bstart[0]+xnos*blength, 3),bstart[1],round(bstart[2]+znos*bheight, 3),bstart[3],bstart[4],bstart[5]]) #edit this so the alignment is always correct
-
-            if xnos < width:
+            if xnos < wall_width-1:  #No idea why -1 is needed here but it does not work without
                 xnos+=1
             else:
                 xnos=0
                 znos+=1
 
-        pos_final = pos_list[:brick_number]
-
         print(pos_final)
 
-        return pos_final
+        return pos_final, brick_number
