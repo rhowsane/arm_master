@@ -102,9 +102,10 @@ def move_arm_handler(req):
     group.set_goal_position_tolerance(0.001)
     group.set_goal_orientation_tolerance(0.1)
     plan, frac = plan_cartesian_path(goal)
-    group.set_max_velocity_scaling_factor(0.25)
-    group.set_max_acceleration_scaling_factor(0.25)
+    group.set_max_velocity_scaling_factor(0.005)
+    group.set_max_acceleration_scaling_factor(0.005)
     group.execute(plan, wait=True)
+    rospy.loginfo(plan)
     group.stop()
     group.clear_pose_targets()
     return True
