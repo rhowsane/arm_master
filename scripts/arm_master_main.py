@@ -10,7 +10,7 @@ from arm_utils import *
 import numpy as np
 from round_path import *
 rospy.init_node('arm_master', anonymous=True)
-
+from arm_master_functions import *
 # TODO FIX ISSUE WITH BAD INIT
 
 pub_gripper = rospy.Publisher('/franka/gripper_width',
@@ -41,28 +41,29 @@ get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 def gen_brick():
     gen_brick_wrapper(TriggerRequest())
 
-def get_brick_pos():
-    loc = get_pick_loc_wrapper(QueryBrickLocRequest())
+def get_brick_pos(placed):
+    loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
-    # return [0.5, 0.5, 0.05 + 0.1, 3.14, 0, 3.14/4]
+    return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4]
     return p
 
-def get_goal_pos():
-    loc = get_place_loc_wrapper(QueryBrickLocRequest())
+def get_goal_pos(placed):
+    loc = get_place_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
-    return [0.5, -0.5, 0.4,  3.14, 0,  3.14/4]
+    return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4]
     return p
 
 def get_home_pos():
     return [0.5, 0, 0.5, 3.14, 0, 0]
 def get_over_pos():
-    return [0, 0, 1, 3.14*2, 0, 3.14/4]
+    return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
     return 10
 
 def move_arm(pos):
     msg = MoveArm()
+    rospy.loginfo(pos)
     success = move_arm_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
 
@@ -70,12 +71,10 @@ def move_arm_curve(pos):
     success = move_arm_curve_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
 
-def pick_up(target, via_offset = 0.3):
+def pick_up(target, via_offset = 0.2):
     #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
-    via_point_two = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
-    via_point_two[2] = 0.8 #Z offset
 
     move_arm(via_point)
     rospy.sleep(1) # Tune time
@@ -90,12 +89,10 @@ def pick_up(target, via_offset = 0.3):
 
     move_arm(via_point)
 
-def place_down(target, via_offset = 0.3):
+def place_down(target, via_offset = 0.2):
         #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
-    via_point_two = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
-    via_point_two[2] = 0.8
     move_arm(via_point)
     rospy.sleep(1) # Tune time
     move_arm(target)
@@ -103,7 +100,6 @@ def place_down(target, via_offset = 0.3):
     rospy.sleep(3)
     move_arm(via_point)
 
-round_way_points = get_round_points()
 def get_round_points():
     round_path = dict()
     res = float(20)
@@ -116,7 +112,6 @@ def get_round_points():
 
     for i in np.arange(20):
         theta = (2 * np.pi) * ((i + 1 )/res)
-        print(theta)
         left = i-1
         if (left < 0):
             left = 19
@@ -131,15 +126,13 @@ def get_round_points():
         plt.plot(x,y,'+')
         pos = [x_c + r * np.cos(theta), y_c + r * np.sin(theta), height]
         round_path[i] = (pos,neighbour)
-    print(round_path)
 
     return round_path
 # plt.show()
 # print(round_path)
 
 round_way_points = get_round_points()
-def distance(p1, p2):
-    return np.sqrt((p1[0]-p2[0])**2 + (p1[1]-p2[1])**2 + (p1[2]-p2[2])**2)
+
 def move_towards(start, end):
     #find nearest point to pick
     min_start_dist = 10000
@@ -164,11 +157,13 @@ def move_towards(start, end):
         print(p)
 
     curr_ind = min_start_ind
+
+    selector = left_or_right(curr_ind, min_end_ind, round_way_points)
     while curr_ind != min_end_ind:
         #move arm to the curr node positon
         curr_node = round_way_points[curr_ind]
         move_arm([curr_node[0][0],curr_node[0][1],curr_node[0][2],3.14,0,0])
-        curr_ind = curr_node[1][0] #go one way around the circle
+        curr_ind = curr_node[1][selector] #go one way around the circle
 
     #move toward location in a controlled maner without running into
 
@@ -193,7 +188,7 @@ placed = 0
 
 #MOVE ARM TO STARTING LOCATION
 open_gripper()
-move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
+# move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
 move_arm_curve(get_home_pos())
 
 while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
@@ -201,26 +196,30 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         placed += 1
 
         #Query Positions
-        brick = get_brick_pos()
-        goal = get_goal_pos()
+        brick = get_brick_pos(placed)
+        goal = get_goal_pos(placed)
         home = get_home_pos()
         over_head = get_over_pos()
 
         #Issue trying to place brick directly behind you must go up first
         #generate Brick
         gen_brick()
+        move_towards(home, brick)
 
         #Pick Place operation then return home
         pick_up(brick)
         #temp fix to move to goal position
         # move_arm_curve(over_head)
         # move_arm_curve(goal)
-        # move_towards(brick, goal)
+        move_towards(brick, goal)
         # move_arm_curve(home)
         # move_arm_curve(over_head)
         # move_towards(goal)
         place_down(goal)
-        go_to(home)
+        move_towards(goal, home)
+
+        # go_to(over_head)
+        # go_to(home)
 
         print("Placed")
         #Place another brick from stack onto wall
