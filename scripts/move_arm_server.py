@@ -11,8 +11,10 @@ from math import pi
 from std_msgs.msg import String, Float64
 from moveit_commander.conversions import pose_to_list
 from de_msgs.srv import QueryNextPos, MoveArm, QueryPPBrick
+# from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from arm_server_functions import *
 # rospy.init_node('arm_controller', anonymous=True)
-
+import numpy as np
 
 rospy.init_node('arm_server')
 
@@ -34,14 +36,29 @@ display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path
 box_name = "box"
 grasping_group = 'hand'
 
-def plan_cartesian_path(goal):
+def plan_cartesian_path(goal,resolution = 10): #speed in m/s
     # Go from where ever you are current to where ever you want to be in a straight line
     #Convert all arrays in 7 array quaterions
     waypoints = []
     wpose = group.get_current_pose().pose
     waypoints.append(copy.deepcopy(wpose))
 
+    #Get current Position in in roll,pitch,yaw
+
+    p = pose_q2array(wpose)
+    curr_pos = quat2point(p)
+    via_points = get_via_points(curr_pos,goal,res=resolution)
     #all code needed
+
+    return via_points
+def move_arm_a_to_b(goal): #move very short distance
+    rospy.loginfo('goal')
+    rospy.loginfo(goal)
+
+    waypoints = []
+    wpose = group.get_current_pose().pose
+    wpose.position.x += 0.0001
+    waypoints.append(copy.deepcopy(wpose))
     wpose.position.x = goal[0]
     wpose.position.y = goal[1]  # First move up (z)
     wpose.position.z = goal[2]  # and sideways (y)
@@ -51,12 +68,16 @@ def plan_cartesian_path(goal):
     wpose.orientation.z = quaternion[2]
     wpose.orientation.w = quaternion[3]
     waypoints.append(copy.deepcopy(wpose))
-    rospy.loginfo(goal)
+    rospy.loginfo("waypoitns")
+    rospy.loginfo(waypoints)
+    group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
                                        0.01,        # eef_step
-                                       15)         # jump_threshold
-    return plan, fraction
+                                       0)         # jump_threshold
+    # rospy.loginfo(goal)
+
+    return plan
 
 def place_brick_handler(req):
     eef_link = group.get_end_effector_link()
@@ -66,7 +87,6 @@ def place_brick_handler(req):
     scene.add_box(box_name, box_pose, size=(0.1, 0.9, 0.1))
     touch_links = robot.get_link_names(group=grasping_group)
     scene.attach_box(eef_link, box_name, touch_links=touch_links)
-    rospy.loginfo("Placing Break")
     return wait_for_state_update(box_is_known=True, box_is_attached=False)
 
 def attach_brick_handler():
@@ -89,10 +109,16 @@ def move_arm_curve_handler(req):
     group.set_pose_target(pose_goal)
     ## Now, we call the planner to compute the plan and execute it.
     plan = group.go(wait=True)
-    # print(plan)
     group.stop()
     group.clear_pose_targets()
     return True
+
+def move_panda_eef(pose_goal):
+    group.set_pose_target(pose_goal)
+    ## Now, we call the planner to compute the plan and execute it.
+    plan = group.go(wait=True)
+    group.stop()
+    group.clear_pose_targets()
 
 def move_arm_handler(req):
 
@@ -100,13 +126,17 @@ def move_arm_handler(req):
     # goal = [0.5,-0.5,0.5,0,3.14,0]
 
     group.set_goal_position_tolerance(0.001)
-    group.set_goal_orientation_tolerance(0.1)
-    plan, frac = plan_cartesian_path(goal)
-    group.set_max_velocity_scaling_factor(0.25)
-    group.set_max_acceleration_scaling_factor(0.25)
-    group.execute(plan, wait=True)
-    group.stop()
-    group.clear_pose_targets()
+    group.set_goal_orientation_tolerance(0.01)
+
+    via_points = plan_cartesian_path(goal,resolution = 15)
+
+    for point in via_points:
+        # move_panda_eef(point)
+        plan = move_arm_a_to_b(point)
+        group.execute(plan, wait=True)
+        # group.stop()
+        group.clear_pose_targets()
+        rospy.sleep(0.1) #pause for 0.25 for PID to catch up
     return True
 
 def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):#talen from tutorial
@@ -135,5 +165,4 @@ def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):
 
 move_arm_s = rospy.Service('move_arm', MoveArm, move_arm_handler)
 move_arm_curve_s = rospy.Service('move_arm_curve', MoveArm, move_arm_curve_handler)
-
 rospy.spin()

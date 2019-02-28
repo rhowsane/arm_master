@@ -24,7 +24,7 @@ GoalManager = SamRowan(5,4)
 
 def brick_manager_server(req):
     resp = QueryBrickLocResponse()
-    p = [0.5, 0.5, 0.05 + 0.1, 3.14, 0, 3.14/4]
+    p = [0.5, 0.5, 0.05 + 0.2, 3.14, 0, 3.14/4]
     resp.x = p[0]
     resp.y = p[1]
     resp.z = p[2]
