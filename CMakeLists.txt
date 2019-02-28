@@ -51,8 +51,8 @@ include_directories(include	${catkin_INCLUDE_DIRS} ${EIGEN3_INCLUDE_DIRS})
 add_executable(${PROJECT_NAME}_talker_node src/talker.cpp)
 target_link_libraries(${PROJECT_NAME}_talker_node ${catkin_LIBRARIES})
 
-add_executable(${PROJECT_NAME}_hello_move_it src/hello_world.cpp)
-target_link_libraries(${PROJECT_NAME}_hello_move_it ${catkin_LIBRARIES})
+# add_executable(${PROJECT_NAME}_hello_move_it src/hello_world.cpp)
+# target_link_libraries(${PROJECT_NAME}_hello_move_it ${catkin_LIBRARIES})
 
 add_executable(arm_control_fine_server src/arm_control_fine_server.cpp)
 add_dependencies(arm_control_fine_server ${PROJECT_NAME}_generate_messages_cpp )

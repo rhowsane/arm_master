@@ -34,7 +34,7 @@ gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 
 #Services for querying pick and place locations
 get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
-get_place_lock_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
+get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
 #Functinos to further wrap function calls
 def gen_brick():
@@ -47,7 +47,7 @@ def get_brick_pos():
     return p
 
 def get_goal_pos():
-    loc = get_place_lock_wrapper(QueryBrickLocRequest())
+    loc = get_place_loc_wrapper(QueryBrickLocRequest())
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
     # return [-0.5, 0.5, 0.2,  3.14, 0, 0]
     return p
