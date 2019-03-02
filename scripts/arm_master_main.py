@@ -44,27 +44,22 @@ def gen_brick():
 def get_brick_pos(placed):
     loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
-    return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4]
+    #return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4] #comment this
     return p
 
-<<<<<<< HEAD
-def get_goal_pos():
-    loc = get_place_loc_wrapper(QueryBrickLocRequest())
-=======
 def get_goal_pos(placed):
     loc = get_place_loc_wrapper(QueryBrickLocRequest(placed))
->>>>>>> 7b6a29e69c8842cae9c80a3e5785e759dc2e44c8
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
-    return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4]
+    #return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4] #comment this
     return p
 
 def get_home_pos():
-    return [0.5, 0, 0.5, 3.14, 0, 0]
-def get_over_pos():
+    return [0.5, 0.5, 0.5, 3.14, 0, 0]
+def get_over_pos(): #not used
     return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
-    return 10
+    return 8
 
 def move_arm(pos):
     msg = MoveArm()
@@ -82,7 +77,6 @@ def pick_up(target, via_offset = 0.2):
     via_point[2] += via_offset #Z offset
 
     move_arm(via_point)
-    rospy.sleep(1) # Tune time
 
     #Make sure gripper is open
     open_gripper()
@@ -176,6 +170,7 @@ def move_towards(start, end):
 def go_to(pos):
     move_arm(pos)
 
+#change these gripper functions to the correct topic for panda arm
 def open_gripper():
     pub_gripper.publish(0.16)
     return True

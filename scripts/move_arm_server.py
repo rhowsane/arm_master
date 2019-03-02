@@ -128,15 +128,21 @@ def move_arm_handler(req):
     group.set_goal_position_tolerance(0.001)
     group.set_goal_orientation_tolerance(0.01)
 
-    via_points = plan_cartesian_path(goal,resolution = 15)
+    via_points = plan_cartesian_path(goal,resolution = 8) #res can be changed
 
     for point in via_points:
+        # COMENT THIS OUT
         # move_panda_eef(point)
-        plan = move_arm_a_to_b(point)
+        # ----------------------------------------------------
+        plan = move_arm_a_to_b(point) #
         group.execute(plan, wait=True)
         # group.stop()
         group.clear_pose_targets()
-        rospy.sleep(0.1) #pause for 0.25 for PID to catch up
+        # END HERE
+        # ------------------------------------------------------
+        # move_arm_justice_func(point) for translating via points into franka_moveto topics
+        # ----------------------------------------------------
+        # rospy.sleep(0.1) #pause for 0.25 for PID to catch up
     return True
 
 def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):#talen from tutorial

@@ -23,8 +23,9 @@ rospy.init_node('brick_manager_server')
 GoalManager = SamRowan(5,4)
 
 def brick_manager_server(req):
+    #num = req.num #change req to req.num to do placed iteration thing
     resp = QueryBrickLocResponse()
-    p = [0.5, 0.5, 0.05 + 0.2, 3.14, 0, 3.14/4]
+    p = [0.5, 0.5, 0.09, 3.14, 0, 3.14/4] # z+0.2?
     resp.x = p[0]
     resp.y = p[1]
     resp.z = p[2]
@@ -35,10 +36,37 @@ def brick_manager_server(req):
 
 
 def goal_manager_server(req):
+
+    num = req.num
+
+    """
     p = GoalManager.get_next_goal_loc()    #SAM DO CODE AND LOGIC IN HERE
     print("GoalManager P: ", p)
+
+    which_brick = QueryBrickLocRequest()
+    print("placed:", which_brick)
+    """
+    if num == 0:
+        p = [0.5, 0, 0.05, 3.14, 0, 0]
+    elif num == 1:
+        p = [0.5, -0.2, 0.05, 3.14, 0, 0]
+    elif num == 2:
+        p = [0.5, -0.4, 0.05, 3.14, 0, 0]
+    elif num == 3:
+        p = [0.5, -0.6, 0.05, 3.14, 0, 0]
+
+    elif num == 4:
+        p = [0.5, 0, 0.2, 3.14, 0, 0]
+    elif num == 5:
+        p = [0.5, -0.2, 0.2, 3.14, 0, 0]
+    elif num == 6:
+        p = [0.5, -0.4, 0.2, 3.14, 0, 0]
+    elif num == 7:
+        p = [0.5, -0.8, 0.2, 3.14, 0, 0]
+    else:
+        p = [0.8, 0, 0.2, 3.14, 0, 0]
+
     resp = QueryBrickLocResponse()
-    # p = [-0.5, 0.5, 0.2,  3.14, 0, 0]
     resp.x = p[0]
     resp.y = p[1]
     resp.z = p[2]

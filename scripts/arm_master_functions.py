@@ -21,8 +21,8 @@ def get_round_points():
     round_path = dict()
     res = float(20)
     diameter = 1.25
-    r = diameter/2
-    height = 0.5
+    r = diameter/2 #diameter of the circle
+    height = 0.5 #height of the circle
 
     x_c = 0
     y_c = 0
@@ -36,7 +36,7 @@ def get_round_points():
         pos = [x_c + r * np.cos(theta), y_c + r * np.sin(theta), height]
         round_path[i] = [pos,neighbour]
 
-    x_thresh = -0.2
+    x_thresh = -0.2 #x threshold behind the arm
 
     #remove illegal points
     to_remove = []
