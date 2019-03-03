@@ -18,8 +18,14 @@ import numpy as np
 
 rospy.init_node('arm_server')
 
-publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1) for i in range(1, 8)]
 moveit_commander.roscpp_initialize(sys.argv)
+
+
+#To publish joint states directly
+from sensor_msgs.msg import JointState
+
+publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1) for i in range(1, 8)]
+
 
 # rospy.init_node('move_group_python_interface_tutorial',
 #                 anonymous=True)
@@ -68,12 +74,12 @@ def move_arm_a_to_b(goal): #move very short distance
     wpose.orientation.z = quaternion[2]
     wpose.orientation.w = quaternion[3]
     waypoints.append(copy.deepcopy(wpose))
-    rospy.loginfo("waypoitns")
-    rospy.loginfo(waypoints)
+    # rospy.loginfo("waypoitns")
+    # rospy.loginfo(waypoints)
     group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.01,        # eef_step
+                                       0.001/2,        # eef_step
                                        0)         # jump_threshold
     # rospy.loginfo(goal)
 
@@ -97,6 +103,9 @@ def attach_brick_handler():
 
     return wait_for_state_update(box_is_known=True, box_is_attached=False)
 def move_arm_curve_handler(req):
+    # rospy.loginfo(robot.get_current_state())
+    # point = [0.5, -0.5, 0, 3.14, 0, 0 ]
+    # return True
     pose_goal = geometry_msgs.msg.Pose()
     pose_goal.position.x = req.x
     pose_goal.position.y = req.y  # First move up (z)
@@ -106,9 +115,14 @@ def move_arm_curve_handler(req):
     pose_goal.orientation.y = quaternion[1]
     pose_goal.orientation.z = quaternion[2]
     pose_goal.orientation.w = quaternion[3]
+
     group.set_pose_target(pose_goal)
+    plan = group.plan()
+    points = plan.joint_trajectory.points
+    for p in points:
+        rospy.loginfo(p.positions)
     ## Now, we call the planner to compute the plan and execute it.
-    plan = group.go(wait=True)
+    # plan = group.go(wait=True)
     group.stop()
     group.clear_pose_targets()
     return True
@@ -128,15 +142,17 @@ def move_arm_handler(req):
     group.set_goal_position_tolerance(0.001)
     group.set_goal_orientation_tolerance(0.01)
 
-    via_points = plan_cartesian_path(goal,resolution = 8) #res can be changed
+    via_points = plan_cartesian_path(goal,resolution = 1) #res can be changed
 
     for point in via_points:
         # COMENT THIS OUT
         # move_panda_eef(point)
         # ----------------------------------------------------
         plan = move_arm_a_to_b(point) #
-        group.execute(plan, wait=True)
-        # group.stop()
+        #Publish this plan at my own speed
+        group.execute(plan, wait=False)
+        execute(plan)
+        group.stop()
         group.clear_pose_targets()
         # END HERE
         # ------------------------------------------------------
@@ -144,6 +160,16 @@ def move_arm_handler(req):
         # ----------------------------------------------------
         # rospy.sleep(0.1) #pause for 0.25 for PID to catch up
     return True
+
+def execute(plan, freq=120): #freq in hz
+    # print(plan.joint_trajectory.points)
+    target_pos = plan.joint_trajectory.points
+    rate = rospy.Rate(freq)
+    for point in target_pos:
+        joint_pos = point.positions
+        for i in range(7):
+            publishers[i].publish(joint_pos[i])
+        rate.sleep()
 
 def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):#talen from tutorial
 

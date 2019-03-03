@@ -13,8 +13,11 @@ rospy.init_node('arm_master', anonymous=True)
 from arm_master_functions import *
 # TODO FIX ISSUE WITH BAD INIT
 
+from sensor_msgs.msg import JointState
+
 pub_gripper = rospy.Publisher('/franka/gripper_width',
                           Float64, queue_size=1)
+
 
 #Get all Services
 
@@ -36,6 +39,27 @@ gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 #Services for querying pick and place locations
 get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
 get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
+
+
+holding_brick = False
+dropped_brick = False
+closed_width = 0.5
+brick_width = 0.6
+dropped_thresh_width = 0.055
+#Functions for error checking on gripper
+def check_gripper_handler(data):
+    global holding_brick
+    global dropped_brick
+
+    if holding_brick:
+        joints = data.position
+        width = joints[0] + joints[1]
+        rospy.loginfo("width")
+        if width < dropped_thresh_width:
+            rospy.loginfo("DROPPED!")
+            dropped_brick = True
+
+rospy.Subscriber("/franka/joint_states", JointState, check_gripper_handler)
 
 #Functinos to further wrap function calls
 def gen_brick():
@@ -84,6 +108,7 @@ def pick_up(target, via_offset = 0.2):
 
     move_arm(target)
     close_gripper()
+    holding_brick = True
     rospy.sleep(2)
 
     move_arm(via_point)
@@ -96,6 +121,7 @@ def place_down(target, via_offset = 0.2):
     rospy.sleep(1) # Tune time
     move_arm(target)
     open_gripper()
+    holding_brick = False
     rospy.sleep(3)
     move_arm(via_point)
 
@@ -132,7 +158,16 @@ def get_round_points():
 
 round_way_points = get_round_points()
 
-def move_towards(start, end):
+def check_dropped():
+    global dropped_brick
+    if dropped_brick:
+        holding_brick = False
+        dropped_brick = False
+        return True
+
+    return False
+
+def move_towards(start, end, check = False):
     #find nearest point to pick
     min_start_dist = 10000
     min_start_ind = 0
@@ -162,8 +197,13 @@ def move_towards(start, end):
         #move arm to the curr node positon
         curr_node = round_way_points[curr_ind]
         move_arm([curr_node[0][0],curr_node[0][1],curr_node[0][2],3.14,0,0])
-        curr_ind = curr_node[1][selector] #go one way around the circle
 
+        if check:
+            if check_dropped(): #Exit and return failure
+                rospy.loginfo("DROPPED BRICK!")
+                return False
+        curr_ind = curr_node[1][selector] #go one way around the circle
+    return True
     #move toward location in a controlled maner without running into
 
 
@@ -172,10 +212,10 @@ def go_to(pos):
 
 #change these gripper functions to the correct topic for panda arm
 def open_gripper():
-    pub_gripper.publish(0.16)
+    pub_gripper.publish(0.12)
     return True
 def close_gripper():
-    pub_gripper.publish(0.03)
+    pub_gripper.publish(0.05)
     return True
 
 rate = rospy.Rate(1)
@@ -193,7 +233,7 @@ move_arm_curve(get_home_pos())
 
 while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
     if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
-        placed += 1
+
 
         #Query Positions
         brick = get_brick_pos(placed)
@@ -204,19 +244,22 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         #Issue trying to place brick directly behind you must go up first
         #generate Brick
         gen_brick()
-        move_towards(home, brick)
-
+        succ = move_towards(home, brick)
         #Pick Place operation then return home
         pick_up(brick)
         #temp fix to move to goal position
         # move_arm_curve(over_head)
         # move_arm_curve(goal)
-        move_towards(brick, goal)
+        succ = move_towards(brick, goal, check = True)
+        if not succ:
+            go_to(home)
+            continue
         # move_arm_curve(home)
         # move_arm_curve(over_head)
         # move_towards(goal)
         place_down(goal)
         move_towards(goal, home)
+        placed += 1
 
         # go_to(over_head)
         # go_to(home)

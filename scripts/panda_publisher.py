@@ -60,7 +60,7 @@ def callback(data):
 def talker():
 
     rospy.init_node('panda_publisher', anonymous=False)
-    rospy.Subscriber("/move_sim/move_group/fake_controller_joint_states", JointState, callback)
+    rospy.Subscriber("/move_group/fake_controller_joint_states", JointState, callback)
     rospy.spin()
 
 

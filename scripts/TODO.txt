@@ -1,0 +1,9 @@
+
+1. Added Dropped Brick Functionality
+2. Fix friction on fingers.
+3. Tune speed
+
+4. Focus on integration on real robot!!!!!
+Now I can control speed of publishing joints... exactly.... which is quite nice.....
+
+Needs to be done tommrow morning!!!!

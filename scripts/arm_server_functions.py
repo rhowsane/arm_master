@@ -1,6 +1,11 @@
 import tf
 import geometry_msgs.msg
 import numpy as np
+
+###############################
+#Functions to read in random joint angles and send them at the proper speed
+
+
 def get_via_points(start, goal, res = 5):
 
     via_points = []

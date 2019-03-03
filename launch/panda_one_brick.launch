@@ -1,8 +1,8 @@
 <launch>
-  <group ns="move_sim">
+  <!-- <group ns="move_sim"> -->
   <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch"/> -->
   <include file="$(find panda_moveit_config)/launch/demo.launch"/>
-  </group>
+  <!-- </group> -->
 
   <!-- <include file="$(find franka_gazebo)/launch/panda_arm_hand.launch"/> -->
 
