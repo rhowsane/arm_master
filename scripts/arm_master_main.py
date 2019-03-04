@@ -40,6 +40,8 @@ gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
 get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
+holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
+
 
 holding_brick = False
 dropped_brick = False
@@ -47,24 +49,16 @@ closed_width = 0.5
 brick_width = 0.6
 dropped_thresh_width = 0.055
 #Functions for error checking on gripper
-def check_gripper_handler(data):
-    global holding_brick
-    global dropped_brick
-
-    if holding_brick:
-        joints = data.position
-        width = joints[0] + joints[1]
-        rospy.loginfo("width")
-        if width < dropped_thresh_width:
-            rospy.loginfo("DROPPED!")
-            dropped_brick = True
-
-rospy.Subscriber("/franka/joint_states", JointState, check_gripper_handler)
 
 #Functinos to further wrap function calls
 def gen_brick():
     gen_brick_wrapper(TriggerRequest())
 
+def check_dropped():
+    asn = holding_brick_wrapper(TriggerRequest())
+    rospy.loginfo("ANSWERS: ")
+    rospy.loginfo(asn)
+    return asn.success
 def get_brick_pos(placed):
     loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
@@ -104,25 +98,29 @@ def pick_up(target, via_offset = 0.2):
 
     #Make sure gripper is open
     open_gripper()
-    rospy.sleep(1) # Tune time
+    # rospy.sleep(1) # Tune time
 
     move_arm(target)
+    rospy.sleep(1)
     close_gripper()
     holding_brick = True
     rospy.sleep(2)
 
     move_arm(via_point)
 
+    return True
+
 def place_down(target, via_offset = 0.2):
         #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
     move_arm(via_point)
-    rospy.sleep(1) # Tune time
+    # rospy.sleep(1) # Tune time
     move_arm(target)
+    rospy.sleep(1) # Tune time
     open_gripper()
     holding_brick = False
-    rospy.sleep(3)
+    rospy.sleep(2)
     move_arm(via_point)
 
 def get_round_points():
@@ -158,14 +156,7 @@ def get_round_points():
 
 round_way_points = get_round_points()
 
-def check_dropped():
-    global dropped_brick
-    if dropped_brick:
-        holding_brick = False
-        dropped_brick = False
-        return True
 
-    return False
 
 def move_towards(start, end, check = False):
     #find nearest point to pick
@@ -194,14 +185,17 @@ def move_towards(start, end, check = False):
 
     selector = left_or_right(curr_ind, min_end_ind, round_way_points)
     while curr_ind != min_end_ind:
-        #move arm to the curr node positon
-        curr_node = round_way_points[curr_ind]
-        move_arm([curr_node[0][0],curr_node[0][1],curr_node[0][2],3.14,0,0])
 
-        if check:
+        if check: #Check if dropped
+            rospy.loginfo("CHECKING IF DROPPED")
             if check_dropped(): #Exit and return failure
                 rospy.loginfo("DROPPED BRICK!")
                 return False
+
+
+        #move arm to the curr node positon
+        curr_node = round_way_points[curr_ind]
+        move_arm([curr_node[0][0],curr_node[0][1],curr_node[0][2],3.14,0,3.14/4])
         curr_ind = curr_node[1][selector] #go one way around the circle
     return True
     #move toward location in a controlled maner without running into
@@ -258,13 +252,13 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         # move_arm_curve(over_head)
         # move_towards(goal)
         place_down(goal)
-        move_towards(goal, home)
+        succ = move_towards(goal, home)
         placed += 1
 
         # go_to(over_head)
         # go_to(home)
 
-        print("Placed")
+        rospy.loginfo("Placed")
         #Place another brick from stack onto wall
     else: #When done just wait
         rospy.loginfo("Done, " +str(placed) + " bricks placed")

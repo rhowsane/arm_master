@@ -161,7 +161,7 @@ def move_arm_handler(req):
         # rospy.sleep(0.1) #pause for 0.25 for PID to catch up
     return True
 
-def execute(plan, freq=120): #freq in hz
+def execute(plan, freq=140): #freq in hz
     # print(plan.joint_trajectory.points)
     target_pos = plan.joint_trajectory.points
     rate = rospy.Rate(freq)

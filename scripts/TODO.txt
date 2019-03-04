@@ -1,5 +1,4 @@
 
-1. Added Dropped Brick Functionality
 2. Fix friction on fingers.
 3. Tune speed
 
