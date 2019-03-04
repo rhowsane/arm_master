@@ -15,6 +15,10 @@ from de_msgs.srv import QueryNextPos, MoveArm, QueryPPBrick
 from arm_server_functions import *
 # rospy.init_node('arm_controller', anonymous=True)
 import numpy as np
+from actionlib_msgs.msg import GoalStatusArray
+from moveit_commander import MoveGroupCommander
+
+from moveit_msgs.msg import RobotTrajectory
 
 rospy.init_node('arm_server')
 
@@ -30,10 +34,15 @@ publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.form
 # rospy.init_node('move_group_python_interface_tutorial',
 #                 anonymous=True)
 
-robot = moveit_commander.RobotCommander()
-scene = moveit_commander.PlanningSceneInterface()
-group_name = "panda_arm"
-group = moveit_commander.MoveGroupCommander(group_name)
+rospy.wait_for_message('move_group/status', GoalStatusArray)
+group = MoveGroupCommander('panda_arm')
+# commander.set_named_target('ready')
+# commander.go()
+
+# robot = moveit_commander.RobotCommander()
+# scene = moveit_commander.PlanningSceneInterface()
+# group_name = "panda_arm"
+# group = moveit_commander.MoveGroupCommander(group_name)
 display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
                                                moveit_msgs.msg.DisplayTrajectory,
                                                queue_size=20)
@@ -133,6 +142,47 @@ def move_panda_eef(pose_goal):
     plan = group.go(wait=True)
     group.stop()
     group.clear_pose_targets()
+ 
+
+def slow_down(traj):
+
+
+    new_traj = RobotTrajectory() 
+    new_traj.joint_trajectory = traj.joint_trajectory 
+    n_joints = len(traj.joint_trajectory.joint_names) 
+    n_points = len(traj.joint_trajectory.points) 
+
+    spd = 0.2
+
+    for i in range(n_points): 
+        new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd 
+
+        # rospy.loginfo(type(traj.joint_trajectory.points[i]))
+        v = list(new_traj.joint_trajectory.points[i].velocities)
+        a = list(new_traj.joint_trajectory.points[i].accelerations)
+        p = list(new_traj.joint_trajectory.points[i].positions)
+
+        for j in range(n_joints): 
+            # rospy.loginfo(type(new_traj.joint_trajectory.points[i].velocities))
+            v[j] = traj.joint_trajectory.points[i].velocities[j] * spd 
+            a[j] = traj.joint_trajectory.points[i].accelerations[j] * spd**2
+            p[j] = traj.joint_trajectory.points[i].positions[j]
+
+            # new_traj.joint_trajectory.points[i].accelerations[j] = traj.joint_trajectory.points[i].accelerations[j] * spd 
+            # new_traj.joint_trajectory.points[i].positions[j] = traj.joint_trajectory.points[i].positions[j] 
+
+        v = tuple(v)
+        a = tuple(a)
+        p = tuple(p)
+
+        new_traj.joint_trajectory.points[i].velocities = v
+        new_traj.joint_trajectory.points[i].accelerations = a
+        new_traj.joint_trajectory.points[i].positions = p
+
+        # rospy.loginfo( new_traj.joint_trajectory.points[i].velocities[j])
+        # rospy.loginfo( new_traj.joint_trajectory.points[i].accelerations[j])
+        # rospy.loginfo( new_traj.joint_trajectory.points[i].positions[j])
+    return new_traj
 
 def move_arm_handler(req):
 
@@ -149,9 +199,10 @@ def move_arm_handler(req):
         # move_panda_eef(point)
         # ----------------------------------------------------
         plan = move_arm_a_to_b(point) #
+        plan = slow_down(plan)
         #Publish this plan at my own speed
-        group.execute(plan, wait=False)
-        execute(plan)
+        group.execute(plan, wait=True)
+        # execute(plan)
         group.stop()
         group.clear_pose_targets()
         # END HERE

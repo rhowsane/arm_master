@@ -47,30 +47,10 @@ def goal_manager_server(req):
     print("placed:", which_brick)
     """
 
-inb = input()
-i = int(inb)
-
-
-def test(i):
-    if i == 0:
-        pos = [0.5, 0.1, 0, 1.5708, 0, 0]
-        return pos
-    elif i == 1:
-        pos = [0.5, 0, 0, 1.5708, 0, 0]
-        return pos
-    elif i == 2:
-        pos = [0.5, -0.1, 0, 1.5708, 0, 0]
-        return pos
-    else:
-        pos = [0.5, 0, 0, 3.1415, 0, 0]
-        return pos
-
-#print (test(i))
-
 #########################################################################
 ###BELOW CODE IS THE ORIGINAL####################
 ############################################################################
-    """if num == 0:
+    if num == 0:
         p = [0.5, 0, 0.05, 3.14, 0, 0]
     elif num == 1:
         p = [0.5, -0.2, 0.05, 3.14, 0, 0]
@@ -88,7 +68,7 @@ def test(i):
     elif num == 7:
         p = [0.5, -0.8, 0.2, 3.14, 0, 0]
     else:
-        p = [0.8, 0, 0.2, 3.14, 0, 0]"""
+        p = [0.8, 0, 0.2, 3.14, 0, 0]
 
     resp = QueryBrickLocResponse()
     resp.x = p[0]

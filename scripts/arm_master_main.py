@@ -34,7 +34,7 @@ move_arm_wrapper = connect_srv('move_arm', MoveArm)
 move_arm_curve_wrapper = connect_srv('move_arm_curve', MoveArm)
 
 #gen_brick generates a brick in Gazebo
-gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
+# gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 
 #Services for querying pick and place locations
 get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
@@ -237,7 +237,7 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
 
         #Issue trying to place brick directly behind you must go up first
         #generate Brick
-        gen_brick()
+        # gen_brick()
         succ = move_towards(home, brick)
         #Pick Place operation then return home
         pick_up(brick)
