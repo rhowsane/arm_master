@@ -89,8 +89,8 @@ def move_arm_a_to_b(goal): #move very short distance
     group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.001/8,        # eef_step
-                                       5)         # jump_threshold
+                                       0.001,        # eef_step
+                                       2)         # jump_threshold
     # rospy.loginfo(goal)
 
     return plan
@@ -126,9 +126,12 @@ def move_arm_curve_handler(req):
     pose_goal.orientation.z = quaternion[2]
     pose_goal.orientation.w = quaternion[3]
 
+    group.set_max_acceleration_scaling_factor(0.2)
+    group.set_max_velocity_scaling_factor(0.2)
+
     group.set_pose_target(pose_goal)
     plan = group.plan()
-    points = plan.joint_trajectory.points
+    # points = plan.joint_trajectory.points
     ## Now, we call the planner to compute the plan and execute it.
     plan = group.go(wait=True)
     group.stop()
@@ -151,7 +154,7 @@ def slow_down(traj):
     n_joints = len(traj.joint_trajectory.joint_names)
     n_points = len(traj.joint_trajectory.points)
 
-    spd = 0.4
+    spd = 0.2
 
     for i in range(n_points):
         new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd
@@ -191,7 +194,7 @@ def move_arm_handler(req):
     group.set_goal_position_tolerance(0.001)
     group.set_goal_orientation_tolerance(0.01)
 
-    via_points = plan_cartesian_path(goal,resolution = 3) #res can be changed
+    via_points = plan_cartesian_path(goal,resolution = 1) #res can be changed
 
     for point in via_points:
         # COMENT THIS OUT

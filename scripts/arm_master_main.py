@@ -129,10 +129,10 @@ def pick_up(target, via_offset = 0.2):
     # rospy.sleep(1) # Tune time
 
     move_arm(target)
-    rospy.sleep(1)
+    rospy.sleep(0.5)
     close_gripper()
     holding_brick = True
-    rospy.sleep(2)
+    rospy.sleep(0.5)
 
     move_arm(via_point)
 
@@ -268,8 +268,8 @@ placed = 0
 open_gripper()
 last_goal = None
 # move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
-move_arm_curve(get_home_pos())
-
+# move_arm_curve(get_home_pos())
+go_to(get_home_pos())
 while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
     if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
 
