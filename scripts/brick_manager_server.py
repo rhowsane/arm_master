@@ -25,7 +25,7 @@ GoalManager = SamRowan(5,4)
 def brick_manager_server(req):
     #num = req.num #change req to req.num to do placed iteration thing
     resp = QueryBrickLocResponse()
-    p = [0.5, 0.5, 0.18, 3.14, 0, 3.14/4] # z+0.2?
+    p = [0.5, 0.5, 0.116, 0, 0, 1.57] # z+0.2?
     resp.x = p[0]
     resp.y = p[1]
     resp.z = p[2]
@@ -38,18 +38,21 @@ def brick_manager_server(req):
 def goal_manager_server(req):
 
     num = req.num
+    new = False
 
+    # p, new = GoalManager.get_next_goal_loc(num)    #SAM DO CODE AND LOGIC IN HERE #Start with one value in here to avoid errors
+    #     # while not new: #Query untill you get a new position
+    #     # rospy.sleep(0.05)
     """
-    p = GoalManager.get_next_goal_loc()    #SAM DO CODE AND LOGIC IN HERE
     print("GoalManager P: ", p)
 
     which_brick = QueryBrickLocRequest()
     print("placed:", which_brick)
     """
 
-#########################################################################
-###BELOW CODE IS THE ORIGINAL####################
-############################################################################
+# #########################################################################
+# ###BELOW CODE IS THE ORIGINAL####################
+# ############################################################################
     if num == 0:
         p = [0.5, 0, 0.05, 3.14, 0, 0]
     elif num == 1:
@@ -73,10 +76,10 @@ def goal_manager_server(req):
     resp = QueryBrickLocResponse()
     resp.x = p[0]
     resp.y = p[1]
-    resp.z = p[2] + 0.15
+    resp.z = p[2] #Offset for table height
     resp.wx = p[3]
     resp.wy = p[4]
-    resp.wz = p[5] +  3.14/4
+    resp.wz = p[5]
     return resp
 
 brick_manager_s = rospy.Service('get_pick_loc', QueryBrickLoc, brick_manager_server)

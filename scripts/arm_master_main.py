@@ -15,6 +15,12 @@ from arm_master_functions import *
 
 from sensor_msgs.msg import JointState
 
+
+
+#----------------------------------------------
+real_panda = False
+#----------------------------------------------
+
 pub_gripper = rospy.Publisher('/franka/gripper_width',
                           Float64, queue_size=1)
 
@@ -34,7 +40,8 @@ move_arm_wrapper = connect_srv('move_arm', MoveArm)
 move_arm_curve_wrapper = connect_srv('move_arm_curve', MoveArm)
 
 #gen_brick generates a brick in Gazebo
-# gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
+if not real_panda:
+    gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 
 #Services for querying pick and place locations
 get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
@@ -62,22 +69,37 @@ def check_dropped():
 def get_brick_pos(placed):
     loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
+    p = orientation_correct(p)
     #return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4] #comment this
     return p
 
 def get_goal_pos(placed):
     loc = get_place_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
+    p = orientation_correct(p)
+
     #return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4] #comment this
     return p
 
 def get_home_pos():
-    return [0.5, 0.5, 0.5, 3.14, 0, 0]
+    p = [0.5, 0, 0.5, 0, 0, 0]
+    p = orientation_correct(p)
+    return p
 def get_over_pos(): #not used
     return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
     return 8
+
+
+def orientation_correct(pose):
+    pose[2] += 0.08
+    pose[3] += 3.14
+    pose[4] += 0
+    pose[5] += - 3.14/4 + 3.14/2
+
+    return pose
+
 
 def move_arm(pos):
     msg = MoveArm()
@@ -222,6 +244,7 @@ placed = 0
 
 #MOVE ARM TO STARTING LOCATION
 open_gripper()
+last_goal = None
 # move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
 move_arm_curve(get_home_pos())
 
@@ -232,12 +255,21 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         #Query Positions
         brick = get_brick_pos(placed)
         goal = get_goal_pos(placed)
+
+        print("POSITIONSS!!!!")
+        print(brick)
+        print(goal)
+        if goal == last_goal: #same as last time, don't go back
+            print("GOAL POS:", goal)
+
+            continue
         home = get_home_pos()
         over_head = get_over_pos()
 
         #Issue trying to place brick directly behind you must go up first
         #generate Brick
-        # gen_brick()
+        if not real_panda:
+            gen_brick()
         succ = move_towards(home, brick)
         #Pick Place operation then return home
         pick_up(brick)
@@ -245,15 +277,17 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         # move_arm_curve(over_head)
         # move_arm_curve(goal)
         succ = move_towards(brick, goal, check = True)
-        if not succ:
-            go_to(home)
-            continue
+        if not real_panda: #just have this functionallity of simulation right now
+            if not succ:
+                go_to(home)
+                continue
         # move_arm_curve(home)
         # move_arm_curve(over_head)
         # move_towards(goal)
         place_down(goal)
         succ = move_towards(goal, home)
         placed += 1
+        last_goal = goal # placed down now its a last brick
 
         # go_to(over_head)
         # go_to(home)

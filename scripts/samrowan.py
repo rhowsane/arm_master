@@ -1,16 +1,59 @@
+import sys
+import os
+
 class SamRowan():
     def __init__(self, width, height):
         print("Instantiating")
-        self.locations, number_of_brick = self.generate_simple_wall(width, height)
+        self.file = os.path.expanduser('~/Desktop/loc_file.txt')
+
+        self.locations = self.update_locations()
         print("Generated Wall")
-        self.pointer = 0
+        self.num = self.get_num()
         self.h = height
         self.n = width
 
-    def get_next_goal_loc(self): #TODO DEAL WITH OVERFLOW CASE
-        loc = self.locations[self.pointer]
-        self.pointer += 1
-        return loc
+    def get_num(self):
+        return len(self.locations)
+
+    def get_next_goal_loc(self, num): #TODO DEAL WITH OVERFLOW CASE
+        self.locations = self.update_locations()
+        print(self.locations)
+        self.num = self.get_num()
+
+        if num + 1 > self.num: #num is number placed. at the start it is 0
+            if self.num == 0:
+                return None, False #return last position and false, your waiting
+
+            return self.locations[self.num-1], False #return last position and false, your waiting
+
+        else:
+            return self.locations[int(num)], True
+
+    def update_locations(self): #Reads text file and writes values to list
+        #file = "ENTER ABS PATH TO THE model-1_4 file on your computer"
+        f = open(self.file, "r")
+
+        txt = f.read()
+        txt = txt.strip('\n')
+        txt = txt.strip(', ')
+
+        print(txt)
+        locs = txt.split(',')
+
+        #reformat into an array of 6
+
+        all_loc = []
+        curr_brick = []
+
+        for i in range(1,len(locs)+1):
+            curr_brick.append(float(locs[i-1]))
+            if i % 6 == 0:
+                all_loc.append(curr_brick)
+                curr_brick = []
+
+        f.close()
+
+        return all_loc
 
     def generate_simple_wall(self, width=5, height=4): #COPY PASTE SAMS FUNCTINO IN HERE AND RETURN THE DESIRED VALUE
 
@@ -64,6 +107,6 @@ class SamRowan():
                 xnos=0
                 znos+=1
 
-        print(pos_final)
+        # print(pos_final)
 
         return pos_final, brick_number

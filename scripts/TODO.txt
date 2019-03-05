@@ -1,8 +1,3 @@
-
-2. Fix friction on fingers.
-3. Tune speed
-
-4. Focus on integration on real robot!!!!!
-Now I can control speed of publishing joints... exactly.... which is quite nice.....
-
-Needs to be done tommrow morning!!!!
+2.Get txt file reading
+1.Place bricks at arbitary orietnation
+1. Add interface for gripper on real Franka
