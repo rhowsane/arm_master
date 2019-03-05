@@ -154,7 +154,7 @@ def slow_down(traj):
     n_joints = len(traj.joint_trajectory.joint_names)
     n_points = len(traj.joint_trajectory.points)
 
-    spd = 0.2
+    spd = 0.4
 
     for i in range(n_points):
         new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd

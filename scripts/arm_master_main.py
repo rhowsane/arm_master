@@ -51,10 +51,12 @@ get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
 holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
 
+client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+
 client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
 rospy.loginfo("Connectining")
 client.wait_for_server()
-
+client_open.wait_for_server()
 
 holding_brick = False
 dropped_brick = False
@@ -95,7 +97,7 @@ def get_over_pos(): #not used
     return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
-    return 8
+    return 6
 
 
 def orientation_correct(pose):
@@ -117,7 +119,7 @@ def move_arm_curve(pos):
     success = move_arm_curve_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
 
-def pick_up(target, via_offset = 0.2):
+def pick_up(target, via_offset = 0.3):
     #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
@@ -125,14 +127,16 @@ def pick_up(target, via_offset = 0.2):
     move_arm(via_point)
 
     #Make sure gripper is open
-    open_gripper()
+    # open_gripper()
+    # open_gripper()
+
     # rospy.sleep(1) # Tune time
 
     move_arm(target)
-    rospy.sleep(0.5)
+    # rospy.sleep(0.5)
     close_gripper()
     holding_brick = True
-    rospy.sleep(0.5)
+    # rospy.sleep(0.5)
 
     move_arm(via_point)
 
@@ -145,10 +149,10 @@ def place_down(target, via_offset = 0.2):
     move_arm(via_point)
     # rospy.sleep(1) # Tune time
     move_arm(target)
-    rospy.sleep(1) # Tune time
+    # rospy.sleep(1) # Tune time
     open_gripper()
     holding_brick = False
-    rospy.sleep(2)
+    # rospy.sleep(2)
     move_arm(via_point)
 
 def get_round_points():
@@ -236,10 +240,10 @@ def go_to(pos):
 #change these gripper functions to the correct topic for panda arm
 def open_gripper():
     if real_panda:
-        goal = MoveGoal(width = 0.08, speed = 0.08)
+        goal = MoveGoal(width = 0.07, speed = 0.08)
         rospy.loginfo("sending goal")
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        client_open.send_goal(goal)
+        client_open.wait_for_result(rospy.Duration.from_sec(10.0))
         rospy.loginfo("DONE")
     else:
         pub_gripper.publish(0.12)
@@ -247,10 +251,10 @@ def open_gripper():
 
 def close_gripper():
     if real_panda:
-        goal = MoveGoal(width = 0.04, speed = 0.08)
+        goal = MoveGoal(width = 0.0485, speed = 0.08)
         rospy.loginfo("sending goal")
         client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        client.wait_for_result(rospy.Duration.from_sec(2.0))
         rospy.loginfo("DONE")
     else:
         pub_gripper.publish(0.05)
@@ -303,13 +307,13 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         #temp fix to move to goal position
         # move_arm_curve(over_head)
         # move_arm_curve(goal)
-        succ = move_towards(brick, goal, check = True)
-        if not real_panda: #just have this functionallity of simulation right now
-            if not succ:
-                brick_via = brick
-                brick_via[2] += 0.2
-                go_to(brick_via)
-                continue
+        succ = move_towards(brick, goal, check = False)
+        # if not real_panda: #just have this functionallity of simulation right now
+        #     if not succ:
+        #         brick_via = brick
+        #         brick_via[2] += 0.2
+        #         go_to(brick_via)
+        #         continue
         # move_arm_curve(home)
         # move_arm_curve(over_head)
         # move_towards(goal)
