@@ -20,7 +20,7 @@ rospy.init_node('brick_manager_server')
 
 #Create Classes to Manager Goal and Brick Stack Location
 
-# GoalManager = SamRowan(5,4)
+GoalManager = SamRowan(5,4)
 
 def brick_manager_server(req):
     #num = req.num #change req to req.num to do placed iteration thing

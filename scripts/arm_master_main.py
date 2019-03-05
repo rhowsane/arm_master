@@ -16,6 +16,7 @@ from arm_master_functions import *
 
 from sensor_msgs.msg import JointState
 
+from franka_gripper.msg import MoveGoal, MoveAction
 
 
 #----------------------------------------------
@@ -49,6 +50,10 @@ get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
 get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
 holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
+
+client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+rospy.loginfo("Connectining")
+client.wait_for_server()
 
 
 holding_brick = False
@@ -231,10 +236,6 @@ def go_to(pos):
 #change these gripper functions to the correct topic for panda arm
 def open_gripper():
     if real_panda:
-        rospy.init_node('Franka_gripper_action')
-        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-        rospy.loginfo("Connectining")
-        client.wait_for_server()
         goal = MoveGoal(width = 0.08, speed = 0.08)
         rospy.loginfo("sending goal")
         client.send_goal(goal)
@@ -246,10 +247,6 @@ def open_gripper():
 
 def close_gripper():
     if real_panda:
-        rospy.init_node('Franka_gripper_action')
-        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-        rospy.loginfo("Connectining")
-        client.wait_for_server()
         goal = MoveGoal(width = 0.04, speed = 0.08)
         rospy.loginfo("sending goal")
         client.send_goal(goal)
