@@ -40,7 +40,7 @@ def goal_manager_server(req):
     num = req.num
     new = False
 
-    p, new = GoalManager.get_next_goal_loc(num)    #SAM DO CODE AND LOGIC IN HERE #Start with one value in here to avoid errors
+    #p, new = GoalManager.get_next_goal_loc(num)    #SAM DO CODE AND LOGIC IN HERE #Start with one value in here to avoid errors
     #     # while not new: #Query untill you get a new position
     #     # rospy.sleep(0.05)
     """
@@ -53,25 +53,24 @@ def goal_manager_server(req):
 # #########################################################################
 # ###BELOW CODE IS THE ORIGINAL####################
 # ############################################################################
-    # if num == 0:
-    #     p = [0.5, 0, 0.05, 3.14, 0, 0]
-    # elif num == 1:
-    #     p = [0.5, -0.2, 0.05, 3.14, 0, 0]
-    # elif num == 2:
-    #     p = [0.5, -0.4, 0.05, 3.14, 0, 0]
-    # elif num == 3:
-    #     p = [0.5, -0.6, 0.05, 3.14, 0, 0]
-    #
-    # elif num == 4:
-    #     p = [0.5, 0, 0.2, 3.14, 0, 0]
-    # elif num == 5:
-    #     p = [0.5, -0.2, 0.2, 3.14, 0, 0]
-    # elif num == 6:
-    #     p = [0.5, -0.4, 0.2, 3.14, 0, 0]
-    # elif num == 7:
-    #     p = [0.5, -0.8, 0.2, 3.14, 0, 0]
-    # else:
-    #     p = [0.8, 0, 0.2, 3.14, 0, 0]
+    if num == 0:
+        p = [0.5, 0, 0.116, 0, 0, 1.57]
+    elif num == 1:
+        p = [0.5, -0.2, 0.116, 0, 0, 1.57]
+    elif num == 2:
+        p = [0.5, -0.4, 0.116, 0, 0, 1.57]
+    elif num == 3:
+        p = [0.5, -0.6, 0.116, 0, 0, 1.57]
+    elif num == 4:
+        p = [0.5, 0, 0.176, 0, 0, 1.57]
+    elif num == 5:
+        p = [0.5, -0.2, 0.176, 0, 0, 1.57]
+    elif num == 6:
+        p = [0.5, -0.4, 0.176, 0, 0, 1.57]
+    elif num == 7:
+        p = [0.5, -0.8, 0.176, 0, 0, 1.57]
+    else:
+        p = [0.8, 0, 0.4, 0, 0, 1.57]
     #
     # p = [0.5, 0, 0.116, 0, 0, 0]
 
