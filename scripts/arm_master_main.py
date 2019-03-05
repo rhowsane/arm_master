@@ -93,10 +93,10 @@ def get_num_bricks():
 
 
 def orientation_correct(pose):
-    pose[2] += 0.08
+    pose[2] += 0.04
     pose[3] += 3.14
     pose[4] += 0
-    pose[5] += - 3.14/4 + 3.14/2
+    pose[5] -= 3.14/4
 
     return pose
 
@@ -155,7 +155,7 @@ def get_round_points():
     x_c = 0
     y_c = 0
 
-    for i in np.arange(20):
+    for i in np.arange(20): #DONT CHANGE 20, this is hardcoded
         theta = (2 * np.pi) * ((i + 1 )/res)
         left = i-1
         if (left < 0):
@@ -168,7 +168,7 @@ def get_round_points():
         neighbour = (right,left)
         x = x_c + r * np.cos(theta)
         y = y_c + r * np.sin(theta)
-        plt.plot(x,y,'+')
+        # plt.plot(x,y,'+')
         pos = [x_c + r * np.cos(theta), y_c + r * np.sin(theta), height]
         round_path[i] = (pos,neighbour)
 
@@ -217,6 +217,7 @@ def move_towards(start, end, check = False):
 
         #move arm to the curr node positon
         curr_node = round_way_points[curr_ind]
+        print("MOVING ARM")
         move_arm([curr_node[0][0],curr_node[0][1],curr_node[0][2],3.14,0,3.14/4])
         curr_ind = curr_node[1][selector] #go one way around the circle
     return True
@@ -270,16 +271,23 @@ while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
         #generate Brick
         if not real_panda:
             gen_brick()
+        print("got here")
         succ = move_towards(home, brick)
         #Pick Place operation then return home
+        print("got here after move towards")
+
         pick_up(brick)
+        print("got here after move towards")
+
         #temp fix to move to goal position
         # move_arm_curve(over_head)
         # move_arm_curve(goal)
         succ = move_towards(brick, goal, check = True)
         if not real_panda: #just have this functionallity of simulation right now
             if not succ:
-                go_to(home)
+                brick_via = brick
+                brick_via[2] += 0.2
+                go_to(brick_via)
                 continue
         # move_arm_curve(home)
         # move_arm_curve(over_head)

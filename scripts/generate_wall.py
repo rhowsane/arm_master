@@ -17,7 +17,7 @@ b_depth = 0.62
 b_space = 0.192 - (b_width * 2)
 tol = 0.03
 
-brick1 = [0.5, 0, 0, 0, 0, 1.57]
+brick1 = [0.5, 0.25, 0.116, 0, 0, 1.57]
 # brick2 = [0, 0, b_length+b_width, 0, 0, 0]
 # brick3 = [0, 0, 0, 0, 0, 0]
 
