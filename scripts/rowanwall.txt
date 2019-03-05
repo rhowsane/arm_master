@@ -1,0 +1,14 @@
+
+def test(i):
+    if i == 0:
+        pos = [0.5, 0.1, 0, 1.5708, 0, 0]
+        return pos
+    elif i == 1:
+        pos = [0.5, 0, 0, 1.5708, 0, 0]
+        return pos
+    elif i == 2:
+        pos = [0.5, -0.1, 0, 1.5708, 0, 0]
+        return pos
+    else:
+        pos = [0.5, 0, 0, 3.1415, 0, 0]
+        return pos

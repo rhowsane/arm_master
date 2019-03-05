@@ -50,7 +50,7 @@ brick_width = 0.6
 dropped_thresh_width = 0.055
 #Functions for error checking on gripper
 
-#Functinos to further wrap function calls
+#Functions to further wrap function calls
 def gen_brick():
     gen_brick_wrapper(TriggerRequest())
 
