@@ -70,7 +70,6 @@ def plan_cartesian_path(goal,resolution = 10): #speed in m/s
     return via_points
 def move_arm_a_to_b(goal): #move very short distance
     rospy.loginfo('goal')
-    rospy.loginfo(goal)
 
     waypoints = []
     wpose = group.get_current_pose().pose
@@ -131,7 +130,7 @@ def move_arm_curve_handler(req):
     plan = group.plan()
     points = plan.joint_trajectory.points
     ## Now, we call the planner to compute the plan and execute it.
-    # plan = group.go(wait=True)
+    plan = group.go(wait=True)
     group.stop()
     group.clear_pose_targets()
     return True
@@ -192,7 +191,7 @@ def move_arm_handler(req):
     group.set_goal_position_tolerance(0.001)
     group.set_goal_orientation_tolerance(0.01)
 
-    via_points = plan_cartesian_path(goal,resolution = 1) #res can be changed
+    via_points = plan_cartesian_path(goal,resolution = 3) #res can be changed
 
     for point in via_points:
         # COMENT THIS OUT
@@ -202,9 +201,13 @@ def move_arm_handler(req):
         #Publish this plan at my own speed
         if not real_panda:
             group.execute(plan, wait=False)
+            print("EXECUTING PLAN")
+
             execute(plan)
         else: #Running on real panada
             plan = slow_down(plan)
+            print("EXECUTING PLAN ON REAL ROBOT")
+
             group.execute(plan, wait=True)
 
         group.stop()
@@ -212,7 +215,7 @@ def move_arm_handler(req):
 
     return True
 
-def execute(plan, freq=150): #freq in hz
+def execute(plan, freq=140): #freq in hz
     # print(plan.joint_trajectory.points)
     target_pos = plan.joint_trajectory.points
     rate = rospy.Rate(freq)
