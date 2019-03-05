@@ -2,6 +2,7 @@
 from arm_utils import *
 import time
 import rospy
+import actionlib
 from de_msgs.srv import QueryNextPos, MoveArm
 from std_msgs.msg import Float64
 from std_srvs.srv import Trigger, TriggerRequest
@@ -15,10 +16,11 @@ from arm_master_functions import *
 
 from sensor_msgs.msg import JointState
 
+from franka_gripper.msg import MoveGoal, MoveAction
 
 
 #----------------------------------------------
-real_panda = False
+real_panda = True
 #----------------------------------------------
 
 pub_gripper = rospy.Publisher('/franka/gripper_width',
@@ -48,6 +50,10 @@ get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
 get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
 holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
+
+client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+rospy.loginfo("Connectining")
+client.wait_for_server()
 
 
 holding_brick = False
@@ -229,10 +235,25 @@ def go_to(pos):
 
 #change these gripper functions to the correct topic for panda arm
 def open_gripper():
-    pub_gripper.publish(0.12)
+    if real_panda:
+        goal = MoveGoal(width = 0.08, speed = 0.08)
+        rospy.loginfo("sending goal")
+        client.send_goal(goal)
+        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.loginfo("DONE")
+    else:
+        pub_gripper.publish(0.12)
     return True
+
 def close_gripper():
-    pub_gripper.publish(0.05)
+    if real_panda:
+        goal = MoveGoal(width = 0.04, speed = 0.08)
+        rospy.loginfo("sending goal")
+        client.send_goal(goal)
+        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.loginfo("DONE")
+    else:
+        pub_gripper.publish(0.05)
     return True
 
 rate = rospy.Rate(1)

@@ -26,7 +26,7 @@ from sensor_msgs.msg import JointState
 
 
 #----------------------------------------------
-real_panda = False
+real_panda = True
 #----------------------------------------------
 
 
@@ -89,8 +89,8 @@ def move_arm_a_to_b(goal): #move very short distance
     group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.001/4,        # eef_step
-                                       10)         # jump_threshold
+                                       0.001/8,        # eef_step
+                                       5)         # jump_threshold
     # rospy.loginfo(goal)
 
     return plan
@@ -151,7 +151,7 @@ def slow_down(traj):
     n_joints = len(traj.joint_trajectory.joint_names)
     n_points = len(traj.joint_trajectory.points)
 
-    spd = 0.2
+    spd = 0.4
 
     for i in range(n_points):
         new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd
