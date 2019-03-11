@@ -5,7 +5,7 @@ import copy
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-file = os.path.expanduser('~/Desktop/loc_file.txt')
+file = os.path.expanduser('~/Dropbox/loc.txt')
 f  = open(file, "w")
 goals = []
 
