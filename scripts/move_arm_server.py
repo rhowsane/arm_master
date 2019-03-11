@@ -26,7 +26,7 @@ from sensor_msgs.msg import JointState
 
 
 #----------------------------------------------
-real_panda = True
+real_panda = False
 #----------------------------------------------
 
 

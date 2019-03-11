@@ -20,7 +20,7 @@ from franka_gripper.msg import MoveGoal, MoveAction
 
 
 #----------------------------------------------
-real_panda = True
+real_panda = False
 #----------------------------------------------
 
 pub_gripper = rospy.Publisher('/franka/gripper_width',
@@ -55,6 +55,9 @@ client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
 rospy.loginfo("Connectining")
 client.wait_for_server()
 
+if real_panda:
+    client.wait_for_server()
+
 
 holding_brick = False
 dropped_brick = False
@@ -72,6 +75,7 @@ def check_dropped():
     rospy.loginfo("ANSWERS: ")
     rospy.loginfo(asn)
     return asn.success
+
 def get_brick_pos(placed):
     loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
