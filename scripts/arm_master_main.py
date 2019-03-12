@@ -35,6 +35,11 @@ Args:
 Returns:
     bool: The return value. True for success, False otherwise.
 
+"""
+
+"""
+roslaunch franka_gripper franka_gripper.launch robot_ip:=192.168.0.88
+roslaunch move_to_start.launch robot_ip:=192.168.0.88
 
 """
 
