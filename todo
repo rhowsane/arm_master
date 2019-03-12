@@ -1,0 +1,7 @@
+Documentation structure:
+1. Intro, team members, prerequisites - Justice
+2. What is the problem, initial constraints, final videos of gazebo and real panda moving - Rowan
+3. Project structure, explaining the modules' functions, how they communicate (de_msgs) - Justice
+4. 3 packages (spawn_mnger - Keith, arm_master - Zach, brick_manager_server - Rowan & Sam) explained in detail
+5. A) Code implementation (Zach) and problems specific to Gazebo (Keith); 😎 Code implementation (Zach) and problems specific to real Panda (Keith)
+6. Hololens interfacing and next steps (Dan)
