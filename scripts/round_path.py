@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 def get_round_points():
     round_path = dict()
-    res = float(20)
+    res = float(40)
     diameter = 0.75
     r = diameter/2
     height = 0.5
@@ -11,15 +11,15 @@ def get_round_points():
     x_c = 0
     y_c = 0
 
-    for i in np.arange(20):
+    for i in np.arange(res):
         theta = (2 * np.pi) * ((i + 1 )/res)
         print(theta)
         left = i-1
         if (left < 0):
-            left = 19
+            left = res-1
 
         right = i+1
-        if right > 19:
+        if right > res-1:
             right = 0
 
         neighbour = (right,left)

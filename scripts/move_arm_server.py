@@ -26,7 +26,7 @@ from sensor_msgs.msg import JointState
 
 
 #----------------------------------------------
-real_panda = True
+real_panda = False
 #----------------------------------------------
 
 
@@ -218,13 +218,17 @@ def move_arm_handler(req):
 
     return True
 
-def execute(plan, freq=140): #freq in hz
+def execute(plan, freq=100): #freq in hz
     # print(plan.joint_trajectory.points)
+    override = [0, 0, 0, -0.5, 0, 0.5, 0.75]
     target_pos = plan.joint_trajectory.points
     rate = rospy.Rate(freq)
     for point in target_pos:
         joint_pos = point.positions
         for i in range(7):
+            #if i < 6:
+                #publishers[i].publish(override[i])
+            #else:
             publishers[i].publish(joint_pos[i])
         rate.sleep()
 
