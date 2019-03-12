@@ -5,3 +5,23 @@ Documentation structure:
 4. 3 packages (spawn_mnger - Keith, arm_master - Zach, brick_manager_server - Rowan & Sam) explained in detail
 5. A) Code implementation (Zach) and problems specific to Gazebo (Keith); 😎 Code implementation (Zach) and problems specific to real Panda (Keith)
 6. Hololens interfacing and next steps (Dan)
+
+
+"""Short Function Summary
+
+Longer Function Description
+
+Args:
+    param1 (int): The first parameter.
+    param2 (str): The second parameter.
+
+Returns:
+    bool: The return value. True for success, False otherwise.
+
+"""
+
+"""
+roslaunch franka_gripper franka_gripper.launch robot_ip:=192.168.0.88
+roslaunch move_to_start.launch robot_ip:=192.168.0.88
+
+"""

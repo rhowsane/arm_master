@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 def get_round_points():
     round_path = dict()
-    res = float(40)
+    res = float(15)
     diameter = 0.75
     r = diameter/2
     height = 0.5

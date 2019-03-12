@@ -1,59 +1,47 @@
 #!/usr/bin/env python
 
+# Import standard libraries
 import sys
 import copy
+import numpy as np
+from math import pi
+
+#Import ROS libraries
 import rospy
 import moveit_commander
-import moveit_msgs.msg
 import tf
-import geometry_msgs.msg
-from math import pi
-from std_msgs.msg import String, Float64
 from moveit_commander.conversions import pose_to_list
-from de_msgs.srv import QueryNextPos, MoveArm, QueryPPBrick
-# from tf.transformations import euler_from_quaternion, quaternion_from_euler
-from arm_server_functions import *
-# rospy.init_node('arm_controller', anonymous=True)
-import numpy as np
+
+# Import standard messages
+import moveit_msgs.msg
+import geometry_msgs.msg
+from std_msgs.msg import String, Float64
 from actionlib_msgs.msg import GoalStatusArray
 from moveit_commander import MoveGroupCommander
-
 from moveit_msgs.msg import RobotTrajectory
 
-rospy.init_node('arm_server')
-
-from sensor_msgs.msg import JointState
-#
-
-#----------------------------------------------
-real_panda = True
-#----------------------------------------------
+# Import custom messages
+from de_msgs.srv import QueryNextPos, MoveArm, QueryPPBrick
 
 
-if not real_panda:
-    moveit_commander.roscpp_initialize(sys.argv)
-    robot = moveit_commander.RobotCommander()
-    scene = moveit_commander.PlanningSceneInterface()
-    group_name = "panda_arm"
-    group = moveit_commander.MoveGroupCommander(group_name)
-    #To publish joint states directly
-    publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1) for i in range(1, 8)]
+# Import custom functions
+from arm_server_functions import *
 
 
-else:
-    rospy.wait_for_message('move_group/status', GoalStatusArray)
-    group = MoveGroupCommander('panda_arm')
+def plan_cartesian_path(goal,resolution = 1): #speed in m/s
+    """Sample points between current pose and goal pos at set resolution
 
+    Longer Function Description
 
-display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
-                                               moveit_msgs.msg.DisplayTrajectory,
-                                               queue_size=20)
+    Args:
+        param1 (int): The first parameter.
+        param2 (str): The second parameter.
 
-#variables for functions
-box_name = "box"
-grasping_group = 'hand'
+    Returns:
+        bool: The return value. True for success, False otherwise.
 
-def plan_cartesian_path(goal,resolution = 10): #speed in m/s
+    """
+
     # Go from where ever you are current to where ever you want to be in a straight line
     #Convert all arrays in 7 array quaterions
     waypoints = []
@@ -144,6 +132,8 @@ def move_panda_eef(pose_goal):
     plan = group.go(wait=True)
     group.stop()
     group.clear_pose_targets()
+
+#accel =
 
 
 def slow_down(traj):
@@ -256,6 +246,39 @@ def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):
 # If we exited the while loop without returning then we timed out
     return False
 
-move_arm_s = rospy.Service('move_arm', MoveArm, move_arm_handler)
-move_arm_curve_s = rospy.Service('move_arm_curve', MoveArm, move_arm_curve_handler)
-rospy.spin()
+
+if __name__ == '__main__':
+
+    rospy.init_node('arm_server')
+
+    box_name = "box"
+    grasping_group = 'hand'
+
+    # ----------------------------------------------
+    real_panda = False  # Are you using the real robot?
+    # ----------------------------------------------
+
+    if not real_panda:  # If not using real_panda then you need to publish joint angles to gazebo. Create the publishers to do this
+        moveit_commander.roscpp_initialize(sys.argv)
+        robot = moveit_commander.RobotCommander()
+        scene = moveit_commander.PlanningSceneInterface()
+        group_name = "panda_arm"
+        group = moveit_commander.MoveGroupCommander(group_name)
+        # To publish joint states directly
+        publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1)
+                      for i in range(1, 8)]
+
+
+    else:  # Otherwise connect to the moveit move group which has control over the robot
+        rospy.wait_for_message('move_group/status', GoalStatusArray)
+        group = MoveGroupCommander('panda_arm')
+
+    display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path',
+                                                   moveit_msgs.msg.DisplayTrajectory,
+                                                   queue_size=20)
+
+    # Variables for functions
+
+    move_arm_s = rospy.Service('move_arm', MoveArm, move_arm_handler)
+    move_arm_curve_s = rospy.Service('move_arm_curve', MoveArm, move_arm_curve_handler)
+    rospy.spin()

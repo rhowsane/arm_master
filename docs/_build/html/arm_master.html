@@ -209,26 +209,26 @@ is waiting for all the required nodes to be launched. Double check <code class="
 Note that the code calls <code class="docutils literal notranslate"><span class="pre">rospy.wait_for_service()</span></code> each time it is required to connect to another service
 or action client
 service or action client.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">msg_type</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">msg_type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">service</span><span class="o">.</span>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
 
-    <span class="n">Returns</span><span class="p">:</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">returns</span> <span class="n">function</span> <span class="nb">object</span> <span class="n">which</span> <span class="n">wraps</span> <span class="n">requested</span> <span class="n">service</span>
+    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    rospy.loginfo(&quot;Searching for &quot; + name + &quot; .... &quot;)</span>
-<span class="sd">    rospy.wait_for_service(name)</span>
-<span class="sd">    srv_wrapper = rospy.ServiceProxy(name, msg_type)</span>
-<span class="sd">    rospy.loginfo(name + &quot; CONNECTED&quot;)</span>
-<span class="sd">    return srv_wrapper</span>
 
-<span class="sd"># Functions to further wrap function calls. Allows for changing of underlying function</span>
-<span class="sd"># without effecting the main loop</span>
+<span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if brick is dropped</span>
 
-<span class="sd">def gen_brick():</span>
-<span class="sd">    &quot;&quot;&quot;</span><span class="n">Generates</span> <span class="n">brick</span> <span class="ow">in</span> <span class="n">gazebo</span><span class="o">.</span> <span class="n">See</span> <span class="n">Spawn</span> <span class="n">Manager</span> <span class="n">Package</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    gen_brick_wrapper(TriggerRequest())</span>
+<span class="sd">    Calls holding_brick service which checks the width of gripper and compares it to the expected width</span>
 
-<span class="s2">def check_dropped():</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asn</span> <span class="o">=</span> <span class="n">holding_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
+
+
 </pre></div>
 </div>
 </div>
@@ -259,26 +259,26 @@ service or action client.</p>
 </div>
 <p>If you wish to change how the arm moves, change the order in which the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>
 functions are called. Additional motion functions also available in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> are <code class="docutils literal notranslate"><span class="pre">go_to()</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_curve()</span></code>. To illustrate, The main loop for our project implementation was implemented as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">msg_type</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">msg_type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">service</span><span class="o">.</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
 
-    <span class="n">Returns</span><span class="p">:</span>
-        <span class="n">func</span><span class="p">:</span> <span class="n">returns</span> <span class="n">function</span> <span class="nb">object</span> <span class="n">which</span> <span class="n">wraps</span> <span class="n">requested</span> <span class="n">service</span>
+    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
 
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    rospy.loginfo(&quot;Searching for &quot; + name + &quot; .... &quot;)</span>
-<span class="sd">    rospy.wait_for_service(name)</span>
-<span class="sd">    srv_wrapper = rospy.ServiceProxy(name, msg_type)</span>
-<span class="sd">    rospy.loginfo(name + &quot; CONNECTED&quot;)</span>
-<span class="sd">    return srv_wrapper</span>
 
-<span class="sd"># Functions to further wrap function calls. Allows for changing of underlying function</span>
-<span class="sd"># without effecting the main loop</span>
+<span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if brick is dropped</span>
 
-<span class="sd">def gen_brick():</span>
-<span class="sd">    &quot;&quot;&quot;</span><span class="n">Generates</span> <span class="n">brick</span> <span class="ow">in</span> <span class="n">gazebo</span><span class="o">.</span> <span class="n">See</span> <span class="n">Spawn</span> <span class="n">Manager</span> <span class="n">Package</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">    gen_brick_wrapper(TriggerRequest())</span>
+<span class="sd">    Calls holding_brick service which checks the width of gripper and compares it to the expected width</span>
 
-<span class="s2">def check_dropped():</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">asn</span> <span class="o">=</span> <span class="n">holding_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
+
+
 </pre></div>
 </div>
 <p>See API calls</p>
@@ -295,6 +295,24 @@ functions are called. Additional motion functions also available in <code class=
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if gripper closer together then expect (means brick has fallen). False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.close_gripper">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">close_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.close_gripper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes robot gripper</p>
+<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
+grip width to <em>/franka/gripper_width</em> topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
 </tr>
@@ -330,27 +348,183 @@ functions are called. Additional motion functions also available in <code class=
 <dl class="function">
 <dt id="scripts.arm_master_main.gen_brick">
 <code class="descclassname">scripts.arm_master_main.</code><code class="descname">gen_brick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.gen_brick" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates brick in gazebo. See Spawn Manager Package for more details</p>
+<dd><p>Generates brick in Gazebo. See Spawn Manager Package for more details</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_brick_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_brick_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_brick_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries location to pick up brick</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_goal_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_goal_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_goal_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries location to place brick</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_home_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_home_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_home_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries home location to return too</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_num_bricks">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_num_bricks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_num_bricks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries number of bricks panda should place</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.go_to">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">go_to</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.go_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move end effector to pos location in a straight line</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_arm">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move arm to queried position</p>
+<p>This function calls the move arm service defined in move_arm_server.py. Arm will move following a cartesian path between its current
+position and the desired position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z].</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of wether it was succesful enough.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_arm_curve">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm_curve</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move end effector to queried position</p>
+<p>This function calls the move arm curved service defined in move_arm_server.py. The Arm will execute a RRT planner to
+determine a path from its current position to the desired location. Helpful when as it does not</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z].</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of whether it was successful or not.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="scripts.arm_master_main.move_towards">
 <code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_towards</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>round_way_points</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_towards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
+<dd><p>Move arm towards end location following way points around a virtual circle centered on the robot</p>
+<p>Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
 Important, to avoid moving arm into the robot as moveit compute cartesian path does not account for joint limits.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Args:</dt>
-<dd><p class="first"><strong>start (list)</strong>: [x, y, z, rot_x, rot_y, rot_z].End effector way point close to the current position of robot.</p>
-<p><strong>end (list)</strong>: [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.</p>
-<p><strong>round_way_points (dict)</strong>: dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:
-pos = [x_pos, y_pos, z_pos], neighbour = [left_id, right_id].Intermediate points to travel between start and end.</p>
-<p class="last"><strong>check (bool)</strong>: Set true to check if robot has dropped the brick during movement.</p>
-</dd>
-<dt>Returns:</dt>
-<dd>bool: The return value. True for success, False otherwise.</dd>
-</dl>
-</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector way point close to the current position of robot.</li>
+<li><strong>end</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.</li>
+<li><strong>round_way_points</strong> (<em>dict</em>) – dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:</li>
+<li><strong>=</strong><strong> [</strong><strong>x_pos</strong><strong>, </strong><strong>y_pos</strong><strong>, </strong><strong>z_pos</strong><strong>]</strong><strong>, </strong><strong>neighbour =</strong><strong> [</strong><strong>left_id</strong><strong>, </strong><strong>right_id</strong><strong>]</strong><strong> Intermediate points to travel between start and end.</strong> (<em>pos</em>) – </li>
+<li><strong>check</strong> (<em>bool</em>) – Set true to check if robot has dropped the brick during movement.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The return value. True for success, False otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.open_gripper">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">open_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.open_gripper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens robot gripper</p>
+<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
+grip width to <em>/franka/gripper_width</em> topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.orientation_correct">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">orientation_correct</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.orientation_correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corrections so that the end effector is aligned as expect. New default is facing downwards
+with gripper opening along y-axis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.pick_up">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">pick_up</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.pick_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pick up brick at target location</p>
+<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
+to target and closes the gripper. Finally moves arm back up to offset location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
+<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.place_down">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">place_down</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.2</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.place_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place down brick at target location</p>
+<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
+to target and opens the gripper. Finally moves arm back up to offset location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
+<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <p>In python scripts:</p>
