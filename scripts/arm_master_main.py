@@ -13,6 +13,7 @@ from std_msgs.msg import Float64
 from std_srvs.srv import Trigger, TriggerRequest
 from sensor_msgs.msg import JointState
 from franka_gripper.msg import MoveGoal, MoveAction
+from franka_gripper.msg import GraspAction, GraspGoal, MoveGoal, MoveAction
 
 # Import custom srv defined in de_msgs
 from de_msgs.srv import QueryNextPos, MoveArm, QueryBrickLoc, QueryBrickLocRequest
@@ -102,7 +103,7 @@ def get_over_pos():  # not used
 def get_num_bricks():
     """Queries number of bricks panda should place"""
 
-    return 13
+    return 23
 
 
 def orientation_correct(pose):
@@ -187,7 +188,7 @@ def pick_up(target, via_offset=0.3):
     return True
 
 
-def place_down(target, via_offset=0.2):
+def place_down(target, via_offset=0.05):
     """Place down brick at target location
 
     First moves the arm to a way point a set offset above the target location (set by ``via_offset``). Then lowers end-effector
@@ -272,7 +273,9 @@ def move_towards(start, end, round_way_points, check=False):
         # move arm to the curr node positon
         curr_node = round_way_points[curr_ind]
         print("MOVING ARM")
-        move_arm([curr_node[0][0], curr_node[0][1], curr_node[0][2], 3.14, 0, 3.14 / 4])
+        print("CURR NODE Z: ", curr_node[0][2])
+
+        move_arm([curr_node[0][0], curr_node[0][1], curr_node[0][2]+0.1, 3.14, 0, 3.14 / 4])
         curr_ind = curr_node[1][selector]  # go one way around the circle
     return True
     # move toward location in a controlled manner without running into
@@ -296,11 +299,11 @@ def open_gripper():
       """
 
     if real_panda:
-        goal = MoveGoal(width=0.07, speed=0.08)
-        rospy.loginfo("sending goal")
-        client_open.send_goal(goal)
-        client_open.wait_for_result(rospy.Duration.from_sec(10.0))
-        rospy.loginfo("DONE")
+        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+        client.wait_for_server()
+        goal = MoveGoal(width = 0.08, speed = 0.04)
+        client.send_goal(goal)
+        client.wait_for_result(rospy.Duration.from_sec(5.0))
     else:
         pub_gripper.publish(0.12)
         rospy.sleep(2)
@@ -318,11 +321,14 @@ def close_gripper():
 
       """
     if real_panda:
-        goal = MoveGoal(width=0.0485, speed=0.08)
-        rospy.loginfo("sending goal")
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(2.0))
-        rospy.loginfo("DONE")
+       client = actionlib.SimpleActionClient('/franka_gripper/grasp', GraspAction)
+       rospy.loginfo("CONNECTING")
+       client.wait_for_server()
+       action = GraspGoal(width=0.5,speed=0.08,force=1)
+       rospy.loginfo("SENDING ACTION")
+       client.send_goal(action)
+       client.wait_for_result(rospy.Duration.from_sec(5.0))
+       rospy.loginfo("DONE")
     else:
         pub_gripper.publish(0.05)
         rospy.sleep(2)
@@ -341,7 +347,7 @@ if __name__ == '__main__':
     circle_points = get_round_points()
 
     # ----------------------------------------------
-    real_panda = False
+    real_panda = True
     # ----------------------------------------------
 
     # Set up connections with services and topics

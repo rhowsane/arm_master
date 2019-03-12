@@ -77,7 +77,7 @@ def move_arm_a_to_b(goal): #move very short distance
     group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.001,        # eef_step
+                                       0.02,        # eef_step
                                        2)         # jump_threshold
     # rospy.loginfo(goal)
 
@@ -144,7 +144,7 @@ def slow_down(traj):
     n_joints = len(traj.joint_trajectory.joint_names)
     n_points = len(traj.joint_trajectory.points)
 
-    spd = 0.4
+    spd = 0.8
 
     for i in range(n_points):
         new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd
@@ -198,7 +198,7 @@ def move_arm_handler(req):
 
             execute(plan)
         else: #Running on real panada
-            plan = slow_down(plan)
+            # plan = slow_down(plan)
             print("EXECUTING PLAN ON REAL ROBOT")
 
             group.execute(plan, wait=True)
@@ -255,7 +255,7 @@ if __name__ == '__main__':
     grasping_group = 'hand'
 
     # ----------------------------------------------
-    real_panda = False  # Are you using the real robot?
+    real_panda = True  # Are you using the real robot?
     # ----------------------------------------------
 
     if not real_panda:  # If not using real_panda then you need to publish joint angles to gazebo. Create the publishers to do this

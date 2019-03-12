@@ -84,10 +84,34 @@ def goal_manager_server(req):
     elif num == 12:
         p = [0.6, 0.2+0.05, 0.356, 0, 0, 1.57]
 
+    elif num == 13:
+        p = [0.6, -0.18, 0.416, 0, 0, 1.57]
+    elif num == 14:
+        p = [0.6, +0.18, 0.416, 0, 0, 1.57]
+
+    elif num == 15:
+        p = [0.6, 0, 0.476, 0, 0, 1.57]
+    elif num == 16:
+        p = [0.6, -0.2-0.05, 0.476, 0, 0, 1.57]
+    elif num == 17:
+        p = [0.6, 0.2+0.05, 0.476, 0, 0, 1.57]
+
+    elif num == 18:
+        p = [0.6, -0.18, 0.536, 0, 0, 1.57]
+    elif num == 19:
+        p = [0.6, +0.18, 0.536, 0, 0, 1.57]
+
+    elif num == 20:
+        p = [0.6, 0, 0.596, 0, 0, 1.57]
+    elif num == 21:
+        p = [0.6, -0.2-0.05, 0.596, 0, 0, 1.57]
+    elif num == 22:
+        p = [0.6, 0.2+0.05, 0.596, 0, 0, 1.57]
+
     resp = QueryBrickLocResponse()
     resp.x = p[0]
     resp.y = p[1]
-    resp.z = p[2] - 0.13 #Offset for table height
+    resp.z = p[2] - 0.125 #Offset for table height
     resp.wx = p[3]
     resp.wy = p[4]
     resp.wz = p[5]
