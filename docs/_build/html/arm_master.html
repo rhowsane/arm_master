@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installing &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  <title>Arm Master Package &mdash; DE3-Panda-Wall 1.0 documentation</title>
   
 
   
@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Spawn Manager Package" href="spawn_manager_test.html" />
     <link rel="prev" title="Welcome to DE3-Panda-Wall’s documentation!" href="index.html" /> 
 </head>
 
@@ -81,10 +82,15 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installing</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Arm Master Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#real-panda">Real Panda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#loop">Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_master_main">Testing AutoDOc</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cool-section">Cool section</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_manager_test.html">Spawn Manager Package</a></li>
 </ul>
 
             
@@ -130,7 +136,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Installing</li>
+      <li>Arm Master Package</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -149,9 +155,218 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installing">
-<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
+  <p># Explain step by step how the arm move to pick up a brick
+# Tidy up code along the way</p>
+<p># Go and do doc strings</p>
+<div class="section" id="arm-master-package">
+<h1>Arm Master Package<a class="headerlink" href="#arm-master-package" title="Permalink to this headline">¶</a></h1>
+<p>Arm Master is the <em>ROS Package</em> which controls the arm. At the most basic level, its purpose is to query goal
+end effector poses, and interpolate their from the arms current position.</p>
+<p>Code for this computation is located in python scripts. Many of which are exposes them selves as ROS node, but also some that simply
+provide function calls.</p>
+<div class="section" id="file-structure">
+<h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
+<p>The core of the package files are structure as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>arm_master
+├── docs
+└── launch
+    ├── light.launch
+    ├── panda_one_brick.launch
+    └── sim.launch
+└── scripts
+    ├── index.rst
+    ├── support.rst
+    ├── install.rst
+├── CMakeLists.txt
+└── package.xml
+</pre></div>
+</div>
+<p>Launch files <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">light.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">panda_one_brick.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">sim.launch</a> run all nessecary ros nodes.
+Refer to <em>launch</em> for more information on running the code</p>
+<p>Once running, the panda arm loops through a control sequence defined in <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">arm_master_main.py</a>,
+which calls services and publishes to topics defined in:</p>
+<ul class="simple">
+<li>move_arm_server.py</li>
+<li>brick_manager_server.py</li>
+</ul>
+<p>I will explain this control squence in the remainder of this section by going line by line
+through arm master main and explaining the neseecary conecepts required to understand what is going on</p>
+</div>
+<div class="section" id="real-panda">
+<h2>Real Panda<a class="headerlink" href="#real-panda" title="Permalink to this headline">¶</a></h2>
+<p>At the start of the runnable code, a variable <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is defined. It is essential this is set correctly
+depending on wether you wish to run the code on gazebo or on the real franka panda.</p>
+<p>Setting this variable to <code class="docutils literal notranslate"><span class="pre">False</span></code>, ensures that the code doesn’t wait for services from the real robot which will
+not apear on the ROS network</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">The <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> variable also needs to be set in <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/move_arm_server.py">move_arm_server.py</a></p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>If you find that the code is not running and is getting hanged up at launch time it could be beacuse the arm_master_main
+is waiting for all the required nodes to be launched. Double check <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is correct.
+Note that the code calls <code class="docutils literal notranslate"><span class="pre">rospy.wait_for_service()</span></code> each time it is required to connect to another service
+or action client
+service or action client.</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">msg_type</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">msg_type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">service</span><span class="o">.</span>
+
+    <span class="n">Returns</span><span class="p">:</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">returns</span> <span class="n">function</span> <span class="nb">object</span> <span class="n">which</span> <span class="n">wraps</span> <span class="n">requested</span> <span class="n">service</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    rospy.loginfo(&quot;Searching for &quot; + name + &quot; .... &quot;)</span>
+<span class="sd">    rospy.wait_for_service(name)</span>
+<span class="sd">    srv_wrapper = rospy.ServiceProxy(name, msg_type)</span>
+<span class="sd">    rospy.loginfo(name + &quot; CONNECTED&quot;)</span>
+<span class="sd">    return srv_wrapper</span>
+
+<span class="sd"># Functions to further wrap function calls. Allows for changing of underlying function</span>
+<span class="sd"># without effecting the main loop</span>
+
+<span class="sd">def gen_brick():</span>
+<span class="sd">    &quot;&quot;&quot;</span><span class="n">Generates</span> <span class="n">brick</span> <span class="ow">in</span> <span class="n">gazebo</span><span class="o">.</span> <span class="n">See</span> <span class="n">Spawn</span> <span class="n">Manager</span> <span class="n">Package</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    gen_brick_wrapper(TriggerRequest())</span>
+
+<span class="s2">def check_dropped():</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="loop">
+<h2>Loop<a class="headerlink" href="#loop" title="Permalink to this headline">¶</a></h2>
+<p>The main loop has the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Continue to loop until you have placed the correct number of bricks</span>
+<span class="k">while</span> <span class="ow">not</span> <span class="n">rospy</span><span class="o">.</span><span class="n">is_shutdown</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">placed</span> <span class="o">&lt;</span> <span class="n">num_bricks</span><span class="p">:</span>
+
+          <span class="c1">#Query Positions</span>
+          <span class="n">brick</span> <span class="o">=</span> <span class="n">get_brick_pos</span><span class="p">()</span>
+          <span class="n">goal</span> <span class="o">=</span> <span class="n">get_goal_pos</span><span class="p">()</span>
+
+          <span class="c1">#Move towards brick and pick up</span>
+          <span class="n">pick_up</span><span class="p">(</span><span class="n">brick</span><span class="p">)</span>
+
+          <span class="c1">#Move from pick up positon to place down position</span>
+          <span class="n">move_towards</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">goal</span><span class="p">)</span>
+
+          <span class="c1">#Place down brick</span>
+          <span class="n">place_down</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
+
+          <span class="c1"># Increment num of brick placed</span>
+          <span class="n">placed</span> <span class="o">+=</span>
+</pre></div>
+</div>
+<p>If you wish to change how the arm moves, change the order in which the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>
+functions are called. Additional motion functions also available in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> are <code class="docutils literal notranslate"><span class="pre">go_to()</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_curve()</span></code>. To illustrate, The main loop for our project implementation was implemented as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        <span class="n">msg_type</span> <span class="p">(</span><span class="nb">str</span><span class="p">):</span> <span class="n">msg_type</span> <span class="n">of</span> <span class="n">the</span> <span class="n">service</span><span class="o">.</span>
+
+    <span class="n">Returns</span><span class="p">:</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">returns</span> <span class="n">function</span> <span class="nb">object</span> <span class="n">which</span> <span class="n">wraps</span> <span class="n">requested</span> <span class="n">service</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    rospy.loginfo(&quot;Searching for &quot; + name + &quot; .... &quot;)</span>
+<span class="sd">    rospy.wait_for_service(name)</span>
+<span class="sd">    srv_wrapper = rospy.ServiceProxy(name, msg_type)</span>
+<span class="sd">    rospy.loginfo(name + &quot; CONNECTED&quot;)</span>
+<span class="sd">    return srv_wrapper</span>
+
+<span class="sd"># Functions to further wrap function calls. Allows for changing of underlying function</span>
+<span class="sd"># without effecting the main loop</span>
+
+<span class="sd">def gen_brick():</span>
+<span class="sd">    &quot;&quot;&quot;</span><span class="n">Generates</span> <span class="n">brick</span> <span class="ow">in</span> <span class="n">gazebo</span><span class="o">.</span> <span class="n">See</span> <span class="n">Spawn</span> <span class="n">Manager</span> <span class="n">Package</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    gen_brick_wrapper(TriggerRequest())</span>
+
+<span class="s2">def check_dropped():</span>
+</pre></div>
+</div>
+<p>See API calls</p>
+</div>
+<div class="section" id="module-scripts.arm_master_main">
+<span id="testing-autodoc"></span><h2>Testing AutoDOc<a class="headerlink" href="#module-scripts.arm_master_main" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scripts.arm_master_main.check_dropped">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">check_dropped</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.check_dropped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if brick is dropped</p>
+<p>Calls holding_brick service which checks the width of gripper and compares it to the expected width</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if gripper closer together then expect (means brick has fallen). False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.connect_srv">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">connect_srv</code><span class="sig-paren">(</span><em>name</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.connect_srv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to connect to services</p>
+<p>Connects to service with queried name. Will wait for service to be available and print status updates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – name of service.</li>
+<li><strong>msg_type</strong> (<em>str</em>) – msg_type of the service.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">returns function object which wraps requested service</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">func</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.gen_brick">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">gen_brick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.gen_brick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates brick in gazebo. See Spawn Manager Package for more details</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_towards">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_towards</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>round_way_points</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_towards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
+Important, to avoid moving arm into the robot as moveit compute cartesian path does not account for joint limits.</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd><p class="first"><strong>start (list)</strong>: [x, y, z, rot_x, rot_y, rot_z].End effector way point close to the current position of robot.</p>
+<p><strong>end (list)</strong>: [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.</p>
+<p><strong>round_way_points (dict)</strong>: dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:
+pos = [x_pos, y_pos, z_pos], neighbour = [left_id, right_id].Intermediate points to travel between start and end.</p>
+<p class="last"><strong>check (bool)</strong>: Set true to check if robot has dropped the brick during movement.</p>
+</dd>
+<dt>Returns:</dt>
+<dd>bool: The return value. True for success, False otherwise.</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<p>In python scripts:</p>
 <p>Installation</p>
+<p>testing a random code block:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+  <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="k">pass</span>
+<span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>arm_master is a ros package which provides the nessecary control flow functions for controlling the panada arm.
+Let me see how this deals with spaces. I am interested
+to be honest
+Very Interested</p>
 <p>At the command line:</p>
 <p>easy_install crawler</p>
 <p>Or, if you have pip installed:</p>
@@ -173,6 +388,7 @@
 <li>nested</li>
 </ol>
 </div></blockquote>
+</div>
 <div class="section" id="cool-section">
 <span id="reference-name"></span><h2>Cool section<a class="headerlink" href="#cool-section" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="#reference-name"><span class="std std-ref">Cool section</span></a></p>
@@ -186,6 +402,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spawn_manager_test.html" class="btn btn-neutral float-right" title="Spawn Manager Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to DE3-Panda-Wall’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

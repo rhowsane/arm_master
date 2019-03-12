@@ -8,7 +8,7 @@
     <node name="check_dropped" pkg="arm_master" type="dropped_checker_server.py" output="screen"/>
 
   <!-- </group> -->
-  <node name="panda_publisher" pkg="arm_master" type="panda_publisher.py" output="screen"/>
+  <!-- <node name="panda_publisher" pkg="arm_master" type="panda_publisher.py" output="screen"/> -->
 
 
 </launch>

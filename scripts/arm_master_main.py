@@ -1,107 +1,122 @@
 #!/usr/bin/env python
-from arm_utils import *
-import time
+
+#Import standard libs.
 import rospy
+import time
+import numpy as np
+
+#Import action lib.
 import actionlib
-from de_msgs.srv import QueryNextPos, MoveArm
+
+#Import standard msgs/srvs
 from std_msgs.msg import Float64
 from std_srvs.srv import Trigger, TriggerRequest
-from de_msgs.srv import QueryBrickLoc, QueryBrickLocRequest
-from arm_utils import *
-import numpy as np
-from round_path import *
-rospy.init_node('arm_master', anonymous=True)
-from arm_master_functions import *
-# TODO FIX ISSUE WITH BAD INIT
-
 from sensor_msgs.msg import JointState
-
 from franka_gripper.msg import MoveGoal, MoveAction
 
+#Import custom srv defined in de_msgs
+from de_msgs.srv import QueryNextPos, MoveArm, QueryBrickLoc, QueryBrickLocRequest
 
-#----------------------------------------------
-real_panda = False
-#----------------------------------------------
+#Import custom helper functions
+from arm_utils import *
+from round_path import *
+from arm_master_functions import *
 
-pub_gripper = rospy.Publisher('/franka/gripper_width',
-                          Float64, queue_size=1)
+#Intialize Node
+
+"""Short Function Summary
+
+Longer Function Description
+
+Args:
+    param1 (int): The first parameter.
+    param2 (str): The second parameter.
+
+Returns:
+    bool: The return value. True for success, False otherwise.
 
 
-#Get all Services
+"""
 
-#Services for Moving arm
+
+# Services for Moving arm
 def connect_srv(name, msg_type):
+    """Function to connect to services
+
+    Connects to service with queried name. Will wait for service to be available and print status updates
+
+    Args:
+        name (str): name of service.
+        msg_type (str): msg_type of the service.
+
+    Returns:
+        func: returns function object which wraps requested service
+
+    """
     rospy.loginfo("Searching for " + name + " .... ")
     rospy.wait_for_service(name)
     srv_wrapper = rospy.ServiceProxy(name, msg_type)
     rospy.loginfo(name + " CONNECTED")
     return srv_wrapper
 
-#Services for moving arm
-move_arm_wrapper = connect_srv('move_arm', MoveArm)
-move_arm_curve_wrapper = connect_srv('move_arm_curve', MoveArm)
+# Functions to further wrap function calls. Allows for changing of underlying function
+# without effecting the main loop
 
-#gen_brick generates a brick in Gazebo
-if not real_panda:
-    gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
-
-#Services for querying pick and place locations
-get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
-get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
-
-holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
-
-if real_panda:
-    client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-
-    client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-    rospy.loginfo("Connectining")
-    client.wait_for_server()
-
-holding_brick = False
-dropped_brick = False
-closed_width = 0.5
-brick_width = 0.6
-dropped_thresh_width = 0.055
-#Functions for error checking on gripper
-
-#Functinos to further wrap function calls
 def gen_brick():
+    """Generates brick in Gazebo. See Spawn Manager Package for more details"""
+
     gen_brick_wrapper(TriggerRequest())
 
 def check_dropped():
+    """Checks if brick is dropped
+
+    Calls holding_brick service which checks the width of gripper and compares it to the expected width
+
+    Returns:
+        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.
+    """
     asn = holding_brick_wrapper(TriggerRequest())
     rospy.loginfo("ANSWERS: ")
     rospy.loginfo(asn)
     return asn.success
 
 def get_brick_pos(placed):
+    """Queries location to pick up brick"""
+
     loc = get_pick_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
     p = orientation_correct(p)
-    #return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4] #comment this
+    #return [0.5, 0.5, 0.15, 3.14, 0, 3.14/4] #Override for Debugging
     return p
 
 def get_goal_pos(placed):
+    """Queries location to place brick"""
+
     loc = get_place_loc_wrapper(QueryBrickLocRequest(placed))
     p = [loc.x, loc.y, loc.z, loc.wx, loc.wy, loc.wz]
     p = orientation_correct(p)
-
-    #return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4] #comment this
+    #return [0.5, -0.5, 0.15,  3.14, 0,  3.14/4] #Override for Debugging
     return p
 
 def get_home_pos():
+    """Queries home location to return too"""
+
     p = [0.5, 0, 0.5, 0, 0, 0]
     p = orientation_correct(p)
     return p
+
 def get_over_pos(): #not used
     return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
+    """Queries number of bricks panda should place"""
+
     return 13
 
-
 def orientation_correct(pose):
+    """Corrections so that the end effector is aligned as expect. New default is facing downwards
+     with gripper opening along y-axis"""
+
     pose[2] += 0.04
     pose[3] += 3.14
     pose[4] += 0
@@ -109,89 +124,96 @@ def orientation_correct(pose):
 
     return pose
 
-
 def move_arm(pos):
+    """Move arm to queried position
+
+    This function calls the move arm service defined in move_arm_server.py. Arm will move following a cartesian path between its current
+    position and the desired position.
+
+    Args:
+        pos (list): [x, y, z, rot_x, rot_y, rot_z].
+
+    Returns:
+        bool: True when motion of arm completes, regardless of wether it was succesful enough.
+
+    """
+
     msg = MoveArm()
     rospy.loginfo(pos)
     success = move_arm_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
 
 def move_arm_curve(pos):
+    """Move end effector to queried position
+
+    This function calls the move arm curved service defined in move_arm_server.py. The Arm will execute a RRT planner to
+    determine a path from its current position to the desired location. Helpful when as it does not
+
+    Args:
+        pos (list): [x, y, z, rot_x, rot_y, rot_z].
+
+    Returns:
+        bool: True when motion of arm completes, regardless of wether it was succesful enough.
+
+    """
     success = move_arm_curve_wrapper(x = pos[0], y =pos[1], z = pos[2],rot_x =pos[3],rot_y =pos[4],rot_z =pos[5])
     return success
 
 def pick_up(target, via_offset = 0.3):
+    global holding_brick #use global var
+
     #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
 
-    move_arm(via_point)
+    move_arm(via_point) # Move arm to just above goal
+    move_arm(target) # Lower arm down to goal
+    # rospy.sleep(0.5) # Play with timming in here to get desired behaviour
+    close_gripper() # Grasp around brick
 
-    #Make sure gripper is open
-    # open_gripper()
-    # open_gripper()
-
-    # rospy.sleep(1) # Tune time
-
-    move_arm(target)
-    # rospy.sleep(0.5)
-    close_gripper()
     holding_brick = True
-    # rospy.sleep(0.5)
-
-    move_arm(via_point)
+    move_arm(via_point) # Move back to via point
 
     return True
 
 def place_down(target, via_offset = 0.2):
+    global holding_brick #use global var
+
         #First Move to point above the pick up location
     via_point = copy.deepcopy(target)
     via_point[2] += via_offset #Z offset
-    move_arm(via_point)
-    # rospy.sleep(1) # Tune time
-    move_arm(target)
-    # rospy.sleep(1) # Tune time
-    open_gripper()
+    move_arm(via_point) #Move arm just above goal
+    move_arm(target) #Move arm down to goal
+    open_gripper() #Open hand
+    # rospy.sleep(1) # Tune time, mabye wait for brick to fully drop
+
     holding_brick = False
-    # rospy.sleep(2)
     move_arm(via_point)
 
-def get_round_points():
-    round_path = dict()
-    res = float(20)
-    diameter = 0.75
-    r = diameter/2
-    height = 0.5
-
-    x_c = 0
-    y_c = 0
-
-    for i in np.arange(20): #DONT CHANGE 20, this is hardcoded
-        theta = (2 * np.pi) * ((i + 1 )/res)
-        left = i-1
-        if (left < 0):
-            left = 19
-
-        right = i+1
-        if right > 19:
-            right = 0
-
-        neighbour = (right,left)
-        x = x_c + r * np.cos(theta)
-        y = y_c + r * np.sin(theta)
-        # plt.plot(x,y,'+')
-        pos = [x_c + r * np.cos(theta), y_c + r * np.sin(theta), height]
-        round_path[i] = (pos,neighbour)
-
-    return round_path
-# plt.show()
-# print(round_path)
-
-round_way_points = get_round_points()
+    return True
 
 
+#Get Circular pathplanning waypoints around the robot
+def move_towards(start, end, round_way_points, check = False):
+    """
 
-def move_towards(start, end, check = False):
+    Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
+    Important, to avoid moving arm into the robot as moveit compute cartesian path does not account for joint limits.
+
+        Args:
+            **start (list)**: [x, y, z, rot_x, rot_y, rot_z].End effector way point close to the current position of robot.
+
+            **end (list)**: [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.
+
+            **round_way_points (dict)**: dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:
+            pos = [x_pos, y_pos, z_pos], neighbour = [left_id, right_id].Intermediate points to travel between start and end.
+
+            **check (bool)**: Set true to check if robot has dropped the brick during movement.
+
+        Returns:
+            bool: The return value. True for success, False otherwise.
+    """
+
     #find nearest point to pick
     min_start_dist = 10000
     min_start_ind = 0
@@ -240,6 +262,8 @@ def go_to(pos):
 
 #change these gripper functions to the correct topic for panda arm
 def open_gripper():
+
+
     if real_panda:
         goal = MoveGoal(width = 0.07, speed = 0.08)
         rospy.loginfo("sending goal")
@@ -263,74 +287,125 @@ def close_gripper():
         rospy.sleep(2)
     return True
 
-rate = rospy.Rate(1)
-
 ###################################################################
 #MAIN CODE
 ###################################################################
-num_bricks = get_num_bricks()
-placed = 0
+if __name__ == '__main__':
 
-#MOVE ARM TO STARTING LOCATION
-last_goal = None
-# move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
-# move_arm_curve(get_home_pos())
-go_to(get_home_pos())
-close_gripper()
-open_gripper()
-while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
-    if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
+    rospy.init_node('arm_master', anonymous=True)
+
+    # Get round way points for circular path planning
+    circle_points = get_round_points()
+
+    #----------------------------------------------
+    real_panda = False
+    #----------------------------------------------
+
+    # Set up connections with services and topics
+
+    # Create publishers to control gripped width in gazebo simulation
+    pub_gripper = rospy.Publisher('/franka/gripper_width',
+                              Float64, queue_size=1)
+
+    # Get all Services
 
 
-        #Query Positions
-        brick = get_brick_pos(placed)
-        goal = get_goal_pos(placed)
+    # Services for moving arm
+    move_arm_wrapper = connect_srv('move_arm', MoveArm)
+    move_arm_curve_wrapper = connect_srv('move_arm_curve', MoveArm)
 
-        print("POSITIONSS!!!!")
-        print(brick)
-        print(goal)
-        if goal == last_goal: #same as last time, don't go back
-            print("GOAL POS:", goal)
+    # gen_brick generates a brick in Gazebo
+    if not real_panda:
+        gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 
-            continue
-        home = get_home_pos()
-        over_head = get_over_pos()
+    #Services for querying pick and place locations
+    get_pick_loc_wrapper = connect_srv('get_pick_loc', QueryBrickLoc)
+    get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
-        #Issue trying to place brick directly behind you must go up first
-        #generate Brick
-        if not real_panda:
-            gen_brick()
-        print("got here")
-        succ = move_towards(home, brick)
-        #Pick Place operation then return home
-        print("got here after move towards")
+    #Service for checking if brick fell out of panda's hand
+    holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
 
-        pick_up(brick)
-        print("got here after move towards")
+    # Only run this Code if your using the real robot
+    if real_panda:
+        client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
 
-        #temp fix to move to goal position
-        # move_arm_curve(over_head)
-        # move_arm_curve(goal)
-        succ = move_towards(brick, goal, check = False)
-        # if not real_panda: #just have this functionallity of simulation right now
-        #     if not succ:
-        #         brick_via = brick
-        #         brick_via[2] += 0.2
-        #         go_to(brick_via)
-        #         continue
-        # move_arm_curve(home)
-        # move_arm_curve(over_head)
-        # move_towards(goal)
-        place_down(goal)
-        succ = move_towards(goal, home)
-        placed += 1
-        last_goal = goal # placed down now its a last brick
+        rospy.loginfo("Connectining")
+        client.wait_for_server()
 
-        # go_to(over_head)
-        # go_to(home)
+    rate = rospy.Rate(1)
 
-        rospy.loginfo("Placed")
-        #Place another brick from stack onto wall
-    else: #When done just wait
-        rospy.loginfo("Done, " +str(placed) + " bricks placed")
-    rate.sleep()
+
+    # Define deafult variables that will be used in main loop
+    holding_brick = False
+    dropped_brick = False
+    closed_width = 0.5
+    brick_width = 0.6
+    dropped_thresh_width = 0.055
+
+    num_bricks = get_num_bricks()
+    placed = 0
+
+    #MOVE ARM TO STARTING LOCATION
+    last_goal = None
+    # move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
+    # move_arm_curve(get_home_pos())
+    go_to(get_home_pos())
+    close_gripper()
+    open_gripper()
+    while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
+        if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
+
+
+            #Query Positions
+            brick = get_brick_pos(placed)
+            goal = get_goal_pos(placed)
+
+            print("POSITIONSS!!!!")
+            print(brick)
+            print(goal)
+            if goal == last_goal: #same as last time, don't go back
+                print("GOAL POS:", goal)
+
+                continue
+            home = get_home_pos()
+            over_head = get_over_pos()
+
+            #Issue trying to place brick directly behind you must go up first
+            #generate Brick
+            if not real_panda:
+                gen_brick()
+            print("got here")
+            succ = move_towards(home, brick,circle_points)
+            #Pick Place operation then return home
+            print("got here after move towards")
+
+            pick_up(brick)
+            print("got here after move towards")
+
+            #temp fix to move to goal position
+            # move_arm_curve(over_head)
+            # move_arm_curve(goal)
+            succ = move_towards(brick, goal,circle_points, check = False)
+            # if not real_panda: #just have this functionallity of simulation right now
+            #     if not succ:
+            #         brick_via = brick
+            #         brick_via[2] += 0.2
+            #         go_to(brick_via)
+            #         continue
+            # move_arm_curve(home)
+            # move_arm_curve(over_head)
+            # move_towards(goal)
+            place_down(goal)
+            succ = move_towards(goal, home,circle_points)
+            placed += 1
+            last_goal = goal # placed down now its a last brick
+
+            # go_to(over_head)
+            # go_to(home)
+
+            rospy.loginfo("Placed")
+            #Place another brick from stack onto wall
+        else: #When done just wait
+            rospy.loginfo("Done, " +str(placed) + " bricks placed")
+        rate.sleep()
