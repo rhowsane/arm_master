@@ -51,19 +51,12 @@ get_place_loc_wrapper = connect_srv('get_place_loc', QueryBrickLoc)
 
 holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
 
-client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-
-client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-rospy.loginfo("Connectining")
-client.wait_for_server()
-<<<<<<< HEAD
-
 if real_panda:
-    client.wait_for_server()
+    client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
 
-=======
-client_open.wait_for_server()
->>>>>>> 3af90a4119c22d2092c8c46da67f457cc4b2d408
+    client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+    rospy.loginfo("Connectining")
+    client.wait_for_server()
 
 holding_brick = False
 dropped_brick = False
@@ -105,7 +98,7 @@ def get_over_pos(): #not used
     return [0.5, 0.5, 0.5, 3.14, 0, 0]
 
 def get_num_bricks():
-    return 6
+    return 13
 
 
 def orientation_correct(pose):
@@ -255,6 +248,7 @@ def open_gripper():
         rospy.loginfo("DONE")
     else:
         pub_gripper.publish(0.12)
+        rospy.sleep(2)
     return True
 
 def close_gripper():
@@ -266,6 +260,7 @@ def close_gripper():
         rospy.loginfo("DONE")
     else:
         pub_gripper.publish(0.05)
+        rospy.sleep(2)
     return True
 
 rate = rospy.Rate(1)
@@ -277,11 +272,12 @@ num_bricks = get_num_bricks()
 placed = 0
 
 #MOVE ARM TO STARTING LOCATION
-open_gripper()
 last_goal = None
 # move_arm_curve(get_brick_pos()) #start in location so you can go back to where you came from
 # move_arm_curve(get_home_pos())
 go_to(get_home_pos())
+close_gripper()
+open_gripper()
 while not rospy.is_shutdown(): #MAIN LOOP that does the control of the arm
     if placed < num_bricks: #Continue to loop until you have placed the correct number of bricks
 
