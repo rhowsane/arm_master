@@ -19,8 +19,16 @@ from sensor_msgs.msg import JointState
 from franka_gripper.msg import MoveGoal, MoveAction
 
 
+
+
 #----------------------------------------------
-real_panda = False
+real_panda = True
+"""
+roslaunch franka_gripper franka_gripper.launch robot_ip:=192.168.0.88
+roslaunch move_to_start.launch robot_ip:=192.168.0.88
+
+
+"""
 #----------------------------------------------
 
 pub_gripper = rospy.Publisher('/franka/gripper_width',

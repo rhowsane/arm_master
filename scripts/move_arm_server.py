@@ -23,10 +23,10 @@ from moveit_msgs.msg import RobotTrajectory
 rospy.init_node('arm_server')
 
 from sensor_msgs.msg import JointState
-
+#
 
 #----------------------------------------------
-real_panda = False
+real_panda = True
 #----------------------------------------------
 
 
