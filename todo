@@ -20,8 +20,16 @@ Returns:
 
 """
 
+``[x, y, z, rot_x, rot_y, rot_z]``
+
+
 """
 roslaunch franka_gripper franka_gripper.launch robot_ip:=192.168.0.88
 roslaunch move_to_start.launch robot_ip:=192.168.0.88
 
 """
+
+
++ finish documenting source code 15
++ write up 30
++ get it all on read the docs 15

@@ -31,14 +31,15 @@ from arm_server_functions import *
 def plan_cartesian_path(goal,resolution = 1): #speed in m/s
     """Sample points between current pose and goal pos at set resolution
 
-    Longer Function Description
+    This function generates cartesian waypoints between the robots current position in move it and its desired
+    goal location.
 
     Args:
-        param1 (int): The first parameter.
-        param2 (str): The second parameter.
+        goal (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Desired end effector goal
+        resolution (int): Nodes per meter of circular path. Describes density of the waypoints
 
     Returns:
-        bool: The return value. True for success, False otherwise.
+        list: ``[[pos1, pos2, pos3,...]]``. Returns list with intepolated end effector positions
 
     """
 
@@ -57,6 +58,20 @@ def plan_cartesian_path(goal,resolution = 1): #speed in m/s
 
     return via_points
 def move_arm_a_to_b(goal): #move very short distance
+    """Move the arm from the current position to goal position
+
+    This function generates cartesian waypoints between the robots current position in move it and its desired
+    goal location.
+
+    Args:
+        goal (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Desired end effector goal
+        resolution (int): Nodes per meter of circular path. Describes density of the waypoints
+
+    Returns:
+        list: ``[[pos1, pos2, pos3,...]]``. Returns list with intepolated end effector positions
+
+    """
+
     rospy.loginfo('goal')
 
     waypoints = []
@@ -83,27 +98,19 @@ def move_arm_a_to_b(goal): #move very short distance
 
     return plan
 
-def place_brick_handler(req):
-    eef_link = group.get_end_effector_link()
-    box_pose = geometry_msgs.msg.PoseStamped()
-    box_pose.header.frame_id = "panda_leftfinger"
-    box_pose.pose.orientation.w = 1.0
-    scene.add_box(box_name, box_pose, size=(0.1, 0.9, 0.1))
-    touch_links = robot.get_link_names(group=grasping_group)
-    scene.attach_box(eef_link, box_name, touch_links=touch_links)
-    return wait_for_state_update(box_is_known=True, box_is_attached=False)
-
-def attach_brick_handler():
-
-    return wait_for_state_update(box_is_known=True, box_is_attached=True)
-
-def attach_brick_handler():
-
-    return wait_for_state_update(box_is_known=True, box_is_attached=False)
 def move_arm_curve_handler(req):
-    # rospy.loginfo(robot.get_current_state())
-    # point = [0.5, -0.5, 0, 3.14, 0, 0 ]
-    # return True
+    """Plans and executes path to requested end effector position
+
+       Plans path using rrt algorithm to desired end effector position. This is then exectued in moveit. ``set_max_acceleration_scaling_factor`` and
+       ``set_max_velocity_scaling_factor`` scale the speed of the movement. Code is blocked until motion completes
+
+       Args:
+           req (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Desired end effector goal
+
+       Returns:
+           bool: True when done, regardless if succesful or not
+    """
+
     pose_goal = geometry_msgs.msg.Pose()
     pose_goal.position.x = req.x
     pose_goal.position.y = req.y  # First move up (z)
@@ -120,24 +127,26 @@ def move_arm_curve_handler(req):
     group.set_pose_target(pose_goal)
     plan = group.plan()
     # points = plan.joint_trajectory.points
+
     ## Now, we call the planner to compute the plan and execute it.
     plan = group.go(wait=True)
     group.stop()
     group.clear_pose_targets()
     return True
 
-def move_panda_eef(pose_goal):
-    group.set_pose_target(pose_goal)
-    ## Now, we call the planner to compute the plan and execute it.
-    plan = group.go(wait=True)
-    group.stop()
-    group.clear_pose_targets()
-
-#accel =
-
 
 def slow_down(traj):
+    """Slows down an exiting move it carestian path trajectory
 
+       Slows down a moveit trajectory by a factor defined in ``spd``. Iterates through all points in trajectory and scales the following
+       variables: ``time_from_start``, ``accelerations``, ``positions``
+
+       Args:
+            traj (RobotTrajectory): Standard ROS message type from moveit_msgs.msg
+
+       Returns:
+            RobotTrajectory: identical but slow downed RobotTrajectory object
+    """
 
     new_traj = RobotTrajectory()
     new_traj.joint_trajectory = traj.joint_trajectory
@@ -177,6 +186,22 @@ def slow_down(traj):
     return new_traj
 
 def move_arm_handler(req):
+    """Moves end effector in straight line to request position
+
+      This handlers performs the necessary work to move the arm to pick up a brick. ``set_goal_position_tolerance`` are set to ensure that the arm doesn't stop
+      moving until it has completly reached the `req` position. If using real robot, then ``group.execute(plan, wait=True)`` is called (you wait for the moveit to finish, beacuse it is
+      mirror the real robot). If using gazebo, then ``group.execute(plan, wait=False)`` is used. Here gazebo and moveit run completly independetly, so you do not want to wait for the
+      moveit robot to finish its motion before calling ``execute(plan)`` to move the gazebo robot.
+
+      Note that when using gazebo it is important that the MoveIt robot finishes first. To ensure this, lower the freqeuncy that messages are published in ``execute()`` and/or further slow
+      down the trajectory in ``slow_down()``
+
+      Args:
+           req (list): ``[x, y, z, rot_x, rot_y, rot_z]``. End effector goal location
+
+      Returns:
+           bool: True when motion is completed, regardless of success
+    """
 
     goal = [req.x,req.y,req.z,req.rot_x,req.rot_y,req.rot_z]
     # goal = [0.5,-0.5,0.5,0,3.14,0]
@@ -209,6 +234,16 @@ def move_arm_handler(req):
     return True
 
 def execute(plan, freq=100): #freq in hz
+    """Executes plan on gazebo robot
+
+      Uses ``rospy.Publisher('/franka/joint1_position_controller/command')`` to send desired joint positions to gazebo robot.
+      Publishers publish at the ``freq`` rate
+
+       Args:
+            plan (RobotTrajectory): Standard ROS message type from moveit_msgs.msg
+            freq (int): Rate at which to publish desired joint angles
+
+    """
     # print(plan.joint_trajectory.points)
     override = [0, 0, 0, -0.5, 0, 0.5, 0.75]
     target_pos = plan.joint_trajectory.points
@@ -221,31 +256,6 @@ def execute(plan, freq=100): #freq in hz
             #else:
             publishers[i].publish(joint_pos[i])
         rate.sleep()
-
-def wait_for_state_update(box_is_known=False, box_is_attached=False, timeout=4):#talen from tutorial
-
-    start = rospy.get_time()
-    seconds = rospy.get_time()
-    while (seconds - start < timeout) and not rospy.is_shutdown():
-    # Test if the box is in attached objects
-        attached_objects = scene.get_attached_objects([box_name])
-        is_attached = len(attached_objects.keys()) > 0
-
-        # Test if the box is in the scene.
-        # Note that attaching the box will remove it from known_objects
-        is_known = box_name in scene.get_known_object_names()
-
-        # Test if we are in the expected state
-        if (box_is_attached == is_attached) and (box_is_known == is_known):
-            return True
-
-        # Sleep so that we give other threads time on the processor
-        rospy.sleep(0.1)
-        seconds = rospy.get_time()
-
-# If we exited the while loop without returning then we timed out
-    return False
-
 
 if __name__ == '__main__':
 

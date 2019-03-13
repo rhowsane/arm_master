@@ -1,10 +1,4 @@
 
-
-# Explain step by step how the arm move to pick up a brick
-# Tidy up code along the way
-
-# Go and do doc strings
-
 Arm Master Package
 ========================
 
@@ -26,20 +20,23 @@ The core of the package files are structure as follows::
         ├── panda_one_brick.launch
         └── sim.launch
     └── scripts
-        ├── index.rst
-        ├── support.rst
-        ├── install.rst
+        ├── arm_master_main.py
+        ├── arm_master_functions.py
+        ├── move_arm_server.py
+        ├── arm_server_functions.py
+        ├── arm_utils.py
+        └── dropped_checker_server.launch
     ├── CMakeLists.txt
     └── package.xml
 
 Launch files `light.launch`_, `panda_one_brick.launch`_, `sim.launch`_ run all nessecary ros nodes.
 Refer to *launch* for more information on running the code
 
-Once running, the panda arm loops through a control sequence defined in `arm_master_main.py`_,
-which calls services and publishes to topics defined in:
+The *scripts* are structured such that there is a script which defines the ROS related code, and a script which provides ROS free functions. To illustrate observe the difference between
+``arm_master_main.py`` and ``arm_master_functions.py``
 
-* move_arm_server.py
-* brick_manager_server.py
+Once running, the panda arm loops through a control sequence defined in `arm_master_main.py`_,
+which calls services and publishes to topics defined in ``move_arm_server.py``
 
 I will explain this control squence in the remainder of this section by going line by line
 through arm master main and explaining the neseecary conecepts required to understand what is going on
@@ -91,7 +88,7 @@ The main loop has the following structure::
             place_down(goal)
 
             # Increment num of brick placed
-            placed +=
+            placed += 1
 
 
 If you wish to change how the arm moves, change the order in which the ``pick_up()``, ``place_down()``, ``place_down()``
@@ -100,11 +97,27 @@ functions are called. Additional motion functions also available in ``arm_master
 .. literalinclude:: ../scripts/arm_master_main.py
   :lines: 50-69
 
-See API calls
 
-Testing AutoDOc
+
+Here is more detailed information for the specific motion functions. Vist the :doc:`../api_reference.rst` API Reference section of the documentation for more information
+
+arm_master_main Functions
 ---------------------
+
 .. automodule:: scripts.arm_master_main
+  :members:
+
+move_arm_server Functions
+---------------------
+
+.. automodule:: scripts.move_arm_server
+  :members:
+
+
+arm_server_functions Functions
+---------------------
+
+.. automodule:: scripts.arm_server_functions
   :members:
 
 .. _arm_master_main.py: https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py

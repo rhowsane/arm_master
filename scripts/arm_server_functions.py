@@ -7,7 +7,20 @@ import numpy as np
 
 
 def get_via_points(start, goal, res = 5):
+    """Returns sampled points between two end effector positions
 
+    Via points functions to further discretize a tracjectory. It first calculates the diplacement vector between
+    points ``start`` and ``goal``. It then samples along that vector direction an amount defined by ``res``
+
+    Args:
+        start (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Starting end effector position
+        end (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Goal end effector position
+
+    Returns:
+        list: Returns list of end effector poses between the two desired location. The number of entries in the list
+        is given by ``res``.
+
+    """
     via_points = []
     d_x = goal[0] - start[0]
     d_y = goal[1] - start[1]
@@ -35,26 +48,30 @@ def get_via_points(start, goal, res = 5):
 
 
 def point2quat(p):
+    """Converts end effector position in euler to quaterion domain"""
     quaternion = tf.transformations.quaternion_from_euler(p[3], p[4], p[5]) #(roll, pitch, yaw)
     q = [p[0],p[1],p[2],quaternion[0],quaternion[1],quaternion[2],quaternion[3]]
     return q
 
 def quat2point(q):
+    """Converts end effector position in quaterion to euler domain"""
+
     orientation_list = [q[3],q[4],q[5],q[6]]
     (roll, pitch, yaw) =tf.transformations.euler_from_quaternion (orientation_list)
     p = [q[0],q[1],q[2],roll, pitch, yaw]
     return p
 
 def pose_e2array(pose):
-
+    """Converts euluer end effector position to a list"""
     p = [pose.positon.x,pose.position.y,pose.position.z,pose.orientation.x,pose.orientation.y,pose.orientation.z]
     return p
 def pose_q2array(pose):
+    """Converts quaterion end effector position to a list"""
 
     p = [pose.position.x,pose.position.y,pose.position.z,pose.orientation.x,pose.orientation.y,pose.orientation.z,pose.orientation.w]
     return p
 
-start = [0.5, -0.5, 0.4,  3.14, 0,  3.14]
-goal = [0.5, 0, 0.5, 3.14, 0, 0]
-via_points = get_via_points(start,goal)
-print(via_points)
+# start = [0.5, -0.5, 0.4,  3.14, 0,  3.14]
+# goal = [0.5, 0, 0.5, 3.14, 0, 0]
+# via_points = get_via_points(start,goal)
+# print(via_points)

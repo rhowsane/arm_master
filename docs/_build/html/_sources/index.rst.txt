@@ -8,7 +8,7 @@ Welcome to DE3-Panda-Wall's documentation!
 
    arm_master
    spawn_manager_test
-
+   api_reference
 
 Indices and tables
 ==================
