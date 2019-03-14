@@ -12,7 +12,7 @@ Welcome to DE3-Panda-Wall's documentation!
    spawn_doc
    gazebo_problems
    real_panda
-   interface
+   api_reference
 
 Indices and tables
 ==================

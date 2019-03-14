@@ -71,33 +71,8 @@ Add dropped checked to documentation
 
 
 
-OVER ALL PLAN:
+What matters right now?
 
-- Film setup with Gazebo all the way throug
-- Finish up and content what is existing (run on real robot and arm amster main)
-
-- Write part about testing on Gazebo
-
-- Get team mates to write comments on code
-- Check links on front page
-- share github with team mates and get them to proof read each one and then push back
-
-
-
-
-
-
-
-
-
-
-+ IN SCHOOL TOMMROW GET MOST RECENT PANDA MOVE IT CONFIG AND PUSH IT TO YOUR CODE
-
-
-
-
-- Edited documentation
-- Video on running code
-- Getting Code working on gazebo
-- Automated API calls in documentation
-
+Getting in documentation for the rest of the code base.
+Editing the existing documentation to 80%
+Talking about Gazebo

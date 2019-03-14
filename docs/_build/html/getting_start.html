@@ -88,12 +88,15 @@
 <li class="toctree-l2"><a class="reference internal" href="#installing-project-packages">Installing Project Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-3rd-party-packages">Installing 3rd Party Packages</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-additional-files">Installing Additional Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-code">Running the Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-code-in-gazebo-simulation">Running the Code in Gazebo simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#additional-resources">Additional Resources</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Welcome to DE3-Panda-Wall’s documentation!</a></li>
 </ul>
 
             
@@ -224,8 +227,8 @@ catkin init
 <p>We list it here once and assume you will do it after each <code class="docutils literal notranslate"><span class="pre">catkin</span> <span class="pre">build</span></code> in this tutorial. Note that generally during
 development you will not need to re-source your workspace, especially when writing python scripts. You are required,
 however to re-source your workspace when creating new packages or messages.</p>
-<p class="last">As a rule of thumb, if ROS commands like <code class="docutils literal notranslate"><span class="pre">roscd</span></code> aren’t working, and your getting <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">not</span> <span class="pre">found</span></code> errors when
-you try to import custom messages: also re-source your workspace.</p>
+<p class="last">As a rule of thumb, if ROS commands like <code class="docutils literal notranslate"><span class="pre">roscd</span></code> aren’t working, and you are getting <code class="docutils literal notranslate"><span class="pre">module</span> <span class="pre">not</span> <span class="pre">found</span></code> errors when
+you try to import custom messages, try and also re-source your workspace.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -237,7 +240,7 @@ you try to import custom messages: also re-source your workspace.</p>
 <p class="last">The <code class="docutils literal notranslate"><span class="pre">.bashrc</span></code> is run every time you start a new terminal session. That means instead of manually re-sourcing your workspace, you can simply close and open a new terminal,
 and ROS will update it self. If you decide to continue working in the same terminal session, however, you will need to run the aforementioned code.</p>
 </div>
-<p>Congrats, you have created and built your ROS workspace. In the <code class="docutils literal notranslate"><span class="pre">src</span></code> folder is where you now will install all relevant ROS packages.</p>
+<p>Congrats, you have created and built your ROS workspace! In the <code class="docutils literal notranslate"><span class="pre">src</span></code> folder is where you now will install all relevant ROS packages.</p>
 </div>
 <div class="section" id="installing-project-packages">
 <h2>Installing Project Packages<a class="headerlink" href="#installing-project-packages" title="Permalink to this headline">¶</a></h2>
@@ -265,7 +268,7 @@ to make sure its working</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catkin build
 </pre></div>
 </div>
-<p>If it worked, Great job!</p>
+<p>If it worked, great job!</p>
 </div>
 <div class="section" id="installing-3rd-party-packages">
 <h2>Installing 3rd Party Packages<a class="headerlink" href="#installing-3rd-party-packages" title="Permalink to this headline">¶</a></h2>
@@ -313,11 +316,18 @@ Download the code from the following <a class="reference external" href="https:/
 <li>Move file <code class="docutils literal notranslate"><span class="pre">wall_table_world.launch</span></code> into <code class="docutils literal notranslate"><span class="pre">/opt/ros/kinetic/share/gazebo_ros/launch</span></code> directory. Make sure to enter in your correct ROS version.</li>
 <li>Move file <code class="docutils literal notranslate"><span class="pre">wall_table.world</span></code> into <code class="docutils literal notranslate"><span class="pre">/usr/share/gazebo-9/worlds</span></code> directory.</li>
 </ul>
-<p>If you made it this far your doing great! Lets run the code now</p>
+<p>If you made it this far, you’re doing great! Lets run the code now.</p>
 </div>
-<div class="section" id="running-the-code">
-<h2>Running the Code<a class="headerlink" href="#running-the-code" title="Permalink to this headline">¶</a></h2>
-<p>All the code can be run by 3 launch files located in the <code class="docutils literal notranslate"><span class="pre">arm_master</span></code> package. Make sure to run the code in order listed.
+<div class="section" id="running-the-code-in-gazebo-simulation">
+<h2>Running the Code in Gazebo simulation<a class="headerlink" href="#running-the-code-in-gazebo-simulation" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This assumes that you already have Gazebo installed within Ubuntu / virtual machine.</p>
+</div>
+<p>We will now go through how to launch the actual simulation in Gazebo, which is a virtual simulation with laws of physics
+applied to objects within the environment, such as the Panda arm and bricks. This allows for the code to be safely tested
+in an environment with no risk of physical damage, before it is actually run on a real robot.</p>
+<p>All the code can be run by 3 launch files located in the <code class="docutils literal notranslate"><span class="pre">arm_master</span></code> package. <strong>Make sure to run the code in order listed.</strong>
 In 3 separate terminals <em>copy-paste</em> the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch arm_master panda_one_brick.launch
 </pre></div>
@@ -341,8 +351,8 @@ more details.</p>
 </div>
 <div class="section" id="additional-resources">
 <h2>Additional Resources<a class="headerlink" href="#additional-resources" title="Permalink to this headline">¶</a></h2>
-<p>Great <a class="reference external" href="http://www.rsl.ethz.ch/education-students/lectures/ros.html">intro to ROS</a> by ETHz Automous Systems Lab:
-API reference for <a class="reference external" href="http://docs.ros.org/jade/api/moveit_commander/html/classmoveit__commander_1_1move__group_1_1MoveGroupCommander.html">python movegroup interface</a>, (has all the useful command you need for using MoveIt with python):</p>
+<p>Great <a class="reference external" href="http://www.rsl.ethz.ch/education-students/lectures/ros.html">intro to ROS</a> by ETHz Autonomous Systems Lab</p>
+<p>API reference for <a class="reference external" href="http://docs.ros.org/jade/api/moveit_commander/html/classmoveit__commander_1_1move__group_1_1MoveGroupCommander.html">python movegroup interface</a>, (has all the useful command you need for using MoveIt with python):</p>
 </div>
 </div>
 

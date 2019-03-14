@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Arm Master Package" href="arm_master.html" /> 
+    <link rel="prev" title="Running on Gazebo" href="gazebo_problems.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,12 +84,14 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Running on Real Panda</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#changing-code">Changing Code</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#more-tweaks-in-franka-ros">More tweaks in franka_ros</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tweak-in-panda-moveit-config">tweak in panda_moveit_config</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#getting-the-gripper-to-work">Getting the Gripper to Work</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#further-slowing-down-the-arm">Further Slowing down the arm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tweaks-in-panda-moveit-config">Tweaks in panda_moveit_config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-the-gripper-to-work">Getting the Gripper to work</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#further-slowing-down-the-arm">Further slowing down the arm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-code-on-the-robot">Running The code on the robot</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#general-points-to-improve-performance">General Points to Improve Performance</a></li>
 </ul>
@@ -162,7 +164,7 @@
 <h1>Running on Real Panda<a class="headerlink" href="#running-on-real-panda" title="Permalink to this headline">¶</a></h1>
 <p><em>“Pure logical thinking cannot yield us any knowledge of the empirical world; all knowledge of reality starts from
 experience and ends in it.”</em></p>
-<p><em>- Albert Einstien</em></p>
+<p><em>- Albert Einstein</em></p>
 <p>The ultimate goal of the robotics project should be to run on the real panda robot. By doing so you take full advantage
 of the resources Imperial has, and get the awesome feeling of making a real robot move: a robotic arm that you have
 programmed yourself.</p>
@@ -177,21 +179,21 @@ kernal</em> which allows its to communicate with the panda arm at an extremely h
 <p>You may find that a workspace is already setup. In that case simply pull the ROS packages mentioned in the <strong>Setup</strong> section
 of the the documentation into the <code class="docutils literal notranslate"><span class="pre">src</span></code>. directory and build using what ever convention is used. (could potentially be <code class="docutils literal notranslate"><span class="pre">catkin_make</span></code>).</p>
 <p>In the case that there is no existing workspace, follow the steps in <strong>Set Up</strong> to get started.</p>
-<p>Once you have the workspace set up you will need to install 2 additonal ROS packages.</p>
+<p>Once you have the workspace set up you will need to install 2 additional ROS packages.</p>
 <ul class="simple">
 <li><a class="reference external" href="https://github.com/de3-robo/franka_ros">franka_ros</a></li>
 <li><a class="reference external" href="https://github.com/frankaemika/libfranka">lib_franka</a></li>
 </ul>
-<p>Instalation instructures for these two packages are described on the <a class="reference external" href="https://frankaemika.github.io/docs/installation.html">Franka documentation site</a></p>
+<p>Installation instructions for these two packages are described on the <a class="reference external" href="https://frankaemika.github.io/docs/installation.html">Franka documentation site</a></p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">While the newest version of <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> is readily avliable online, we have made small adjustments in the source codes of our version.
+<p class="last">While the newest version of <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> is readily available online, we have made small adjustments in the source codes of our version.
 If you want to have the identical setup to that used in this project, we recommend you download the versions
 of <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> available on our repo. Changes made to the source code will be further described bellow.</p>
 </div>
-<p>As described in the <a class="reference external" href="https://frankaemika.github.io/docs/installation.html">Franka documentation site</a> there are a number of options for interfacing with the real Panda. Ultimetly what worked
+<p>As described in the <a class="reference external" href="https://frankaemika.github.io/docs/installation.html">Franka documentation site</a> there are a number of options for interfacing with the real Panda. Ultimately what worked
 for us was using doing the control through moveit. Included in the <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> package is already the code for making this work,
-which greatly simplies the process and means that you do not need to write a custom c++ controller or deal directly with
+which greatly simplifies the process and means that you do not need to write a custom c++ controller or deal directly with
 <code class="docutils literal notranslate"><span class="pre">lib_franka</span></code>.</p>
 <div class="section" id="changing-code">
 <h2>Changing Code<a class="headerlink" href="#changing-code" title="Permalink to this headline">¶</a></h2>
@@ -207,7 +209,7 @@ In <code class="docutils literal notranslate"><span class="pre">arm__master_main
 </pre></div>
 </div>
 <p>and behaviour in the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> and <code class="docutils literal notranslate"><span class="pre">place_down()</span></code> function changes from publishing to a topic which is read by the simulated Gazebo robot,
-to calling a action server which is exposed by the actually Panda robot</p>
+to calling a action server which is exposed by the actually Panda robot.</p>
 <blockquote>
 <div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
 <span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
@@ -258,9 +260,9 @@ in sync with the real robot.</p>
 </pre></div>
 </div>
 </div></blockquote>
-<p>the most important difference is in the <code class="docutils literal notranslate"><span class="pre">move_arm_handler()</span></code> function. When running on the real panda you exectute trajectories on moveit and wait until it completes. This is beacuse
-moveit deals with the control of the robot. As the robot is Move it moves, so does the real robot. On the gazebo robot, there where seperate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consitency between the
-Gazebo and Moveit robot, but do not wait for the Moveit robo to finish its path before then moving the simulated robot:</p>
+<p>The most important difference is in the <code class="docutils literal notranslate"><span class="pre">move_arm_handler()</span></code> function. When running on the real panda, you execute trajectories on moveit and wait until it completes. This is because
+moveit deals with the control of the robot. As the robot in moveit moves, so does the real robot. On the gazebo robot, there where separate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consistency between the
+Gazebo and Moveit robot, but we do not wait for the Moveit robot to finish its path before then moving the simulated robot:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>
        <span class="n">group</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTING PLAN&quot;</span><span class="p">)</span>
@@ -273,17 +275,17 @@ Gazebo and Moveit robot, but do not wait for the Moveit robo to finish its path 
        <span class="n">group</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Getting our code to run on the real robot was a trial and error process. We outline some of the changes and learnings we made in the hope that you will not
+<p>Getting our code to run on the real robot was a trial and error process. Here we outline some of the changes and learnings we made in the hope that you will not
 have to make the same mistakes.</p>
 </div>
 <div class="section" id="more-tweaks-in-franka-ros">
 <h2>More tweaks in franka_ros<a class="headerlink" href="#more-tweaks-in-franka-ros" title="Permalink to this headline">¶</a></h2>
-<p>A number of tweaks where made in order enable to panda arm to move succesfully. Straight out of the box, the robot was performing extremly sub optimally.
-Its motion was extremly slow yet it was still reutrning <code class="docutils literal notranslate"><span class="pre">acceleration</span> <span class="pre">discontinuity</span></code> errors beacuse supposbily it was moving to fast. This intial testing was done using the provided
+<p>A number of tweaks where made in order enable to panda arm to move successfully. Straight out of the box, the robot was performing extremely sub-optimally.
+It’s motion was extremely slow, yet it was still returning <code class="docutils literal notranslate"><span class="pre">acceleration</span> <span class="pre">discontinuity</span></code> errors because supposedly it was moving to fast. This initial testing was done using the provided
 <code class="docutils literal notranslate"><span class="pre">joint_position_example_controller.cpp</span></code>.</p>
-<p>We then switched to using the <code class="docutils literal notranslate"><span class="pre">joint_velocity_example_controller.cpp</span></code> and made small modifications to the file. The robot moved noticeably faster. This gave us hope that the current robot limitations where programatic
+<p>We then switched to using the <code class="docutils literal notranslate"><span class="pre">joint_velocity_example_controller.cpp</span></code> and made small modifications to the file. The robot moved noticeably faster. This gave us hope that the current robot limitations where programmatic
 and not hardware related.</p>
-<p>Ultimetly the most meaningful change was in <code class="docutils literal notranslate"><span class="pre">franka_hw/src/franka_hw.cpp</span></code>. Here we:</p>
+<p>Ultimately the most meaningful change was in <code class="docutils literal notranslate"><span class="pre">franka_hw/src/franka_hw.cpp</span></code>. Here we:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>   <span class="n">joint_limits</span><span class="o">.</span><span class="n">max_acceleration</span> <span class="o">=</span> <span class="n">franka</span><span class="p">::</span><span class="n">kMaxJointAcceleration</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">;</span>
    <span class="n">joint_limits</span><span class="o">.</span><span class="n">max_jerk</span> <span class="o">=</span> <span class="n">franka</span><span class="p">::</span><span class="n">kMaxJointJerk</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span><span class="p">;</span>
 
@@ -293,19 +295,19 @@ and not hardware related.</p>
    <span class="n">auto</span> <span class="n">cutoff_frequency</span> <span class="o">=</span> <span class="n">get_cutoff_frequency_</span><span class="p">()</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span>
 </pre></div>
 </div>
-<p>While during intial testing, this seemed to actually let the panda robot to move without the controllers dying. In final testing, we noticed the Panda PID would often begin to randomly diverge.
-While we kept these changes in our delopyed code, in hindsight, the PID problem was probably caused by these changes.</p>
+<p>During initial testing, this seemed to actually let the panda robot to move without the controllers dying. In final testing, we noticed the Panda PID would often begin to randomly diverge.
+While we kept these changes in our deployed code, in hindsight, the PID problem was probably caused by these changes.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">For future scope I would suggest reverting these changes. For us, it made it work, but I personally believe changes made to the panda_moveit_config are what allowed the robot
-to succesfully move.</p>
+to successfully move.</p>
 </div>
 </div>
-<div class="section" id="tweak-in-panda-moveit-config">
-<h2>tweak in panda_moveit_config<a class="headerlink" href="#tweak-in-panda-moveit-config" title="Permalink to this headline">¶</a></h2>
-<p>One error we noticed that was causing the robot controllers to crash was that there was to large a difference between the internal moveit representation of the robot and the actually robot.
-To this effect we made one extremly important change which I belive enabled control of the real panda robot through moveit to work.</p>
-<p>From the <code class="docutils literal notranslate"><span class="pre">launch/trajectory_exectuion.launch.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">panda_moveit_config</span></code> we increased the allowable time for the trajectory to finish and the joint tolerence:</p>
+<div class="section" id="tweaks-in-panda-moveit-config">
+<h2>Tweaks in panda_moveit_config<a class="headerlink" href="#tweaks-in-panda-moveit-config" title="Permalink to this headline">¶</a></h2>
+<p>One error we noticed that was causing the robot controllers to crash was that there was to large a difference between the internal moveit representation of the robot and the actual robot.
+To this effect we made one extremely important change which I believe enabled control of the real panda robot through moveit to work.</p>
+<p>From the <code class="docutils literal notranslate"><span class="pre">launch/trajectory_exectuion.launch.xml</span></code> file in the <code class="docutils literal notranslate"><span class="pre">panda_moveit_config</span></code> we increased the allowable time for the trajectory to finish and the joint tolerance:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;!-- When determining the expected duration of a trajectory, this multiplicative factor is applied to get the allowed duration of execution --&gt;
 &lt;param name=&quot;trajectory_execution/allowed_execution_duration_scaling&quot; value=&quot;1.2*5&quot;/&gt; &lt;!-- default 1.2 --&gt;
 &lt;!-- Allow more than the expected execution time before triggering a trajectory cancel (applied after scaling) --&gt;
@@ -323,32 +325,32 @@ To this effect we made one extremly important change which I belive enabled cont
     <span class="n">max_acceleration</span><span class="p">:</span> <span class="mf">3.75</span> <span class="o">*</span> <span class="mf">1.5</span>
 </pre></div>
 </div>
-<p>While the sum of these changes enabled control of the Panda robot through the moveit interface, we are unable to determine wether some of these changes where meaningless. Our intution certaintly
-tells us that the change to the <code class="docutils literal notranslate"><span class="pre">trajectory_exectuion.launch.xml</span></code> files was important and that the changes in <code class="docutils literal notranslate"><span class="pre">ranka_hw.cpp</span></code> can potentially be reverted.</p>
+<p>While the sum of these changes enabled control of the Panda robot through the moveit interface, we are unable to determine whether some of these changes where meaningless. Our intuition certainly
+told us that the change to the <code class="docutils literal notranslate"><span class="pre">trajectory_exectuion.launch.xml</span></code> files was important and that the changes in <code class="docutils literal notranslate"><span class="pre">ranka_hw.cpp</span></code> can potentially be reverted.</p>
 </div>
 <div class="section" id="getting-the-gripper-to-work">
-<h2>Getting the Gripper to Work<a class="headerlink" href="#getting-the-gripper-to-work" title="Permalink to this headline">¶</a></h2>
-<p>During testing we were also having alot of trouble with the panda gripper. By launching the panda gripper node a number of action services are exposed. (refer to <a class="reference external" href="https://frankaemika.github.io/docs/franka_ros.html">franka_ros documentation</a> for more
-information)</p>
-<p>Intially we utilized the Move server to grasp the brick:</p>
+<h2>Getting the Gripper to work<a class="headerlink" href="#getting-the-gripper-to-work" title="Permalink to this headline">¶</a></h2>
+<p>During testing, we were also having a lot of trouble with the panda gripper. By launching the panda gripper node, a number of action services are exposed. (refer to <a class="reference external" href="https://frankaemika.github.io/docs/franka_ros.html">franka_ros documentation</a> for more
+information.)</p>
+<p>Initially, we utilized the <code class="docutils literal notranslate"><span class="pre">Move</span></code> server to grasp the brick:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span><span class="s1">&#39;/franka_gripper/move&#39;</span><span class="p">,</span> <span class="n">MoveAction</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>However the tolerence on reaching the goal position seemed to be to small so the action would fail the robot wouldn’t be able to release brick. The action server would attempt to close
-the gripper to a certain width, but beacuse of the brick in between it wouldn’t be able to close fully. We attempted to fix this by first better tuning the goal
-widths to better match the actual brick width. During the subquent testing this seemed to work, but the gripper was extremly sensitive to off angle pick ups and would have a gripper failure after around placing 6 bricks.</p>
-<p>Other fixes we tried included making two seperate clients for opening and closing, such that opening would continue to work even if the closing action got hung up.</p>
+<p>However the tolerance on reaching the goal position seemed to be to small, so the action would fail as the robot wouldn’t be able to release brick. The action server would attempt to close
+the gripper to a certain width, but because of the brick in between not being aligned properly, it wouldn’t be able to close fully and ‘complete’ the action. We attempted to fix this by first better tuning the goal
+widths to better match the actual brick width. During the subsequent testing this seemed to work, but the gripper remained extremely sensitive to off-angle pick ups and would have a gripper failure after around placing 6 bricks.</p>
+<p>Other fixes we tried included making two separate clients for opening and closing, such that opening would continue to work even if the closing action got hung up.</p>
 <p>We increased the wait time for the action to reach the goal significantly, but this did not solve the root problem either:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span><span class="o">.</span><span class="n">wait_for_result</span><span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="o">.</span><span class="n">from_sec</span><span class="p">(</span><span class="mf">10.0</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Finally, we also found a configuration file for the action where we could edit the goal tolerences directly. From the <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> package, inside the file <code class="docutils literal notranslate"><span class="pre">franka_gripper/config/franka_gripper_node.yaml</span></code>:</p>
+<p>Finally, we also found a configuration file for the action where we could edit the goal tolerances directly. From the <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> package, inside the file <code class="docutils literal notranslate"><span class="pre">franka_gripper/config/franka_gripper_node.yaml</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">default_grasp_epsilon</span><span class="p">:</span>
   <span class="n">inner</span><span class="p">:</span> <span class="mf">0.02</span> <span class="c1"># [m]</span>
   <span class="n">outer</span><span class="p">:</span> <span class="mf">0.02</span> <span class="c1"># [m]</span>
 </pre></div>
 </div>
-<p>Where epsilon is a parameter which determines the goal tolerence for the action. Ultimetly, none of these fixes could over come to the problem of the gripper getting stuck holding a brick. We kept the move action
+<p>Where epsilon is a parameter which determines the goal tolerance for the action. Ultimately, none of these fixes could over come to the problem of the gripper getting stuck holding a brick. We kept the move action
 server for opening the gripper, but we switched to using the the Grasp action server provided by the <code class="docutils literal notranslate"><span class="pre">franka_gripper</span></code> package for pick up. The grasp action server is specifically designed for pick and place operation and accounts for the
 fact that the gripper will not be able to fully close:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span><span class="s1">&#39;/franka_gripper/grasp&#39;</span><span class="p">,</span> <span class="n">GraspAction</span><span class="p">)</span>
@@ -359,9 +361,9 @@ fact that the gripper will not be able to fully close:</p>
 <p>You now also have the functionality to define how hard the gripper will grasp the brick.</p>
 </div>
 <div class="section" id="further-slowing-down-the-arm">
-<h2>Further Slowing down the arm<a class="headerlink" href="#further-slowing-down-the-arm" title="Permalink to this headline">¶</a></h2>
-<p>Even with all the changes mentioned above we were still having issues with the controller dying to position and acceleration discontinuty errors. Intially to fix this issue we attempted to both increase the resultion
-of our trajectory such that difference in joint angles per step in trajectory was extremly small. In package <code class="docutils literal notranslate"><span class="pre">arm_master</span></code>, file <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>, we increase resolution of the cartesian path planner and decrease
+<h2>Further slowing down the arm<a class="headerlink" href="#further-slowing-down-the-arm" title="Permalink to this headline">¶</a></h2>
+<p>Even with all the changes mentioned above we were still having issues with the controller dying to position and acceleration discontinuity errors. Initially to fix this issue we attempted to both increase the resolution
+of our trajectory, such that the difference in joint angles per step in trajectory was extremely small. In package <code class="docutils literal notranslate"><span class="pre">arm_master</span></code>, file <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>, we increased the resolution of the cartesian path planner and decreased
 the jump threshold, which is the maximum allowable difference in joint angles for IK solutions along the trajectory:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">fraction</span><span class="p">)</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">compute_cartesian_path</span><span class="p">(</span>
                                        <span class="n">waypoints</span><span class="p">,</span>   <span class="c1"># waypoints to follow</span>
@@ -369,8 +371,8 @@ the jump threshold, which is the maximum allowable difference in joint angles fo
                                        <span class="mf">1.5</span><span class="p">)</span>         <span class="c1"># jump_threshold</span>
 </pre></div>
 </div>
-<p>We also wrote a function to take the planned path and slow down the trajectory further. While this <em>slow down</em> functionality is proided for joint angle and end effector position goal planning in moveit, it is not avliable for the
-<code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code> function so, we needed to implement it our selves. The essence of this function was esstially to iterate through all the points in the current plan, increase <code class="docutils literal notranslate"><span class="pre">time_from_start</span></code> and decrease <code class="docutils literal notranslate"><span class="pre">velocities</span></code>,
+<p>We also wrote a function to take the planned path and slow down the trajectory further. While this <em>slow down</em> functionality is provided for joint angle and end effector position goal planning in moveit, it is not available for the
+<code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code> function, therefore we needed to implement it ourselves. This function essentially iterated through all the points in the current plan, increased <code class="docutils literal notranslate"><span class="pre">time_from_start</span></code> and decreased <code class="docutils literal notranslate"><span class="pre">velocities</span></code>,
 <code class="docutils literal notranslate"><span class="pre">accelerations</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>  spd = 0.2
 
@@ -383,10 +385,10 @@ the jump threshold, which is the maximum allowable difference in joint angles fo
            a[j] = traj.joint_trajectory.points[i].accelerations[j] * spd**2
            p[j] = traj.joint_trajectory.points[i].positions[j]
 
-We would then pass this adjusted trajectory plan to moveit for exectuion. Changing the ``spd`` parameter gave complete control over the real robot speed.
+We would The adjusted trajectory plan was then passed to moveit for execution. Changing the ``spd`` parameter gave complete control over the real robot speed.
 </pre></div>
 </div>
-<p>Ultimetly however, in testing we realized that the opposite approach worked better. Providing such finally discretized trajectories over constrained the motion. In practice this just resulted in jittery motion, controller divergence and failure.</p>
+<p>Ultimetly However, in testing we realized that the opposite approach worked better. Providing such finely discretised trajectories overly constrained the motion, and in practice this just resulted in jittery motion, controller divergence and failure.</p>
 <p>What we found to work best was setting the <code class="docutils literal notranslate"><span class="pre">spd</span></code> near 1 and decreasing the resolution by a factor of 10, only solving for a way point every 1 cm:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">fraction</span><span class="p">)</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">compute_cartesian_path</span><span class="p">(</span>
                                        <span class="n">waypoints</span><span class="p">,</span>   <span class="c1"># waypoints to follow</span>
@@ -436,7 +438,7 @@ the real time kernal is running (it’s an option that must be selected from the
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
       
-        <a href="arm_master.html" class="btn btn-neutral float-left" title="Arm Master Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="gazebo_problems.html" class="btn btn-neutral float-left" title="Running on Gazebo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
