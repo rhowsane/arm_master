@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>AR Interface for wall-building &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="API Reference" href="api_reference.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DE3-Panda-Wall
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AR Interface for wall-building</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#networking-helper">Networking Helper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#write-text-helper">Write Text Helper</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DE3-Panda-Wall</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>AR Interface for wall-building</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/interface.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ar-interface-for-wall-building">
+<h1>AR Interface for wall-building<a class="headerlink" href="#ar-interface-for-wall-building" title="Permalink to this headline">¶</a></h1>
+<p>This section describes an interface in augmented reality (AR) that was designed to build a wall structure with bricks.
+The Microsoft Hololens was used to implement this, and demonstration videos can be found in the home page.</p>
+<div class="section" id="networking-helper">
+<h2>Networking Helper<a class="headerlink" href="#networking-helper" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<img alt="_images/python_console.png" src="_images/python_console.png" />
+</div>
+<p>The above image is a screenshot of data received in the python server console during the communication between the HoloLens client and the python server.</p>
+<p>The white text the 6 coordinates data of frozen bricks.</p>
+<p>In order to let the program in HoloLens transmit coordinate data via HTTP request, a helper class <cite>NetworkingHelper</cite> has been implemented to enable the HoloLens communicate with a server by granting access to post requests on specified IP, the server is a simple HTTP server running on python3.</p>
+<p>Firstly, we instantiate the HTTP client for life time in the class at the very beginning:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+private static readonly HttpClient client = new HttpClient();
+```
+</pre></div>
+</div>
+<p>During the development, two networking methods using different modules have been tested each with:</p>
+<ul>
+<li><p class="first">Unity default networking module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+UnityEngine.Networking
+```
+</pre></div>
+</div>
+</li>
+<li><p class="first">Asynchronous programming in .NET development:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+using System.Net.Http;
+using System.Threading.Tasks;
+```
+</pre></div>
+</div>
+</li>
+</ul>
+<p>In order to obtain a more robust and stable communication, the method utilising .Net has been eventually used in the``InteractionHelper`` main function:</p>
+<p>The function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordinates data retrieved from the <code class="docutils literal notranslate"><span class="pre">InteractionHelper</span></code> main function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+public async void MainAsync(
+    string string1,
+    string string2,
+    string string3,
+    string string4,
+    string string5,
+    string string6) {
+    ...
+}
+```
+</pre></div>
+</div>
+<p>Then, Dictionary Key-Value pairs format has been used for standard Non-JSON HTTP request content:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+var values = new Dictionary&lt;string, string&gt; {
+    {&quot;1&quot;, string1},
+    {&quot;2&quot;, string2},
+    {&quot;3&quot;, string3},
+    {&quot;4&quot;, string4},
+    {&quot;5&quot;, string5},
+    {&quot;6&quot;, string6}
+};
+```
+</pre></div>
+</div>
+<p>After that, we encode the content into the standard format for HTTP request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+var content = new FormUrlEncodedContent(values);
+```
+</pre></div>
+</div>
+<p>Lastly, we create the post request:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+var result = await client.PostAsync(&quot;http://192.168.0.154:3000&quot;, content);
+string resultContent = await result.Content.ReadAsStringAsync();
+Console.WriteLine(resultContent);
+```
+</pre></div>
+</div>
+<p><cite>await</cite> keyword has been used to force the current thread to wait until the asynchronous operation has completed.</p>
+</div>
+<div class="section" id="write-text-helper">
+<h2>Write Text Helper<a class="headerlink" href="#write-text-helper" title="Permalink to this headline">¶</a></h2>
+<p>Apart from transmitting data between a server and Hololens client, the functionality storing data to local text file has also been implemented in helper class <cite>WriteTextHelper</cite></p>
+<p>The Method utilised the <cite>IO</cite> module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+using System.IO;
+```
+</pre></div>
+</div>
+<p>The path of the file has been defined in the main <cite>InteractionHelper</cite> helper class, in order to retrieve that, we cached the reference by creating a instance of the <cite>InteractionHelper</cite> class:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+private InteractionHelper interactionHelper = new InteractionHelper();
+```
+</pre></div>
+</div>
+<p>Then we assign the path value in the <cite>WriteString</cite> function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+// need to re-assign the path variable or otherwise will encounter ArgumentNullException
+interactionHelper.path = &quot;C:/Users/HRK/Documents/DanRoboticsBricks/test.txt&quot;;
+```
+</pre></div>
+</div>
+<p>Once again, like the Networking functions, the function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordination data retrieved from the <cite>InteractionHelper</cite> main function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+public void WriteString(
+    string string1,
+    string string2,
+    string string3,
+    string string4,
+    string string5,
+    string string6) {
+    ...
+}
+```
+</pre></div>
+</div>
+<p>For the purpose of enabling the writing functionality within the function, a writer object instance has been created:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+StreamWriter writer = new StreamWriter(interactionHelper.path, true);
+```
+</pre></div>
+</div>
+<p>Then, write the 6 strings separating using <cite>,</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+writer.WriteLine(
+    string1 + &quot;,&quot; +
+    string2 + &quot;,&quot; +
+    string3 + &quot;,&quot; +
+    string4 + &quot;,&quot; +
+    string5 + &quot;,&quot; +
+    string6 + &quot;,&quot;);
+```
+</pre></div>
+</div>
+<p>Eventually, close the writing functionality to free memory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+writer.Close();
+```
+</pre></div>
+</div>
+<p>After all the steps done, open the txt file and the data of the bricks will promptly show up:</p>
+<div class="figure align-center">
+<img alt="_images/txt_file.png" src="_images/txt_file.png" />
+</div>
+<p>Every time initiate the program, a clear functionality will be triggered in the <cite>InteractionHelper</cite> main class to wipe all the content before loading new data into it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+File.WriteAllText(path, String.Empty);
+```
+</pre></div>
+</div>
+<p>Below is another more robust way of implementation, where the <cite>stream</cite> has been created before the writer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>```C#
+// create the stream before making the writer
+using (var stream = new FileStream(interactionHelper.path, FileMode.OpenOrCreate, FileAccess.Write)) {
+    var writer = new StreamWriter(stream, System.Text.Encoding.UTF8);
+
+    ...
+
+    writer.Flush();
+    writer.Dispose();
+}
+```
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="api_reference.html" class="btn btn-neutral float-left" title="API Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Zachary Yamaoka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

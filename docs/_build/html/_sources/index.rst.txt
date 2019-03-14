@@ -13,6 +13,7 @@ Welcome to DE3-Panda-Wall's documentation!
    gazebo_problems
    real_panda
    api_reference
+   interface
 
 Indices and tables
 ==================

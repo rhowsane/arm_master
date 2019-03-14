@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.abspath('..'))
 sys.path.insert(0, os.path.abspath('../../'))
 sys.path.insert(0, os.path.abspath('../scripts/'))
 
+
 # -- Project information -----------------------------------------------------
 
 project = 'DE3-Panda-Wall'
@@ -180,5 +181,10 @@ epub_title = project
 epub_exclude_files = ['search.html']
 
 
-autodoc_mock_imports = ["rospy", "std_msgs", "numpy", "cv2", "skimage", "imutils", "matplotlib", "scipy", "mpl_toolkits"]
+autodoc_mock_imports = ["rospy", "roscpp", "std_msgs", "numpy", "scipy", "matplotlib","moveit_commander","tf","moveit_msgs","geometry_msgs","std_msgs","actionlib_msgs","moveit_msgs"]
 
+
+
+
+# MOCK_MODULES = ['rospy', 'numpy']
+# sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
