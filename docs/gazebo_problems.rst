@@ -34,9 +34,19 @@ using the ``rqt_reconfigure`` window. It soon became clear that this would be im
 
 We decided to take a more disciplined approach and tune each joint in isolation. For this process we worked from the end effector down to the robot
 base. To start we locked all the joints bellow the joint in question and set the joints *PID* constants to zero. We would then send a joint signal in a characteristic square wave to visually
-characterize the joint behavior to perturbations. *P* would be increased until the joint had minimal overshoot and small oscillations. We would then add
+characterize the joint behavior to perturbations::
+
+    def sq_wave(t):
+        f = 0.5
+        const = 2 * np.pi * f * t
+        delta_angle = (4/np.pi) * (np.sin(const) + (1/3)*np.sin(3*const) + (1/5)*np.sin(5*const)+ (1/7)*np.sin(7*const))
+        # delta_angle = np.sin(np.pi*f*t)
+        return delta_angle
+
+
+*P* would be increased until the joint had minimal overshoot and small oscillations. We would then add
 sufficient *D* till the joint was critically damped. This worked for the first 2 joints but the maximum *P* constant in the
-dynamic tuning window was limited and were not able to continue increasing *P* to a suitable level. The reason for requiring such a high *P* was most likely
+dynamic tuning window was limited and were not able to continue increasing *P* to a suitable level for the lower larger joints. The reason for requiring such a high *P* was most likely
 due to modelling errors in the physical simulation
 
 
@@ -78,12 +88,12 @@ With the model file ``model-1_4.sdf``, the following were changed::
 
 We increased ``<mu>`` and ``<mu2>`` parameters. These are the static friction co-efficients used by the physics engine.
 
-We increased ``<kp>`` to increase the stiffness of the collision and increased ``<kd>`` to add dampening. I
+We increased ``<kp>`` to increase the stiffness of the collision and increased ``<kd>`` to add dampening.
 
 Perhaps most importantly we set ``<max_vel>`` to a value larger then 0, and ``<min_depth>`` to a reasonable value. All bodies in Gazebo are soft, so when they collide there is
 always some penetration past the surface boundary line. This is motion is counteracted a spring force. ``<max_vel>`` is the maximum velocity that an object can reach as
 a result of that spring force. In earlier testing when we had wrongly tuned this parameter to zero, bricks would sink through the floor and continuing to vibrate indefinitely
-upon being dropped.
+upon being dropped. This *unrealistic* value seems to break the physics engine.
 
 The total sum of these improvements allowed the brick to be grasped more effectively, and were less likely to slip from Panda's
 gripper.
@@ -91,20 +101,20 @@ gripper.
 Gripper Friction friction issues
 --------------------------------------
 
-Friction is a function of both surfaces in contact. It wasn't enough to just fix the brick, we also needed to consider the gripper.
+Friction is a function of both surfaces in contact. Thus it wasn't enough to just fix the brick, we also needed to consider the gripper.
 
-Before considering fiction we first addressed the fact that the gripper didn't open wide enough to pick up the brick. We fixed this by editing the ``hand.xacro`` file in the
+Before considering fiction, however, we first addressed the fact that the gripper didn't open wide enough to pick up the brick. We fixed this by editing the ``hand.xacro`` file in the
 ``franka_gazebo`` package. Here we increased the maximum joint limit to give the gripper a 0.12 m span::
 
       <limit effort="400" lower="-0.001" upper="0.06" velocity="0.1"/>
 
 Knowing that friction is a function of normal force, we increased the maximum allowable effort here as well. Never the less, while the gripper could
-now open wide enough to pick up the brick, it wasn't enough friction to hold on.
+now open wide enough to pick up the brick, there wasn't enough friction to hold on.
 
 Specifically we noticed that the gripper seemed to lack torsional friction. When it picked up the brick directly around the center of mass, the brick would
 stay in longer. However, when it pick it up at an offset it would quickly rotate out.
 
-In order to fix this issue we changed the torsion friction parameters of the gripper. Agian in the ``hand.xacro`` file we added the following code to
+In order to fix this issue we changed the torsion friction parameters of the gripper. Again in the ``hand.xacro`` file we added the following code to
 overwrite the default::
 
     <gazebo reference="${ns}_leftfinger">
@@ -122,10 +132,9 @@ overwrite the default::
             <surface_radius>0.1</surface_radius>
 
 
-While we extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistent pick up the brick.
-While these changes didn't necessary reflect reality, we felt validated as we knew in practice, the brick would not fall out of the gripper. This belief was
+While extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistently pick up the brick.
+These changes didn't necessary reflect reality, but we felt validated as we knew in practice the brick would not fall out of the gripper. This belief was
 eventually confirmed when we ran our simulated robot on the real Franka Panda.
 
-Issues with publishing, so we needed to add namespaces.
 
 

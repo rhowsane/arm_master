@@ -89,6 +89,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Running on Gazebo</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#arm-experiencing-vibration-jittering">Arm experiencing vibration / ‘jittering’</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#brick-model-friction-issues">Brick model friction issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gripper-friction-friction-issues">Gripper Friction friction issues</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
@@ -158,9 +159,11 @@
             
   <div class="section" id="running-on-gazebo">
 <h1>Running on Gazebo<a class="headerlink" href="#running-on-gazebo" title="Permalink to this headline">¶</a></h1>
-<p>Before testing our code on the real Panda robot, we must be able to run it within a digital simulation first, proving
-that it works. Otherwise, having a physically moving robot with unknown risks / movements that have not been tested
-would be a major risk. Here were the main problems that were encountered by the team when attempting to perform simulations in Gazebo.</p>
+<p><em>“Failing to plan is planning to fail”</em></p>
+<p><em>- Alan Lakein</em></p>
+<p>Before testing our code on the real Panda robot, we ran it on on a digital simulation, to validate that it would function
+as expected. This was incredibly helpful as using a physically moving robot with unknown risks / movements would be a major risk.</p>
+<p>In theory simulation works well, but in practice there were many problems that were encountered by the team when attempting to perform simulations in Gazebo.</p>
 <div class="section" id="arm-experiencing-vibration-jittering">
 <h2>Arm experiencing vibration / ‘jittering’<a class="headerlink" href="#arm-experiencing-vibration-jittering" title="Permalink to this headline">¶</a></h2>
 <p>This was mostly likely due to the fact that the PID settings for the robot’s joints were not well tuned. Therefore,
@@ -175,6 +178,17 @@ in the menu on the left hand side.</p>
 <div class="align-center figure">
 <img alt="_images/gazebo_pid_interface.png" src="_images/gazebo_pid_interface.png" />
 </div>
+<p>In order to fix this issue we took a number of approaches. In the first case we simply let the robot run and visually tuned the PID values
+using the <code class="docutils literal notranslate"><span class="pre">rqt_reconfigure</span></code> window. It soon became clear that this would be impractical for tuning all 7 joints.</p>
+<p>We decided to take a more disciplined approach and tune each joint in isolation. For this process we worked from the end effector down to the robot
+base. To start we locked all the joints bellow the joint in question and set the joints <em>PID</em> constants to zero. We would then send a joint signal in a characteristic square wave to visually
+characterize the joint behavior to perturbations. <em>P</em> would be increased until the joint had minimal overshoot and small oscillations. We would then add
+sufficient <em>D</em> till the joint was critically damped. This worked for the first 2 joints but the maximum <em>P</em> constant in the
+dynamic tuning window was limited and were not able to continue increasing <em>P</em> to a suitable level. The reason for requiring such a high <em>P</em> was most likely
+due to modelling errors in the physical simulation</p>
+<p>Ultimately we returned to the default values found in <code class="docutils literal notranslate"><span class="pre">franka_gazebo</span></code> package. Using these values as a starting point we added a small amount of
+<em>I</em> gain because we noticed that the end effector had trouble converging on the commanded position. The resulting performance was sufficiently to accurate
+build a 5 high wall.</p>
 </div>
 <div class="section" id="brick-model-friction-issues">
 <h2>Brick model friction issues<a class="headerlink" href="#brick-model-friction-issues" title="Permalink to this headline">¶</a></h2>
@@ -204,8 +218,48 @@ its grip effectively.</p>
 <span class="o">&lt;/</span><span class="n">surface</span><span class="o">&gt;</span>
 </pre></div>
 </div>
-<p>These improved parameters allowed the brick to be grasped more effectively, and were less likely to slip from Panda’s
+<p>We increased <code class="docutils literal notranslate"><span class="pre">&lt;mu&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;mu2&gt;</span></code> parameters. These are the static friction co-efficients used by the physics engine.</p>
+<p>We increased <code class="docutils literal notranslate"><span class="pre">&lt;kp&gt;</span></code> to increase the stiffness of the collision and increased <code class="docutils literal notranslate"><span class="pre">&lt;kd&gt;</span></code> to add dampening. I</p>
+<p>Perhaps most importantly we set <code class="docutils literal notranslate"><span class="pre">&lt;max_vel&gt;</span></code> to a value larger then 0, and <code class="docutils literal notranslate"><span class="pre">&lt;min_depth&gt;</span></code> to a reasonable value. All bodies in Gazebo are soft, so when they collide there is
+always some penetration past the surface boundary line. This is motion is counteracted a spring force. <code class="docutils literal notranslate"><span class="pre">&lt;max_vel&gt;</span></code> is the maximum velocity that an object can reach as
+a result of that spring force. In earlier testing when we had wrongly tuned this parameter to zero, bricks would sink through the floor and continuing to vibrate indefinitely
+upon being dropped.</p>
+<p>The total sum of these improvements allowed the brick to be grasped more effectively, and were less likely to slip from Panda’s
 gripper.</p>
+</div>
+<div class="section" id="gripper-friction-friction-issues">
+<h2>Gripper Friction friction issues<a class="headerlink" href="#gripper-friction-friction-issues" title="Permalink to this headline">¶</a></h2>
+<p>Friction is a function of both surfaces in contact. It wasn’t enough to just fix the brick, we also needed to consider the gripper.</p>
+<p>Before considering fiction we first addressed the fact that the gripper didn’t open wide enough to pick up the brick. We fixed this by editing the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file in the
+<code class="docutils literal notranslate"><span class="pre">franka_gazebo</span></code> package. Here we increased the maximum joint limit to give the gripper a 0.12 m span:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">limit</span> <span class="n">effort</span><span class="o">=</span><span class="s2">&quot;400&quot;</span> <span class="n">lower</span><span class="o">=</span><span class="s2">&quot;-0.001&quot;</span> <span class="n">upper</span><span class="o">=</span><span class="s2">&quot;0.06&quot;</span> <span class="n">velocity</span><span class="o">=</span><span class="s2">&quot;0.1&quot;</span><span class="o">/&gt;</span>
+</pre></div>
+</div>
+<p>Knowing that friction is a function of normal force, we increased the maximum allowable effort here as well. Never the less, while the gripper could
+now open wide enough to pick up the brick, it wasn’t enough friction to hold on.</p>
+<p>Specifically we noticed that the gripper seemed to lack torsional friction. When it picked up the brick directly around the center of mass, the brick would
+stay in longer. However, when it pick it up at an offset it would quickly rotate out.</p>
+<p>In order to fix this issue we changed the torsion friction parameters of the gripper. Agian in the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file we added the following code to
+overwrite the default:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;gazebo reference=&quot;${ns}_leftfinger&quot;&gt;
+  &lt;mu1&gt;100&lt;/mu1&gt;
+    &lt;mu2&gt;100&lt;/mu2&gt;
+    &lt;kp&gt;100000&lt;/kp&gt;
+    &lt;!-- &lt;fdir1&gt;0 0 0&lt;/fdir1&gt; --&gt;
+    &lt;collision name=&quot;${ns}__leftfinger_collision&quot;&gt;
+  &lt;surface&gt;
+    &lt;friction&gt;
+      &lt;torsional&gt;
+        &lt;coefficient&gt;100&lt;/coefficient&gt;
+        &lt;use_patch_radius&gt;true&lt;/use_patch_radius&gt;
+        &lt;patch_radius&gt;0.1&lt;/patch_radius&gt;
+        &lt;surface_radius&gt;0.1&lt;/surface_radius&gt;
+</pre></div>
+</div>
+<p>While we extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistent pick up the brick.
+While these changes didn’t necessary reflect reality, we felt validated as we knew in practice, the brick would not fall out of the gripper. This belief was
+eventually confirmed when we ran our simulated robot on the real Franka Panda.</p>
+<p>Issues with publishing, so we needed to add namespaces.</p>
 </div>
 </div>
 
