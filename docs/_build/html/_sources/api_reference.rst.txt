@@ -6,17 +6,17 @@ arm_master_main Functions
 -----------------------------------
 
 .. automodule:: scripts.arm_master_main
-  :members:
+    :members:
 
 move_arm_server Functions
 -----------------------------------
 
 .. automodule:: scripts.move_arm_server
-  :members:
-
+    :members:
 
 arm_server_functions Functions
 -----------------------------------
 
 .. automodule:: scripts.arm_server_functions
-  :members:
+    :members:
+
