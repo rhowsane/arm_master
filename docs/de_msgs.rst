@@ -1,6 +1,10 @@
 de_msgs Package
 ========================
 
+*“Honestly, if everyone likes what you say something is wrong with your message.”*
+
+*― Ashley Ormon*
+
 Arm_Master, Spawn_Manager and Brick_Manager are all nodes that communicate using de_msgs services. Spawn Manager was built
  by Keith Li and Justice Duruanyanwu, Arm Master was built by Zachary Gen and Brick Manager was built by Rowan Dixon and Samuel Willis
 
