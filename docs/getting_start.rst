@@ -217,6 +217,16 @@ In 3 separate terminals *copy-paste* the following commands:
 
      roslaunch arm_master panda_one_brick.launch
 
+.. warning::
+
+    This part is essential. The code will not work if you do not have the *MoveIt* motion planner module activated in rviz. To activate, click on
+    *add* at the bottom of the display and then add the motion planning module. Use *crtl-s* to save the rviz config. Refer to installation video for
+    more details.
+
+.. warning::
+
+    Wait for each launch file to fully load before launching the next one.
+
 .. code-block:: bash
 
      roslaunch arm_master sim.launch
