@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Spawn Manager Package" href="spawn_manager_test.html" />
-    <link rel="prev" title="Welcome to DE3-Panda-Wall’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Getting Started" href="getting_start.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -82,18 +82,25 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arm Master Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#real-panda">Real Panda</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#loop">Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arm-master-main-functions">arm_master_main Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#move-arm-server-functions">move_arm_server Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#arm-server-functions-functions">arm_server_functions Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#behind-the-scences">Behind the Scences</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pick-up">Pick Up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#move-towards">Move towards</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_master_main">arm_master_main Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.move_arm_server">move_arm_server Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_server_functions">arm_server_functions Functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cool-section">Cool section</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_manager_test.html">Spawn Manager Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Welcome to DE3-Panda-Wall’s documentation!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 </ul>
 
             
@@ -210,7 +217,8 @@ is waiting for all the required nodes to be launched. Double check <code class="
 Note that the code calls <code class="docutils literal notranslate"><span class="pre">rospy.wait_for_service()</span></code> each time it is required to connect to another service
 or action client
 service or action client.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
 
     <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
@@ -228,7 +236,6 @@ service or action client.</p>
     <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
     <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
-
 
 </pre></div>
 </div>
@@ -260,7 +267,8 @@ service or action client.</p>
 </div>
 <p>If you wish to change how the arm moves, change the order in which the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>
 functions are called. Additional motion functions also available in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> are <code class="docutils literal notranslate"><span class="pre">go_to()</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_curve()</span></code>. To illustrate, The main loop for our project implementation was implemented as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
 
     <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
@@ -279,14 +287,225 @@ functions are called. Additional motion functions also available in <code class=
     <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
 
+</pre></div>
+</div>
+</div>
+<div class="section" id="behind-the-scences">
+<h2>Behind the Scences<a class="headerlink" href="#behind-the-scences" title="Permalink to this headline">¶</a></h2>
+<p>I know will explain some more of the theoretical aspects of what happens when a motion function like <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> is called in
+<code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>.</p>
+<div class="section" id="pick-up">
+<h3>Pick Up<a class="headerlink" href="#pick-up" title="Permalink to this headline">¶</a></h3>
+<p>The pick up function in full is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pick_up</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">via_offset</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
 
+    <span class="k">global</span> <span class="n">holding_brick</span>  <span class="c1"># use global var</span>
+
+    <span class="c1"># First Move to point above the pick up location</span>
+    <span class="n">via_point</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="n">via_point</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="n">via_offset</span>  <span class="c1"># Z offset</span>
+
+    <span class="n">move_arm</span><span class="p">(</span><span class="n">via_point</span><span class="p">)</span>  <span class="c1"># Move arm to just above goal</span>
+    <span class="n">move_arm</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>  <span class="c1"># Lower arm down to goal</span>
+    <span class="c1"># rospy.sleep(0.5) # Play with timming in here to get desired behaviour</span>
+    <span class="n">close_gripper</span><span class="p">()</span>  <span class="c1"># Grasp around brick</span>
+
+    <span class="n">holding_brick</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">move_arm</span><span class="p">(</span><span class="n">via_point</span><span class="p">)</span>  <span class="c1"># Move back to via point</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>It is queried using a target end effector position of where the pick up will happen (defined by a
+<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list) and a <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter which determines how high the above the brick it travels before
+lowering and picking it up.</p>
+<p>Pictorially the function of <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">IMAGE</span><span class="o">**</span>
+</pre></div>
+</div>
+<p>first <code class="docutils literal notranslate"><span class="pre">move_arm(via_point)</span></code> is called. This calls the function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
+
+<span class="n">msg</span> <span class="o">=</span> <span class="n">MoveArm</span><span class="p">()</span>
+<span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+<span class="n">success</span> <span class="o">=</span> <span class="n">move_arm_wrapper</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">z</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">rot_x</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">rot_y</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">rot_z</span><span class="o">=</span><span class="n">pos</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
+
+<span class="k">return</span> <span class="n">success</span>
+</pre></div>
+</div>
+<p>which further provides a wrapper to the service <cite>move_arm</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">move_arm_wrapper</span> <span class="o">=</span> <span class="n">connect_srv</span><span class="p">(</span><span class="s1">&#39;move_arm&#39;</span><span class="p">,</span> <span class="n">MoveArm</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All arm movment services are defined in the <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>. When a requested is send to the <code class="docutils literal notranslate"><span class="pre">move_arm</span></code> service,
+the <code class="docutils literal notranslate"><span class="pre">move_arm_handler(req)</span></code> function defined inside <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code> is called:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm_handler</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+
+    <span class="n">goal</span> <span class="o">=</span> <span class="p">[</span><span class="n">req</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">req</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">req</span><span class="o">.</span><span class="n">z</span><span class="p">,</span><span class="n">req</span><span class="o">.</span><span class="n">rot_x</span><span class="p">,</span><span class="n">req</span><span class="o">.</span><span class="n">rot_y</span><span class="p">,</span><span class="n">req</span><span class="o">.</span><span class="n">rot_z</span><span class="p">]</span>
+    <span class="c1"># goal = [0.5,-0.5,0.5,0,3.14,0]</span>
+
+    <span class="n">group</span><span class="o">.</span><span class="n">set_goal_position_tolerance</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span>
+    <span class="n">group</span><span class="o">.</span><span class="n">set_goal_orientation_tolerance</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+
+    <span class="n">via_points</span> <span class="o">=</span> <span class="n">plan_cartesian_path</span><span class="p">(</span><span class="n">goal</span><span class="p">,</span><span class="n">resolution</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="c1">#res can be changed</span>
+
+    <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">via_points</span><span class="p">:</span>
+        <span class="n">plan</span> <span class="o">=</span> <span class="n">move_arm_a_to_b</span><span class="p">(</span><span class="n">point</span><span class="p">)</span> <span class="c1">#</span>
+        <span class="c1">#Publish this plan at my own speed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>
+            <span class="n">group</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTING PLAN&quot;</span><span class="p">)</span>
+
+            <span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#Running on real panada</span>
+            <span class="c1"># plan = slow_down(plan)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;EXECUTING PLAN ON REAL ROBOT&quot;</span><span class="p">)</span>
+
+            <span class="n">group</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">group</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="n">group</span><span class="o">.</span><span class="n">clear_pose_targets</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Depdning on wether your running on the real robot or gazebo, how the plan is executed changes. But the fundamental planning of the path doesn’t.</p>
+<p>First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
+`` plan_cartesian_path(goal,resolution = 1)`` which then calls <code class="docutils literal notranslate"><span class="pre">get_via_points(curr_pos,goal,res=resolution)</span></code>. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> is function
+defined in the <code class="docutils literal notranslate"><span class="pre">arm_server_functions.py</span></code> files. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> essentially determines the dispalcment vector between the start and goal
+position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">IMAGE</span><span class="o">**</span>
+</pre></div>
+</div>
+<p>While much of this sampling computation can be accomplished using the the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code>, it gives up addtional flexibility and control over the positon
+of waypoints, and always use to break up the movment into smaller chunkcs. Once <code class="docutils literal notranslate"><span class="pre">via_points</span></code> have been obtained, it time to plan a path through the determined points.
+This is done using the <code class="docutils literal notranslate"><span class="pre">move_arm_a_to_b()</span></code> function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm_a_to_b</span><span class="p">(</span><span class="n">goal</span><span class="p">):</span> <span class="c1">#move very short distance</span>
+
+
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s1">&#39;goal&#39;</span><span class="p">)</span>
+
+    <span class="n">waypoints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">wpose</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get_current_pose</span><span class="p">()</span><span class="o">.</span><span class="n">pose</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="mf">0.0001</span>
+    <span class="n">waypoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">wpose</span><span class="p">))</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">goal</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">goal</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># First move up (z)</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">goal</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># and sideways (y)</span>
+    <span class="n">quaternion</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">transformations</span><span class="o">.</span><span class="n">quaternion_from_euler</span><span class="p">(</span><span class="n">goal</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">goal</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">goal</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span> <span class="c1">#(roll, pitch, yaw)</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">quaternion</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">quaternion</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">quaternion</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">wpose</span><span class="o">.</span><span class="n">orientation</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">quaternion</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">waypoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">wpose</span><span class="p">))</span>
+
+    <span class="n">group</span><span class="o">.</span><span class="n">set_planning_time</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">fraction</span><span class="p">)</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">compute_cartesian_path</span><span class="p">(</span>
+                                       <span class="n">waypoints</span><span class="p">,</span>   <span class="c1"># waypoints to follow</span>
+                                       <span class="mf">0.02</span><span class="p">,</span>        <span class="c1"># eef_step</span>
+                                       <span class="mi">2</span><span class="p">)</span>         <span class="c1"># jump_threshold</span>
+    <span class="c1"># rospy.loginfo(goal)</span>
+
+    <span class="k">return</span> <span class="n">plan</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">move_arm_a_to_b()</span></code> function utilises moveit to solve IK along the desired path. First it gets the current positon of the robot from the move group interface:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wpose</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get_current_pose</span><span class="p">()</span><span class="o">.</span><span class="n">pose</span>
+</pre></div>
+</div>
+<p>It then gets the desired end effector position (<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code>) defined with euler angles and changes it to a quaternion representation
+(<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">W]</span></code>). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 seperate rotations around
+linearly indepdent axis (like with eulers desccription), a 4D vector is used. This 4D vector has advantages in that it doesn’t degengrate in certain rotation squences and
+thus can be seen as more general. That said, it is not intutive to work with. All poses in our code base are encoded with the Euler description and trasnformed to
+a quanterion at the last moment using the <code class="docutils literal notranslate"><span class="pre">tf.transformations</span></code> function.</p>
+<p>Now that the goal pose is describded in the same vector space as the current position, a linear interpolation can be calculated between the two. For this purpose,
+the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path</span></code> function is used. This function first samples points along the straight line between the waypoints, the distance between the points is given by the
+<code class="docutils literal notranslate"><span class="pre">eef_step</span></code> parameter. It then solves IK for each of thoose sampled points. As the robot is redudant (7 DOF for a task which requires at most 6 DOF), it is able to find many solutions to
+the IK problem. Mathetically this means that that null space of the jacobean contains vectors other than the zero vector. Redundancy resolution is specified such that IK solution minimises the distance from the
+previous olution. Specifically we specificy in the <code class="docutils literal notranslate"><span class="pre">jump_threshold</span></code> parameter that the difference in joint angles in neighbouring IK solutions can be no greater than 2 radians.</p>
+<p>The resulting output is a series of joint angles which describe an arm trajectory along the line between the current and goal position.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Because we always specify the end effector of the robot to be pointing downwards, it remains pointing downwards during the interpolation between the current and
+goal position. Just the x, y, z position of the end effector changes.</p>
+</div>
+<p>Focusing back on the <code class="docutils literal notranslate"><span class="pre">move_arm_handler(req)</span></code> function. The next step is to exectue that path. Regardless of wether the robot is running on gazebo or on the real robot.
+The desired joint angles are used to update the set point on the robot’s PID controller, virtual or real. This results in a error between current and desired joint angles,
+which results in a proportional gain to be applied to the motors and ultimetly arm movement. Sending all the joint angles in
+succession and the arm will track the desired end effector movment. Key parameters here are the frequency at which the joint angles are published and the distance between the joint angles.
+As only a feedback is being used to control the robot, extremly large steps in joint angles will lead to un antural arm behaviour.</p>
+<p>This summarizes the main computation and consideratoins behind moving the panda arm. We now focus back on the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> function, you will see that picking up the brick is simply
+a matter of asking the robot arm to move first from its current position to a via point a set z-offset above the brick. lowering down to just above the brick,
+closing the gripper around the brick, and then returning to the via point.</p>
+<p>Motion happens as in the paragraphs described above. While there are slight differences between controlling the gripper in gazebo vs on the real robot, the essence is to publish
+a desired gripper width to a topic that is being read by a controller on the franka gripper.</p>
+</div>
+<div class="section" id="move-towards">
+<h3>Move towards<a class="headerlink" href="#move-towards" title="Permalink to this headline">¶</a></h3>
+<p>Move towards is the other main motion function called in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>. The mechanics through which it moves remain the same as described previously. After a few layer of functions,
+it calls the exact same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function. The difference in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is how the way points are selected. Pictorall what happens when you call the function is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">DIAGRAM</span> <span class="n">OF</span> <span class="n">MOVE</span> <span class="n">TOWARDS</span><span class="o">**</span>
+</pre></div>
+</div>
+<p>Stepping through the function you will see exactly this behaviour implemented. First the closest points on the circular
+to the goal and start location are determined. These will become the entry and exit points to the circle:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_towards</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">round_way_points</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="c1"># find nearest point to pick</span>
+    <span class="n">min_start_dist</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">min_start_ind</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">min_end_dist</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">min_end_ind</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">round_way_points</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="c1"># print(key, value)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dist_start</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">dist_end</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dist_start</span> <span class="o">&lt;</span> <span class="n">min_start_dist</span><span class="p">:</span>
+            <span class="n">min_start_dist</span> <span class="o">=</span> <span class="n">dist_start</span>
+            <span class="n">min_start_ind</span> <span class="o">=</span> <span class="n">key</span>
+
+        <span class="k">if</span> <span class="n">dist_end</span> <span class="o">&lt;</span> <span class="n">min_end_dist</span><span class="p">:</span>
+            <span class="n">min_end_dist</span> <span class="o">=</span> <span class="n">dist_end</span>
+            <span class="n">min_end_ind</span> <span class="o">=</span> <span class="n">key</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once the starting point is determined, one must then descide wether to go left or right around the circle. This computation is done the <code class="docutils literal notranslate"><span class="pre">left_or_right()</span></code> function:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curr_ind</span> <span class="o">=</span> <span class="n">min_start_ind</span>
+
+<span class="n">selector</span> <span class="o">=</span> <span class="n">left_or_right</span><span class="p">(</span><span class="n">curr_ind</span><span class="p">,</span> <span class="n">min_end_ind</span><span class="p">,</span> <span class="n">round_way_points</span><span class="p">)</span>
+
+
+<span class="k">while</span> <span class="n">curr_ind</span> <span class="o">!=</span> <span class="n">min_end_ind</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">check</span><span class="p">:</span>  <span class="c1"># Check if dropped</span>
+        <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;CHECKING IF DROPPED&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">check_dropped</span><span class="p">():</span>  <span class="c1"># Exit and return failure</span>
+            <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;DROPPED BRICK!&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="c1"># move arm to the curr node positon</span>
+    <span class="n">curr_node</span> <span class="o">=</span> <span class="n">round_way_points</span><span class="p">[</span><span class="n">curr_ind</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MOVING ARM&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CURR NODE Z: &quot;</span><span class="p">,</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Finally the arm is moved to the selected way point untill it have reached the way point with the exit id:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">move_arm</span><span class="p">([</span><span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.14</span> <span class="o">/</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="n">curr_ind</span> <span class="o">=</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">selector</span><span class="p">]</span>  <span class="c1"># go one way around the circle</span>
+<span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
 <p>Here is more detailed information for the specific motion functions. Vist the <span class="xref std std-doc">../api_reference.rst</span> API Reference section of the documentation for more information</p>
 </div>
-<div class="section" id="arm-master-main-functions">
-<h2>arm_master_main Functions<a class="headerlink" href="#arm-master-main-functions" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-scripts.arm_master_main"></span><dl class="function">
+</div>
+<div class="section" id="module-scripts.arm_master_main">
+<span id="arm-master-main-functions"></span><h2>arm_master_main Functions<a class="headerlink" href="#module-scripts.arm_master_main" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="scripts.arm_master_main.check_dropped">
 <code class="descclassname">scripts.arm_master_main.</code><code class="descname">check_dropped</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.check_dropped" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if brick is dropped</p>
@@ -504,7 +723,7 @@ to target and closes the gripper. Finally moves arm back up to offset location.<
 
 <dl class="function">
 <dt id="scripts.arm_master_main.place_down">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">place_down</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.2</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.place_down" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">place_down</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.place_down" title="Permalink to this definition">¶</a></dt>
 <dd><p>Place down brick at target location</p>
 <p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
 to target and opens the gripper. Finally moves arm back up to offset location.</p>
@@ -529,9 +748,9 @@ to target and opens the gripper. Finally moves arm back up to offset location.</
 </dd></dl>
 
 </div>
-<div class="section" id="move-arm-server-functions">
-<h2>move_arm_server Functions<a class="headerlink" href="#move-arm-server-functions" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-scripts.move_arm_server"></span><dl class="function">
+<div class="section" id="module-scripts.move_arm_server">
+<span id="move-arm-server-functions"></span><h2>move_arm_server Functions<a class="headerlink" href="#module-scripts.move_arm_server" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="scripts.move_arm_server.execute">
 <code class="descclassname">scripts.move_arm_server.</code><code class="descname">execute</code><span class="sig-paren">(</span><em>plan</em>, <em>freq=100</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes plan on gazebo robot</p>
@@ -663,9 +882,9 @@ variables: <code class="docutils literal notranslate"><span class="pre">time_fro
 </dd></dl>
 
 </div>
-<div class="section" id="arm-server-functions-functions">
-<h2>arm_server_functions Functions<a class="headerlink" href="#arm-server-functions-functions" title="Permalink to this headline">¶</a></h2>
-<span class="target" id="module-scripts.arm_server_functions"></span><dl class="function">
+<div class="section" id="module-scripts.arm_server_functions">
+<span id="arm-server-functions-functions"></span><h2>arm_server_functions Functions<a class="headerlink" href="#module-scripts.arm_server_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
 <dt id="scripts.arm_server_functions.get_via_points">
 <code class="descclassname">scripts.arm_server_functions.</code><code class="descname">get_via_points</code><span class="sig-paren">(</span><em>start</em>, <em>goal</em>, <em>res=5</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.get_via_points" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns sampled points between two end effector positions</p>
@@ -769,7 +988,7 @@ Very Interested</p>
         <a href="spawn_manager_test.html" class="btn btn-neutral float-right" title="Spawn Manager Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to DE3-Panda-Wall’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="getting_start.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

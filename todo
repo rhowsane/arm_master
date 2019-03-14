@@ -33,3 +33,44 @@ roslaunch move_to_start.launch robot_ip:=192.168.0.88
 + finish documenting source code 15
 + write up 30
 + get it all on read the docs 15
+
+y detailed documentation,
+describing all theoretic and
+implementation aspects of the
+project. Includes not only
+explanations about the successful
+achievements, but also about the
+failed attempts during the project
+(i.e. what worked and what didn’t
+work).
+
+
+
+
+
++ make graphics for pages
++ format
++running on gazebo
++ talk about the namespace issue with rqt_graph
++ film video
++ friction set up
+
+
+
+Go through and format code and publish/push
+
+
+
+more content (1hr)
+rest (1hr)
+run()
+Add dropped checked to documentation
+
+
++ go through and format all pages and add photos ect.... of going through the process and off your own screen
+
+
+
+
+
++ IN SCHOOL TOMMROW GET MOST RECENT PANDA MOVE IT CONFIG AND PUSH IT TO YOUR CODE

@@ -212,9 +212,6 @@ def move_arm_handler(req):
     via_points = plan_cartesian_path(goal,resolution = 1) #res can be changed
 
     for point in via_points:
-        # COMENT THIS OUT
-        # move_panda_eef(point)
-        # ----------------------------------------------------
         plan = move_arm_a_to_b(point) #
         #Publish this plan at my own speed
         if not real_panda:

@@ -373,14 +373,6 @@ if __name__ == '__main__':
     # Service for checking if brick fell out of panda's hand
     holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
 
-    # Only run this Code if your using the real robot
-    if real_panda:
-        client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-
-        rospy.loginfo("Connectining")
-        client.wait_for_server()
-
     rate = rospy.Rate(1)
 
     # Define deafult variables that will be used in main loop
