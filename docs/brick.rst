@@ -10,6 +10,7 @@ This package is run from the python file ``brick_manager_server.py`` and this wi
 
 File Structure
 -----------------
+
 The core of the package files are structure as follows::
 
     brick_manager
@@ -24,7 +25,7 @@ The package itself is incredibly simple. Within the *scripts* section only two P
 
 
 Retrieving a new brick
------------------------------------
+------------------------------------
 
 The first function, ``brick_manager_server``, is the intermediary service between Arm Master and Brick Manager. This function essentially
 returns the end effector position that Panda arm needs to move to in order to retrieve a new brick, by using the message type
@@ -45,13 +46,13 @@ returns the end effector position that Panda arm needs to move to in order to re
 A similar input and output process is used by the three other functions to give the Panda arm end effector positions of where to place bricks - these are described below.
 
 Wall-building functions
------------------------------------
+-------------------------------------
 
 Within ``brick_manager_server.py`` there are three functions which could be used to generate the brick's 'goal positions'. In summary the first of these runs from a hardcoded list of positions
 whilst the second and third generate the wall based on a predefined base width and number of bricks.
 
 The First Function: goal_manager_server()
-------------------------------------------
+--------------------------------------------
 
 This first set of brick positions was generated so that the other packages could be tested whilst this one was developed. In essence it is a pre-defined set of
 positions which gets run through in increments of one, as each brick is successfully placed. This 'brick number' is iterated through in the main loop of Arm Master and received through a service in Brick Manager.
@@ -98,7 +99,7 @@ Finally, ``rospy.spin()`` prevents the python script from closing and allows the
     rospy.spin()
 
 The Second Function: goal_manager_server2()
---------------------------------------------
+----------------------------------------------
 
 The second function works much the same way as the first; it receives the brick number from Arm Master and returns the positions in the same way.
 However, this code generates it's positions based off an algorithm instead of pre-defined locations.
@@ -151,7 +152,7 @@ establish the size the wall will be built to and give tolerances to the brick po
 this does sound like a lot it is all simply definitions for the generative alogorithm.
 
 The Third Function: goal_manager_server3
------------------------------------
+-----------------------------------------
 
 The final function, ``goal_manager_server3()`` works in the same way as ``goal_manager_server2()`` in the sense it generates the wall coordinates as it goes.
 This section will simply talk about the differences in generation technique and the resulting shape.

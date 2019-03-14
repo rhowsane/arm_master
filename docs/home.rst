@@ -9,7 +9,7 @@ This Robotics project took place at the Dyson School of Engineering at the start
 
 ROS was used to program an industrial Franka Panda Robot to perform pick and place task of foam bricks.
 
-All code for project is avliable in the `team git repo`_
+All code for project is available in the `team git repo`_
 
 Development focused on 3 main packages and 1 custom message package:
 
@@ -18,7 +18,7 @@ Development focused on 3 main packages and 1 custom message package:
 * `spawn_manager`_
 * `de_msgs`_
 
-Please refer to those packages for specific documentation. Setup documentation and overall comments are written here.
+Setup documentation and overall comments have been grouped here.
 
 
 Videos
@@ -27,13 +27,13 @@ Videos
 `Project overview`_
 
 The aim of this project was to build a foam brick wall that was both tall and aesthetic. We accomplished this by
-by programming a Franka Panda robot to pick up and place bricks into the the desired locations. Further we were highly interested in the
-possibility of commanding Panda and designing the wall using augment reality technology. For this a mirror environment, with identical workspace to
+by programming a Franka Panda robot to pick up and place bricks into the desired locations. Further we were highly interested in the
+possibility of commanding Panda and designing the wall using augment reality technology. For this a mirror environment, with an identical workspace to
 the real setup, was created in Unity 3D. Using this software were able manipulate virtual bricks. The program then save the position
 of the bricks in the resulting design into a text file for processing on the robot.
 
 While the entire workflow was never executed, what we demonstrate in this video is a "Wizard of Oz" concept. Certainly in the
-future, advanced robot programming techniques such as using AR will become more accesible.
+future, advanced robot programming techniques such as using AR will become more accessible.
 
 
 `Robot building wall in simulation`_
