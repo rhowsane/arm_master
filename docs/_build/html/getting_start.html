@@ -93,8 +93,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spawn_manager_test.html">Spawn Manager Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Welcome to DE3-Panda-Wall’s documentation!</a></li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 </ul>
 
@@ -323,6 +321,16 @@ Download the code from the following <a class="reference external" href="https:/
 In 3 separate terminals <em>copy-paste</em> the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch arm_master panda_one_brick.launch
 </pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This part is essential. The code will not work if you do not have the <em>MoveIt</em> motion planner module activated in rviz. To activate, click on
+<em>add</em> at the bottom of the display and then add the motion planning module. Use <em>crtl-s</em> to save the rviz config. Refer to installation video for
+more details.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Wait for each launch file to fully load before launching the next one.</p>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>roslaunch arm_master sim.launch
 </pre></div>

@@ -57,6 +57,6 @@ Presentation
 
 .. _Project overview: https://drive.google.com/file/d/1upAYPv9WAtRqW-wK1cnZig8cDrmZvin2/view?fbclid=IwAR2OWkxUuuH4r3dMeiGpXatqs_VzAjbUqYJ-8Y4pmy0s-TFVt2B1EIfaAgg
 .. _Robot building wall in simulation: https://github.com/de3-robo/brick_manager
-.. _Robot building wall in real-life: https://github.com/de3-robo/spawn_mnger
+.. _Robot building wall in real-life: https://www.dropbox.com/s/e0z4refyi6ttdey/noice_wall-2019-03-14_09.57.18.mp4?dl=0
 .. _Setting up and running code: https://github.com/de3-robo/de_msgs
-.. _Robot demo presentation slides: https://github.com/de3-robo/de_msgs
+.. _Robot demo presentation slides: https://www.dropbox.com/s/uztyttssk7mjkrf/robotics%20presentation.pdf?dl=0

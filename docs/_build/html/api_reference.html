@@ -34,9 +34,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Running on Real Panda" href="real_panda.html" />
-    <link rel="prev" title="Spawn Manager Package" href="spawn_manager_test.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,17 +79,10 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spawn_manager_test.html">Spawn Manager Package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Welcome to DE3-Panda-Wall’s documentation!</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_master_main">arm_master_main Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.move_arm_server">move_arm_server Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_server_functions">arm_server_functions Functions</a></li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 </ul>
 
@@ -409,7 +400,7 @@ to target and opens the gripper. Finally moves arm back up to offset location.</
 <span id="move-arm-server-functions"></span><h2>move_arm_server Functions<a class="headerlink" href="#module-scripts.move_arm_server" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="scripts.move_arm_server.execute">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">execute</code><span class="sig-paren">(</span><em>plan</em>, <em>freq=100</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.execute" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">execute</code><span class="sig-paren">(</span><em>plan</em>, <em>freq=140</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.execute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes plan on gazebo robot</p>
 <p>Uses <code class="docutils literal notranslate"><span class="pre">rospy.Publisher('/franka/joint1_position_controller/command')</span></code> to send desired joint positions to gazebo robot.
 Publishers publish at the <code class="docutils literal notranslate"><span class="pre">freq</span></code> rate</p>
@@ -600,15 +591,6 @@ is given by <code class="docutils literal notranslate"><span class="pre">res</sp
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="real_panda.html" class="btn btn-neutral float-right" title="Running on Real Panda" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="spawn_manager_test.html" class="btn btn-neutral float-left" title="Spawn Manager Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

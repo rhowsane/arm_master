@@ -56,7 +56,7 @@ Presentation
 .. _de_msgs: https://github.com/de3-robo/de_msgs
 
 .. _Project overview: https://drive.google.com/file/d/1upAYPv9WAtRqW-wK1cnZig8cDrmZvin2/view?fbclid=IwAR2OWkxUuuH4r3dMeiGpXatqs_VzAjbUqYJ-8Y4pmy0s-TFVt2B1EIfaAgg
-.. _Robot building wall in simulation: https://github.com/de3-robo/brick_manager
-.. _Robot building wall in real-life: https://github.com/de3-robo/spawn_mnger
-.. _Setting up and running code: https://github.com/de3-robo/de_msgs
+.. _Robot building wall in simulation: https://drive.google.com/open?id=1E517xbq1VebSo29f8bf77n7HyZpDgVL6
+.. _Robot building wall in real-life: https://drive.google.com/open?id=1hC8p6dtVZZ6CVmGSD1spYmxh6AhzPmxO
+.. _Setting up and running code: https://drive.google.com/open?id=164bEFaRacpHIMV_tlWwU3duqRCKpdJvD
 .. _Robot demo presentation slides: https://www.dropbox.com/s/uztyttssk7mjkrf/robotics%20presentation.pdf?dl=0
