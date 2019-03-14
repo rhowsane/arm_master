@@ -10,7 +10,7 @@ Arm_Master, Spawn_Manager and Brick_Manager are all nodes that communicate using
 
 
 Inside the de_msgs package
---------------------------
+----------------------------
 
 ``de_msgs`` is a package that contains 4 custom ``.srv`` files that are imported into ``arm_master_main.py``:
 
@@ -75,7 +75,7 @@ QueryBrickLoc requests the brick number as "num" in the format of float64. The s
 ROS automatically generates the QueryBrickLocRequest and QueryBrickLocResponse from the QueryBrickLoc service.
 
 Updating CMakeList.txt
-======================
+------------------------
 
 The CMakeList.txt must be updated so that the srv files can be called as services in the arm_master_main loop.
 The custom service names must be added to the add_service_files function. Message_generation must also be added to the find_package function.::
@@ -99,7 +99,7 @@ The custom service names must be added to the add_service_files function. Messag
 
 
 Updating package.xml
-===================
+------------------------
 
 Ensure the following two lines are uncommented from the code to allow the sending of messages
 Line 40::
