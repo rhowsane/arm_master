@@ -2,12 +2,15 @@
 Arm Master Package
 ========================
 
+*"I am the master of my fate: I am the captain of my soul."*
+
+*- William Ernest Henley*
 
 Arm Master is the *ROS Package* which controls the arm. At the most basic level, its purpose is to query goal
-end effector poses, and interpolate their from the arms current position.
+end effector poses, and then move the arm from the current position to meet the new goal.
 
-Code for this computation is located in python scripts. Many of which are exposes them selves as ROS node, but also some that simply
-provide function calls.
+Code for this computation is located in *python* scripts. Some of these scripts exposes them selves as ROS node, but their are also some scripts that simply
+provide pure *python* function calls.
 
 File Structure
 -----------------
@@ -29,41 +32,55 @@ The core of the package files are structure as follows::
     ├── CMakeLists.txt
     └── package.xml
 
-Launch files `light.launch`_, `panda_one_brick.launch`_, `sim.launch`_ run all nessecary ros nodes.
-Refer to *launch* for more information on running the code
+Launch files `light.launch`_, `panda_one_brick.launch`_, `sim.launch`_ run all necessary ros nodes.
+Refer to **Getting Started** for more information on running the code
 
 The *scripts* are structured such that there is a script which defines the ROS related code, and a script which provides ROS free functions. To illustrate observe the difference between
 ``arm_master_main.py`` and ``arm_master_functions.py``
 
-Once running, the panda arm loops through a control sequence defined in `arm_master_main.py`_,
-which calls services and publishes to topics defined in ``move_arm_server.py``
 
-I will explain this control squence in the remainder of this section by going line by line
-through arm master main and explaining the neseecary conecepts required to understand what is going on
-
-
-Real Panda
+Main Control Loop
 -----------------------------------
 
-At the start of the runnable code, a variable ``real_panda`` is defined. It is essential this is set correctly
-depending on wether you wish to run the code on gazebo or on the real franka panda.
+Once running, the Panda arm loops through a control sequence defined in `arm_master_main.py`_,
+which calls services and publishes to topics defined in ``move_arm_server.py``
+
+To understand what is happening in this control sequence, I will go line by line through the important information and explain
+the necessary concepts required.
+
+
+real_panda
+-----------------------------------
+
+At the start of the runnable code, a variable ``real_panda`` is defined::
+
+    # ----------------------------------------------
+    real_panda = True
+    # ----------------------------------------------
+
+It is essential this is set correctly depending on weather you wish to run the code on *Gazebo* or on the real *Franka Panda*.
 
 
 Setting this variable to ``False``, ensures that the code doesn't wait for services from the real robot which will
-not apear on the ROS network
+not appear on the ROS network
 
 .. warning::
    The ``real_panda`` variable also needs to be set in `move_arm_server.py`_
 
 .. warning::
-   If you find that the code is not running and is getting hanged up at launch time it could be beacuse the arm_master_main
-   is waiting for all the required nodes to be launched. Double check ``real_panda`` is correct.
-   Note that the code calls ``rospy.wait_for_service()`` each time it is required to connect to another service
-   or action client
-   service or action client.
+   If you find that the code is not running and is getting hanged up at launch time it could be because the arm_master node
+   is waiting for all the required nodes to be launched. Double check ``real_panda`` is correctly set.
 
-   .. literalinclude:: ../scripts/arm_master_main.py
-      :lines: 50-69
+   Note that the code calls ``rospy.wait_for_service()`` each time it is required to connect to another service
+   or action client::
+
+        def connect_srv(name, msg_type):
+
+            rospy.loginfo("Searching for " + name + " .... ")
+            rospy.wait_for_service(name)
+            srv_wrapper = rospy.ServiceProxy(name, msg_type)
+            rospy.loginfo(name + " CONNECTED")
+            return srv_wrapper
 
 
 Loop
@@ -92,21 +109,59 @@ The main loop has the following structure::
 
 
 If you wish to change how the arm moves, change the order in which the ``pick_up()``, ``place_down()``, ``place_down()``
-functions are called. Additional motion functions also available in ``arm_master_main.py`` are ``go_to()`` and ``move_arm_curve()``. To illustrate, The main loop for our project implementation was implemented as follows:
+functions are called. Additional motion functions also available in ``arm_master_main.py`` are ``go_to()`` and ``move_arm_curve()``. To illustrate,
+The main loop for our project implementation was implemented as follows::
 
-.. literalinclude:: ../scripts/arm_master_main.py
-  :lines: 50-69
+     while not rospy.is_shutdown():  # Main Control Loop for the arm
+            if placed < num_bricks:  # Continue to loop until you have placed the correct number of bricks
+
+                # Query Positions
+                brick = get_brick_pos(placed)
+                goal = get_goal_pos(placed)
+
+                if goal == last_goal:  # same as last time, don't go back
+                    continue
+                home = get_home_pos()
+                over_head = get_over_pos()
+
+                if not real_panda:
+                    gen_brick()
+                succ = move_towards(home, brick, circle_points)
+
+                # Pick Place operation then return home
+
+                pick_up(brick)
+                succ = move_towards(brick, goal, circle_points, check=False)
+
+                if not real_panda: #Functionality to return to brick location if you dropped it.
+                    if not succ:
+                        brick_via = brick
+                        brick_via[2] += 0.2
+                        go_to(brick_via)
+                        continue #continue, don't increment placed
+
+                place_down(goal)
+
+                succ = move_towards(goal, home, circle_points)
+                placed += 1
+                last_goal = goal  # placed down now its a last brick
+
+                rospy.loginfo("Placed")
+                # Place another brick from stack onto wall
+
+            else:  # When done just wait
+                rospy.loginfo("Done, " + str(placed) + " bricks placed")
+            rate.sleep()
 
 
-Behind the Scences
+Behind the Scenes
 -----------------------------------
 
-I know will explain some more of the theoretical aspects of what happens when a motion function like ``pick_up()`` is called in
+I will now explain more of the theoretical aspects of what happens when a motion function like ``pick_up()`` is called in
 ``arm_master_main.py``.
 
 Pick Up
 ++++++++++++++++++++++
-
 
 The pick up function in full is::
 
@@ -129,16 +184,16 @@ The pick up function in full is::
         return True
 
 
-It is queried using a target end effector position of where the pick up will happen (defined by a
-``[x, y, z, rot_x, rot_y, rot_z]`` list) and a ``via_offset`` parameter which determines how high the above the brick it travels before
-lowering and picking it up.
+It is queried using a target end effector position, set to the location and rotation of the brick to be picked up (defined by a
+``[x, y, z, rot_x, rot_y, rot_z]`` list). The second ``via_offset`` parameter determines how high the above the brick the end effector will first travel before
+lowering and picking up the brick.
 
-Pictorially the function of ``pick_up()`` looks like:
+Pictorially the function ``pick_up()`` looks like:
 
 .. figure::  imgs/pick_up.jpg
    :align:   center
 
-first ``move_arm(via_point)`` is called. This calls the function::
+Going line by line, first ``move_arm(via_point)`` is called. This calls the function::
 
     def move_arm(pos):
 
@@ -148,11 +203,12 @@ first ``move_arm(via_point)`` is called. This calls the function::
 
     return success
 
-which further provides a wrapper to the service `move_arm`::
+
+Which further provides a wrapper to the service `move_arm`::
 
     move_arm_wrapper = connect_srv('move_arm', MoveArm)
 
-All arm movment services are defined in the ``move_arm_server.py``. When a requested is send to the ``move_arm`` service,
+All arm moment services are defined in ROS node initialized in ``move_arm_server.py``. When a request is sent to the ``move_arm`` service,
 the ``move_arm_handler(req)`` function defined inside ``move_arm_server.py`` is called::
 
     def move_arm_handler(req):
@@ -186,18 +242,18 @@ the ``move_arm_handler(req)`` function defined inside ``move_arm_server.py`` is 
 
 
 
-Depdning on wether your running on the real robot or gazebo, how the plan is executed changes. But the fundamental planning of the path doesn't.
+Depending on whether your running on the real robot or *Gazebo*, how the plan is executed changes, but the fundamental planning of the path doesn't.
 
 First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
-`` plan_cartesian_path(goal,resolution = 1)`` which then calls ``get_via_points(curr_pos,goal,res=resolution)``. ``get_via_points()`` is function
-defined in the ``arm_server_functions.py`` files. ``get_via_points()`` essentially determines the dispalcment vector between the start and goal
-position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows:
+`` plan_cartesian_path()`` which then calls ``get_via_points()``. ``get_via_points()`` is a function
+defined in the ``arm_server_functions.py`` file. ``get_via_points()`` essentially determines the displacement vector between the start and goal
+position and then samples points along the same direction incrementally at a set resolution. Pictorially the operation is as follows:
 
 .. figure::  imgs/get_via_points.jpg
    :align:   center
 
-While much of this sampling computation can be accomplished using the the ``compute_cartesian_path()``, it gives up addtional flexibility and control over the positon
-of waypoints, and always use to break up the movment into smaller chunkcs. Once ``via_points`` have been obtained, it time to plan a path through the determined points.
+While much of this sampling computation can be accomplished using the the ``compute_cartesian_path()`` function, ``get_via_points()`` gives up additional flexibility and control over the position
+of way points, and is used to break up the movement into smaller chunks. Once the ``via_points`` have been obtained, the next step is to create a robot trajectory which goes through all the points.
 This is done using the ``move_arm_a_to_b()`` function::
 
     def move_arm_a_to_b(goal): #move very short distance
@@ -229,21 +285,21 @@ This is done using the ``move_arm_a_to_b()`` function::
         return plan
 
 
-The ``move_arm_a_to_b()`` function utilises moveit to solve IK along the desired path. First it gets the current positon of the robot from the move group interface::
+The ``move_arm_a_to_b()`` function utilises *MoveIt* to solve IK along the desired path. First it gets the current position of the robot from the move group interface::
 
  wpose = group.get_current_pose().pose
 
-It then gets the desired end effector position (``[x, y, z, roll, pitch, yaw]``) defined with euler angles and changes it to a quaternion representation
-(``[x, y, z, X, Y, Z, W]``). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 seperate rotations around
-linearly indepdent axis (like with eulers desccription), a 4D vector is used. This 4D vector has advantages in that it doesn't degengrate in certain rotation squences and
-thus can be seen as more general. That said, it is not intutive to work with. All poses in our code base are encoded with the Euler description and trasnformed to
-a quanterion at the last moment using the ``tf.transformations`` function.
+It then reads the desired end effector position, passed in as ``goal``, which is defined with euler angles (``[x, y, z, roll, pitch, yaw]``), and changes it to a quaternion representation
+(``[x, y, z, X, Y, Z, W]``). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 separate rotations around
+linearly independent axis, a 4D vector is used. This 4D vector has advantages in that it doesn't degenerate and reach singularities in certain rotation sequences, and
+thus can be seen as more general. That said, it is not intuitive to work with quaternion's. All poses in our code-base are encoded with the Euler description and transformed to
+a quaternion at the last moment using the ``tf.transformations`` function.
 
-Now that the goal pose is describded in the same vector space as the current position, a linear interpolation can be calculated between the two. For this purpose,
+Now that the goal pose is described in the same vector space as the current position (7D vector), a linear interpolation can be calculated between the two. For this purpose,
 the ``compute_cartesian_path`` function is used. This function first samples points along the straight line between the waypoints, the distance between the points is given by the
-``eef_step`` parameter. It then solves IK for each of thoose sampled points. As the robot is redudant (7 DOF for a task which requires at most 6 DOF), it is able to find many solutions to
-the IK problem. Mathetically this means that that null space of the jacobean contains vectors other than the zero vector. Redundancy resolution is specified such that IK solution minimises the distance from the
-previous olution. Specifically we specificy in the ``jump_threshold`` parameter that the difference in joint angles in neighbouring IK solutions can be no greater than 2 radians.
+``eef_step`` parameter. It then solves IK for each of those sampled points. As the robot is redundant (7 DOF for a task which requires at most 6 DOF), it is able to find many solutions to
+the IK problem. Mathematically this means that that null space of the Jacobean contains vectors other than the zero vector. Redundancy resolution is specified such that IK solution minimises the distance from the
+previous solution. Specifically we specify in the ``jump_threshold`` parameter that the difference in joint angles in neighbouring IK solutions can be no greater than 2 radians.
 
 The resulting output is a series of joint angles which describe an arm trajectory along the line between the current and goal position.
 
@@ -253,33 +309,36 @@ The resulting output is a series of joint angles which describe an arm trajector
     Because we always specify the end effector of the robot to be pointing downwards, it remains pointing downwards during the interpolation between the current and
     goal position. Just the x, y, z position of the end effector changes.
 
+.. note:: All poses are taken with respect to a static world frame located at the base of the Randa robot
 
-Focusing back on the ``move_arm_handler(req)`` function. The next step is to exectue that path. Regardless of wether the robot is running on gazebo or on the real robot.
-The desired joint angles are used to update the set point on the robot's PID controller, virtual or real. This results in a error between current and desired joint angles,
-which results in a proportional gain to be applied to the motors and ultimetly arm movement. Sending all the joint angles in
-succession and the arm will track the desired end effector movment. Key parameters here are the frequency at which the joint angles are published and the distance between the joint angles.
-As only a feedback is being used to control the robot, extremly large steps in joint angles will lead to un antural arm behaviour.
+Focusing back on the ``move_arm_handler(req)`` function. The next step is to execute that path. Regardless of whether the robot is running on *Gazebo* or on the real robot,
+the desired joint angles are used to update the set point on the robot's PID controller. This results in a error between current and desired joint angles,
+which results in a proportional gain to be applied to the motors, which ultimately moves the arm. Sending all the joint angles in
+succession and the arm will track the desired end effector movement. Key parameters here are the frequency at which the joint angles are published and the distance between the joint angles.
+As only a feedback is being used to control the robot, extremely large steps in joint angles will lead to un unnatural arm behaviour.
 
-This summarizes the main computation and consideratoins behind moving the panda arm. We now focus back on the ``pick_up()`` function, you will see that picking up the brick is simply
-a matter of asking the robot arm to move first from its current position to a via point a set z-offset above the brick. lowering down to just above the brick,
-closing the gripper around the brick, and then returning to the via point.
+This summarizes the main computation and considerations behind moving the Panda arm. We now focus back on the ``pick_up()`` function. You will see that picking up the brick is simply
+a matter of asking the robot arm to move first from its current position to a via point - a set z-offset above the brick. Then to lower down to just above the brick,
+close the gripper around the brick, and finally return to the via point. Each time, the motion happens as in the paragraphs described above.
 
-Motion happens as in the paragraphs described above. While there are slight differences between controlling the gripper in gazebo vs on the real robot, the essence is to publish
-a desired gripper width to a topic that is being read by a controller on the franka gripper.
+.. note::
+
+    While there are slight differences between controlling the gripper in *Gazebo* vs on the real robot, the essence is to publish
+    a desired gripper width to a topic that is being read by a controller on the Franka gripper.
 
 
 Move towards
 +++++++++++++++
 
-Move towards is the other main motion function called in ``arm_master_main.py``. The mechanics through which it moves remain the same as described previously. After a few layer of functions,
-it calls the exact same ``move_arm()`` function. The difference in ``move_towards()`` is how the way points are selected.
-Pictorall what happens when you call the function is as follows:
+``move_towards()`` is the other main motion function called in ``arm_master_main.py``. The mechanics through which the arm moves are identical to the process described in the paragraphs above. After a few layers of functions,
+it calls the exact same ``move_arm()`` function. The difference in ``move_towards()`` is how the way way points are selected.
+Pictorially what happens when you call the function is as follows:
 
 .. figure::  imgs/move_towards.jpg
    :align:   center
 
 
-Stepping through the function you will see exactly this behaviour implemented. First the closest points on the circular
+Stepping through the function line by line, you will see exactly how this behaviour is implemented. First the closest points on the circle
 to the goal and start location are determined. These will become the entry and exit points to the circle::
 
     def move_towards(start, end, round_way_points, check=False):
@@ -306,9 +365,52 @@ to the goal and start location are determined. These will become the entry and e
 
             print(p)
 
+The circle points are generated by a function ``get_round_points()`` in ``arm_master_functions.py``. By changing the ``res``,
+``diameter``, ``height``, ``x_thresh`` the nature of the circle can be changed::
 
-Once the starting point is determined, one must then descide wether to go left or right around the circle. This computation is done the ``left_or_right()`` function::
+    def get_round_points():
 
+        round_path = dict()
+        res = float(20)
+        diameter = 1.25
+        r = diameter / 2  # diameter of the circle
+        height = 0.5  # height of the circle
+
+        x_c = 0
+        y_c = 0
+        num = 20
+        for i in np.arange(num):
+            theta = (2 * np.pi) * ((i + 1) / res)
+            right, left = get_LR_ind(i)
+            neighbour = [right, left]
+            x = x_c + r * np.cos(theta)
+            y = y_c + r * np.sin(theta)
+            pos = [x_c + r * np.cos(theta), y_c + r * np.sin(theta), height]
+            round_path[i] = [pos, neighbour]
+
+        x_thresh = -0.2  # x threshold behind the arm
+
+        # remove illegal points
+        to_remove = []
+        for key, value in round_path.items():
+            if value[0][0] < x_thresh:
+                r_i, l_i = get_LR_ind(key)
+
+                # go to thoose values and delete your self
+                right_neighbour_list = round_path[r_i][1]
+                left_neighbour_list = round_path[l_i][1]
+                right_neighbour_list.remove(key)
+                left_neighbour_list.remove(key)
+                to_remove.append(key)
+
+        for i in to_remove:
+            # print(i)
+            del round_path[i]
+
+        return round_path
+
+
+Back in ``move_towards()``, once the starting point is determined, one must then decide whether to go left or right around the circle. This calculation is done by the ``left_or_right()`` function::
 
         curr_ind = min_start_ind
 
@@ -329,7 +431,8 @@ Once the starting point is determined, one must then descide wether to go left o
             print("CURR NODE Z: ", curr_node[0][2])
 
 
-Finally the arm is moved to the selected way point untill it have reached the way point with the exit id::
+Finally the arm is moved to the neighbour way point in the circle until it reachs the way point with the exit id calculated at the begging of the function call. As you can see, the same ``move_arm()`` function
+is used::
 
 
             move_arm([curr_node[0][0], curr_node[0][1], curr_node[0][2]+0.1, 3.14, 0, 3.14 / 4])
@@ -337,83 +440,9 @@ Finally the arm is moved to the selected way point untill it have reached the wa
         return True
 
 
-Here is more detailed information for the specific motion functions. Vist the :doc:`../api_reference.rst` API Reference section of the documentation for more information
-
-arm_master_main Functions
------------------------------------
-
-.. automodule:: scripts.arm_master_main
-  :members:
-
-move_arm_server Functions
------------------------------------
-
-.. automodule:: scripts.move_arm_server
-  :members:
-
-
-arm_server_functions Functions
------------------------------------
-
-.. automodule:: scripts.arm_server_functions
-  :members:
-
 .. _arm_master_main.py: https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py
 .. _move_arm_server.py: https://github.com/de3-robo/arm_master/blob/master/scripts/move_arm_server.py
 .. _brick_manager_server.py: https://github.com/de3-robo/arm_master/blob/master/scripts/brick_manager_server.py
 .. _light.launch: https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py
 .. _panda_one_brick.launch: https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py
 .. _sim.launch: https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py
-
-
-In python scripts:
-
-
-Installation
-
-
-testing a random code block::
-
-  if x:
-    z = 1
-  else:
-    pass
-  x = True
-
-
-arm_master is a ros package which provides the nessecary control flow functions for controlling the panada arm.
-Let me see how this deals with spaces. I am interested
-to be honest
-Very Interested
-
-At the command line:
-
-easy_install crawler
-
-Or, if you have pip installed:
-
-pip install crawler
-
-*italics*
-**boldface**
-
-``code sample``
-
-
-* bullet 1.
-* bullet 2.
-
-1. num List
-2. num list
-
-#. One List
-
-  #. nested
-
-
-.. _reference-name:
-
-Cool section
--------------
-
-:ref:`reference-name`

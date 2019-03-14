@@ -9,8 +9,6 @@ Welcome to DE3-Panda-Wall's documentation!
    home
    getting_start
    arm_master
-   spawn_manager_test
-   api_reference
    real_panda
 
 Indices and tables

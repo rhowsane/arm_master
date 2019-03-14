@@ -86,17 +86,14 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arm Master Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#real-panda">Real Panda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#main-control-loop">Main Control Loop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#real-panda">real_panda</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#loop">Loop</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#behind-the-scences">Behind the Scences</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#behind-the-scenes">Behind the Scenes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#pick-up">Pick Up</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#move-towards">Move towards</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_master_main">arm_master_main Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.move_arm_server">move_arm_server Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-scripts.arm_server_functions">arm_server_functions Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#cool-section">Cool section</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_manager_test.html">Spawn Manager Package</a></li>
@@ -168,10 +165,12 @@
             
   <div class="section" id="arm-master-package">
 <h1>Arm Master Package<a class="headerlink" href="#arm-master-package" title="Permalink to this headline">¶</a></h1>
+<p><em>“I am the master of my fate: I am the captain of my soul.”</em></p>
+<p><em>- William Ernest Henley</em></p>
 <p>Arm Master is the <em>ROS Package</em> which controls the arm. At the most basic level, its purpose is to query goal
-end effector poses, and interpolate their from the arms current position.</p>
-<p>Code for this computation is located in python scripts. Many of which are exposes them selves as ROS node, but also some that simply
-provide function calls.</p>
+end effector poses, and then move the arm from the current position to meet the new goal.</p>
+<p>Code for this computation is located in <em>python</em> scripts. Some of these scripts exposes them selves as ROS node, but their are also some scripts that simply
+provide pure <em>python</em> function calls.</p>
 <div class="section" id="file-structure">
 <h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
 <p>The core of the package files are structure as follows:</p>
@@ -192,52 +191,46 @@ provide function calls.</p>
 └── package.xml
 </pre></div>
 </div>
-<p>Launch files <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">light.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">panda_one_brick.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">sim.launch</a> run all nessecary ros nodes.
-Refer to <em>launch</em> for more information on running the code</p>
+<p>Launch files <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">light.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">panda_one_brick.launch</a>, <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">sim.launch</a> run all necessary ros nodes.
+Refer to <strong>Getting Started</strong> for more information on running the code</p>
 <p>The <em>scripts</em> are structured such that there is a script which defines the ROS related code, and a script which provides ROS free functions. To illustrate observe the difference between
 <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> and <code class="docutils literal notranslate"><span class="pre">arm_master_functions.py</span></code></p>
-<p>Once running, the panda arm loops through a control sequence defined in <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">arm_master_main.py</a>,
+</div>
+<div class="section" id="main-control-loop">
+<h2>Main Control Loop<a class="headerlink" href="#main-control-loop" title="Permalink to this headline">¶</a></h2>
+<p>Once running, the Panda arm loops through a control sequence defined in <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/arm_master_main.py">arm_master_main.py</a>,
 which calls services and publishes to topics defined in <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code></p>
-<p>I will explain this control squence in the remainder of this section by going line by line
-through arm master main and explaining the neseecary conecepts required to understand what is going on</p>
+<p>To understand what is happening in this control sequence, I will go line by line through the important information and explain
+the necessary concepts required.</p>
 </div>
 <div class="section" id="real-panda">
-<h2>Real Panda<a class="headerlink" href="#real-panda" title="Permalink to this headline">¶</a></h2>
-<p>At the start of the runnable code, a variable <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is defined. It is essential this is set correctly
-depending on wether you wish to run the code on gazebo or on the real franka panda.</p>
+<h2>real_panda<a class="headerlink" href="#real-panda" title="Permalink to this headline">¶</a></h2>
+<p>At the start of the runnable code, a variable <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is defined:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># ----------------------------------------------</span>
+<span class="n">real_panda</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="c1"># ----------------------------------------------</span>
+</pre></div>
+</div>
+<p>It is essential this is set correctly depending on weather you wish to run the code on <em>Gazebo</em> or on the real <em>Franka Panda</em>.</p>
 <p>Setting this variable to <code class="docutils literal notranslate"><span class="pre">False</span></code>, ensures that the code doesn’t wait for services from the real robot which will
-not apear on the ROS network</p>
+not appear on the ROS network</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">The <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> variable also needs to be set in <a class="reference external" href="https://github.com/de3-robo/arm_master/blob/master/scripts/move_arm_server.py">move_arm_server.py</a></p>
 </div>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p>If you find that the code is not running and is getting hanged up at launch time it could be beacuse the arm_master_main
-is waiting for all the required nodes to be launched. Double check <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is correct.
-Note that the code calls <code class="docutils literal notranslate"><span class="pre">rospy.wait_for_service()</span></code> each time it is required to connect to another service
-or action client
-service or action client.</p>
-<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
+<p>If you find that the code is not running and is getting hanged up at launch time it could be because the arm_master node
+is waiting for all the required nodes to be launched. Double check <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> is correctly set.</p>
+<p>Note that the code calls <code class="docutils literal notranslate"><span class="pre">rospy.wait_for_service()</span></code> each time it is required to connect to another service
+or action client:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">connect_srv</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">msg_type</span><span class="p">):</span>
 
-    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
-
-
-<span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Checks if brick is dropped</span>
-
-<span class="sd">    Calls holding_brick service which checks the width of gripper and compares it to the expected width</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">asn</span> <span class="o">=</span> <span class="n">holding_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
-
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Searching for &quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; .... &quot;</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_service</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">srv_wrapper</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">ServiceProxy</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">msg_type</span><span class="p">)</span>
+    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; CONNECTED&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">srv_wrapper</span>
 </pre></div>
 </div>
 </div>
@@ -267,33 +260,54 @@ service or action client.</p>
 </pre></div>
 </div>
 <p>If you wish to change how the arm moves, change the order in which the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>, <code class="docutils literal notranslate"><span class="pre">place_down()</span></code>
-functions are called. Additional motion functions also available in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> are <code class="docutils literal notranslate"><span class="pre">go_to()</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_curve()</span></code>. To illustrate, The main loop for our project implementation was implemented as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
+functions are called. Additional motion functions also available in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> are <code class="docutils literal notranslate"><span class="pre">go_to()</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_curve()</span></code>. To illustrate,
+The main loop for our project implementation was implemented as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="ow">not</span> <span class="n">rospy</span><span class="o">.</span><span class="n">is_shutdown</span><span class="p">():</span>  <span class="c1"># Main Control Loop for the arm</span>
+       <span class="k">if</span> <span class="n">placed</span> <span class="o">&lt;</span> <span class="n">num_bricks</span><span class="p">:</span>  <span class="c1"># Continue to loop until you have placed the correct number of bricks</span>
 
-    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
+           <span class="c1"># Query Positions</span>
+           <span class="n">brick</span> <span class="o">=</span> <span class="n">get_brick_pos</span><span class="p">(</span><span class="n">placed</span><span class="p">)</span>
+           <span class="n">goal</span> <span class="o">=</span> <span class="n">get_goal_pos</span><span class="p">(</span><span class="n">placed</span><span class="p">)</span>
 
+           <span class="k">if</span> <span class="n">goal</span> <span class="o">==</span> <span class="n">last_goal</span><span class="p">:</span>  <span class="c1"># same as last time, don&#39;t go back</span>
+               <span class="k">continue</span>
+           <span class="n">home</span> <span class="o">=</span> <span class="n">get_home_pos</span><span class="p">()</span>
+           <span class="n">over_head</span> <span class="o">=</span> <span class="n">get_over_pos</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Checks if brick is dropped</span>
+           <span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>
+               <span class="n">gen_brick</span><span class="p">()</span>
+           <span class="n">succ</span> <span class="o">=</span> <span class="n">move_towards</span><span class="p">(</span><span class="n">home</span><span class="p">,</span> <span class="n">brick</span><span class="p">,</span> <span class="n">circle_points</span><span class="p">)</span>
 
-<span class="sd">    Calls holding_brick service which checks the width of gripper and compares it to the expected width</span>
+           <span class="c1"># Pick Place operation then return home</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">asn</span> <span class="o">=</span> <span class="n">holding_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
+           <span class="n">pick_up</span><span class="p">(</span><span class="n">brick</span><span class="p">)</span>
+           <span class="n">succ</span> <span class="o">=</span> <span class="n">move_towards</span><span class="p">(</span><span class="n">brick</span><span class="p">,</span> <span class="n">goal</span><span class="p">,</span> <span class="n">circle_points</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
+           <span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span> <span class="c1">#Functionality to return to brick location if you dropped it.</span>
+               <span class="k">if</span> <span class="ow">not</span> <span class="n">succ</span><span class="p">:</span>
+                   <span class="n">brick_via</span> <span class="o">=</span> <span class="n">brick</span>
+                   <span class="n">brick_via</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mf">0.2</span>
+                   <span class="n">go_to</span><span class="p">(</span><span class="n">brick_via</span><span class="p">)</span>
+                   <span class="k">continue</span> <span class="c1">#continue, don&#39;t increment placed</span>
+
+           <span class="n">place_down</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
+
+           <span class="n">succ</span> <span class="o">=</span> <span class="n">move_towards</span><span class="p">(</span><span class="n">goal</span><span class="p">,</span> <span class="n">home</span><span class="p">,</span> <span class="n">circle_points</span><span class="p">)</span>
+           <span class="n">placed</span> <span class="o">+=</span> <span class="mi">1</span>
+           <span class="n">last_goal</span> <span class="o">=</span> <span class="n">goal</span>  <span class="c1"># placed down now its a last brick</span>
+
+           <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Placed&quot;</span><span class="p">)</span>
+           <span class="c1"># Place another brick from stack onto wall</span>
+
+       <span class="k">else</span><span class="p">:</span>  <span class="c1"># When done just wait</span>
+           <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;Done, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">placed</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; bricks placed&quot;</span><span class="p">)</span>
+       <span class="n">rate</span><span class="o">.</span><span class="n">sleep</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="behind-the-scences">
-<h2>Behind the Scences<a class="headerlink" href="#behind-the-scences" title="Permalink to this headline">¶</a></h2>
-<p>I know will explain some more of the theoretical aspects of what happens when a motion function like <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> is called in
+<div class="section" id="behind-the-scenes">
+<h2>Behind the Scenes<a class="headerlink" href="#behind-the-scenes" title="Permalink to this headline">¶</a></h2>
+<p>I will now explain more of the theoretical aspects of what happens when a motion function like <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> is called in
 <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>.</p>
 <div class="section" id="pick-up">
 <h3>Pick Up<a class="headerlink" href="#pick-up" title="Permalink to this headline">¶</a></h3>
@@ -317,14 +331,14 @@ functions are called. Additional motion functions also available in <code class=
     <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>It is queried using a target end effector position of where the pick up will happen (defined by a
-<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list) and a <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter which determines how high the above the brick it travels before
-lowering and picking it up.</p>
-<p>Pictorially the function of <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like:</p>
+<p>It is queried using a target end effector position, set to the location and rotation of the brick to be picked up (defined by a
+<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list). The second <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter determines how high the above the brick the end effector will first travel before
+lowering and picking up the brick.</p>
+<p>Pictorially the function <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like:</p>
 <div class="figure align-center">
 <img alt="_images/pick_up.jpg" src="_images/pick_up.jpg" />
 </div>
-<p>first <code class="docutils literal notranslate"><span class="pre">move_arm(via_point)</span></code> is called. This calls the function:</p>
+<p>Going line by line, first <code class="docutils literal notranslate"><span class="pre">move_arm(via_point)</span></code> is called. This calls the function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
 
 <span class="n">msg</span> <span class="o">=</span> <span class="n">MoveArm</span><span class="p">()</span>
@@ -334,11 +348,11 @@ lowering and picking it up.</p>
 <span class="k">return</span> <span class="n">success</span>
 </pre></div>
 </div>
-<p>which further provides a wrapper to the service <cite>move_arm</cite>:</p>
+<p>Which further provides a wrapper to the service <cite>move_arm</cite>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">move_arm_wrapper</span> <span class="o">=</span> <span class="n">connect_srv</span><span class="p">(</span><span class="s1">&#39;move_arm&#39;</span><span class="p">,</span> <span class="n">MoveArm</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>All arm movment services are defined in the <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>. When a requested is send to the <code class="docutils literal notranslate"><span class="pre">move_arm</span></code> service,
+<p>All arm moment services are defined in ROS node initialized in <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>. When a request is sent to the <code class="docutils literal notranslate"><span class="pre">move_arm</span></code> service,
 the <code class="docutils literal notranslate"><span class="pre">move_arm_handler(req)</span></code> function defined inside <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code> is called:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm_handler</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
 
@@ -370,16 +384,16 @@ the <code class="docutils literal notranslate"><span class="pre">move_arm_handle
     <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>Depdning on wether your running on the real robot or gazebo, how the plan is executed changes. But the fundamental planning of the path doesn’t.</p>
+<p>Depending on whether your running on the real robot or <em>Gazebo</em>, how the plan is executed changes, but the fundamental planning of the path doesn’t.</p>
 <p>First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
-`` plan_cartesian_path(goal,resolution = 1)`` which then calls <code class="docutils literal notranslate"><span class="pre">get_via_points(curr_pos,goal,res=resolution)</span></code>. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> is function
-defined in the <code class="docutils literal notranslate"><span class="pre">arm_server_functions.py</span></code> files. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> essentially determines the dispalcment vector between the start and goal
-position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows:</p>
+`` plan_cartesian_path()`` which then calls <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code>. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> is a function
+defined in the <code class="docutils literal notranslate"><span class="pre">arm_server_functions.py</span></code> file. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> essentially determines the displacement vector between the start and goal
+position and then samples points along the same direction incrementally at a set resolution. Pictorially the operation is as follows:</p>
 <div class="figure align-center">
 <img alt="_images/get_via_points.jpg" src="_images/get_via_points.jpg" />
 </div>
-<p>While much of this sampling computation can be accomplished using the the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code>, it gives up addtional flexibility and control over the positon
-of waypoints, and always use to break up the movment into smaller chunkcs. Once <code class="docutils literal notranslate"><span class="pre">via_points</span></code> have been obtained, it time to plan a path through the determined points.
+<p>While much of this sampling computation can be accomplished using the the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code> function, <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> gives up additional flexibility and control over the position
+of way points, and is used to break up the movement into smaller chunks. Once the <code class="docutils literal notranslate"><span class="pre">via_points</span></code> have been obtained, the next step is to create a robot trajectory which goes through all the points.
 This is done using the <code class="docutils literal notranslate"><span class="pre">move_arm_a_to_b()</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm_a_to_b</span><span class="p">(</span><span class="n">goal</span><span class="p">):</span> <span class="c1">#move very short distance</span>
 
@@ -410,46 +424,53 @@ This is done using the <code class="docutils literal notranslate"><span class="p
     <span class="k">return</span> <span class="n">plan</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">move_arm_a_to_b()</span></code> function utilises moveit to solve IK along the desired path. First it gets the current positon of the robot from the move group interface:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">move_arm_a_to_b()</span></code> function utilises <em>MoveIt</em> to solve IK along the desired path. First it gets the current position of the robot from the move group interface:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wpose</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get_current_pose</span><span class="p">()</span><span class="o">.</span><span class="n">pose</span>
 </pre></div>
 </div>
-<p>It then gets the desired end effector position (<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code>) defined with euler angles and changes it to a quaternion representation
-(<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">W]</span></code>). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 seperate rotations around
-linearly indepdent axis (like with eulers desccription), a 4D vector is used. This 4D vector has advantages in that it doesn’t degengrate in certain rotation squences and
-thus can be seen as more general. That said, it is not intutive to work with. All poses in our code base are encoded with the Euler description and trasnformed to
-a quanterion at the last moment using the <code class="docutils literal notranslate"><span class="pre">tf.transformations</span></code> function.</p>
-<p>Now that the goal pose is describded in the same vector space as the current position, a linear interpolation can be calculated between the two. For this purpose,
+<p>It then reads the desired end effector position, passed in as <code class="docutils literal notranslate"><span class="pre">goal</span></code>, which is defined with euler angles (<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code>), and changes it to a quaternion representation
+(<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">W]</span></code>). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 separate rotations around
+linearly independent axis, a 4D vector is used. This 4D vector has advantages in that it doesn’t degenerate and reach singularities in certain rotation sequences, and
+thus can be seen as more general. That said, it is not intuitive to work with quaternion’s. All poses in our code-base are encoded with the Euler description and transformed to
+a quaternion at the last moment using the <code class="docutils literal notranslate"><span class="pre">tf.transformations</span></code> function.</p>
+<p>Now that the goal pose is described in the same vector space as the current position (7D vector), a linear interpolation can be calculated between the two. For this purpose,
 the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path</span></code> function is used. This function first samples points along the straight line between the waypoints, the distance between the points is given by the
-<code class="docutils literal notranslate"><span class="pre">eef_step</span></code> parameter. It then solves IK for each of thoose sampled points. As the robot is redudant (7 DOF for a task which requires at most 6 DOF), it is able to find many solutions to
-the IK problem. Mathetically this means that that null space of the jacobean contains vectors other than the zero vector. Redundancy resolution is specified such that IK solution minimises the distance from the
-previous olution. Specifically we specificy in the <code class="docutils literal notranslate"><span class="pre">jump_threshold</span></code> parameter that the difference in joint angles in neighbouring IK solutions can be no greater than 2 radians.</p>
+<code class="docutils literal notranslate"><span class="pre">eef_step</span></code> parameter. It then solves IK for each of those sampled points. As the robot is redundant (7 DOF for a task which requires at most 6 DOF), it is able to find many solutions to
+the IK problem. Mathematically this means that that null space of the Jacobean contains vectors other than the zero vector. Redundancy resolution is specified such that IK solution minimises the distance from the
+previous solution. Specifically we specify in the <code class="docutils literal notranslate"><span class="pre">jump_threshold</span></code> parameter that the difference in joint angles in neighbouring IK solutions can be no greater than 2 radians.</p>
 <p>The resulting output is a series of joint angles which describe an arm trajectory along the line between the current and goal position.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">Because we always specify the end effector of the robot to be pointing downwards, it remains pointing downwards during the interpolation between the current and
 goal position. Just the x, y, z position of the end effector changes.</p>
 </div>
-<p>Focusing back on the <code class="docutils literal notranslate"><span class="pre">move_arm_handler(req)</span></code> function. The next step is to exectue that path. Regardless of wether the robot is running on gazebo or on the real robot.
-The desired joint angles are used to update the set point on the robot’s PID controller, virtual or real. This results in a error between current and desired joint angles,
-which results in a proportional gain to be applied to the motors and ultimetly arm movement. Sending all the joint angles in
-succession and the arm will track the desired end effector movment. Key parameters here are the frequency at which the joint angles are published and the distance between the joint angles.
-As only a feedback is being used to control the robot, extremly large steps in joint angles will lead to un antural arm behaviour.</p>
-<p>This summarizes the main computation and consideratoins behind moving the panda arm. We now focus back on the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> function, you will see that picking up the brick is simply
-a matter of asking the robot arm to move first from its current position to a via point a set z-offset above the brick. lowering down to just above the brick,
-closing the gripper around the brick, and then returning to the via point.</p>
-<p>Motion happens as in the paragraphs described above. While there are slight differences between controlling the gripper in gazebo vs on the real robot, the essence is to publish
-a desired gripper width to a topic that is being read by a controller on the franka gripper.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">All poses are taken with respect to a static world frame located at the base of the Randa robot</p>
+</div>
+<p>Focusing back on the <code class="docutils literal notranslate"><span class="pre">move_arm_handler(req)</span></code> function. The next step is to execute that path. Regardless of whether the robot is running on <em>Gazebo</em> or on the real robot,
+the desired joint angles are used to update the set point on the robot’s PID controller. This results in a error between current and desired joint angles,
+which results in a proportional gain to be applied to the motors, which ultimately moves the arm. Sending all the joint angles in
+succession and the arm will track the desired end effector movement. Key parameters here are the frequency at which the joint angles are published and the distance between the joint angles.
+As only a feedback is being used to control the robot, extremely large steps in joint angles will lead to un unnatural arm behaviour.</p>
+<p>This summarizes the main computation and considerations behind moving the Panda arm. We now focus back on the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> function. You will see that picking up the brick is simply
+a matter of asking the robot arm to move first from its current position to a via point - a set z-offset above the brick. Then to lower down to just above the brick,
+close the gripper around the brick, and finally return to the via point. Each time, the motion happens as in the paragraphs described above.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">While there are slight differences between controlling the gripper in <em>Gazebo</em> vs on the real robot, the essence is to publish
+a desired gripper width to a topic that is being read by a controller on the Franka gripper.</p>
+</div>
 </div>
 <div class="section" id="move-towards">
 <h3>Move towards<a class="headerlink" href="#move-towards" title="Permalink to this headline">¶</a></h3>
-<p>Move towards is the other main motion function called in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>. The mechanics through which it moves remain the same as described previously. After a few layer of functions,
-it calls the exact same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function. The difference in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is how the way points are selected.
-Pictorall what happens when you call the function is as follows:</p>
+<p><code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is the other main motion function called in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>. The mechanics through which the arm moves are identical to the process described in the paragraphs above. After a few layers of functions,
+it calls the exact same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function. The difference in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is how the way way points are selected.
+Pictorially what happens when you call the function is as follows:</p>
 <div class="figure align-center">
 <img alt="_images/move_towards.jpg" src="_images/move_towards.jpg" />
 </div>
-<p>Stepping through the function you will see exactly this behaviour implemented. First the closest points on the circular
+<p>Stepping through the function line by line, you will see exactly how this behaviour is implemented. First the closest points on the circle
 to the goal and start location are determined. These will become the entry and exit points to the circle:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_towards</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">round_way_points</span><span class="p">,</span> <span class="n">check</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 
@@ -476,7 +497,51 @@ to the goal and start location are determined. These will become the entry and e
         <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Once the starting point is determined, one must then descide wether to go left or right around the circle. This computation is done the <code class="docutils literal notranslate"><span class="pre">left_or_right()</span></code> function:</p>
+<p>The circle points are generated by a function <code class="docutils literal notranslate"><span class="pre">get_round_points()</span></code> in <code class="docutils literal notranslate"><span class="pre">arm_master_functions.py</span></code>. By changing the <code class="docutils literal notranslate"><span class="pre">res</span></code>,
+<code class="docutils literal notranslate"><span class="pre">diameter</span></code>, <code class="docutils literal notranslate"><span class="pre">height</span></code>, <code class="docutils literal notranslate"><span class="pre">x_thresh</span></code> the nature of the circle can be changed:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_round_points</span><span class="p">():</span>
+
+    <span class="n">round_path</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">diameter</span> <span class="o">=</span> <span class="mf">1.25</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">diameter</span> <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># diameter of the circle</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># height of the circle</span>
+
+    <span class="n">x_c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">y_c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num</span><span class="p">):</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">res</span><span class="p">)</span>
+        <span class="n">right</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">get_LR_ind</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">neighbour</span> <span class="o">=</span> <span class="p">[</span><span class="n">right</span><span class="p">,</span> <span class="n">left</span><span class="p">]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x_c</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_c</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_c</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">y_c</span> <span class="o">+</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">height</span><span class="p">]</span>
+        <span class="n">round_path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">,</span> <span class="n">neighbour</span><span class="p">]</span>
+
+    <span class="n">x_thresh</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span>  <span class="c1"># x threshold behind the arm</span>
+
+    <span class="c1"># remove illegal points</span>
+    <span class="n">to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">round_path</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">x_thresh</span><span class="p">:</span>
+            <span class="n">r_i</span><span class="p">,</span> <span class="n">l_i</span> <span class="o">=</span> <span class="n">get_LR_ind</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># go to thoose values and delete your self</span>
+            <span class="n">right_neighbour_list</span> <span class="o">=</span> <span class="n">round_path</span><span class="p">[</span><span class="n">r_i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">left_neighbour_list</span> <span class="o">=</span> <span class="n">round_path</span><span class="p">[</span><span class="n">l_i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">right_neighbour_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">left_neighbour_list</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">to_remove</span><span class="p">:</span>
+        <span class="c1"># print(i)</span>
+        <span class="k">del</span> <span class="n">round_path</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">round_path</span>
+</pre></div>
+</div>
+<p>Back in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code>, once the starting point is determined, one must then decide whether to go left or right around the circle. This calculation is done by the <code class="docutils literal notranslate"><span class="pre">left_or_right()</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">curr_ind</span> <span class="o">=</span> <span class="n">min_start_ind</span>
 
 <span class="n">selector</span> <span class="o">=</span> <span class="n">left_or_right</span><span class="p">(</span><span class="n">curr_ind</span><span class="p">,</span> <span class="n">min_end_ind</span><span class="p">,</span> <span class="n">round_way_points</span><span class="p">)</span>
@@ -496,486 +561,14 @@ to the goal and start location are determined. These will become the entry and e
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CURR NODE Z: &quot;</span><span class="p">,</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Finally the arm is moved to the selected way point untill it have reached the way point with the exit id:</p>
+<p>Finally the arm is moved to the neighbour way point in the circle until it reachs the way point with the exit id calculated at the begging of the function call. As you can see, the same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function
+is used:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">move_arm</span><span class="p">([</span><span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">3.14</span> <span class="o">/</span> <span class="mi">4</span><span class="p">])</span>
     <span class="n">curr_ind</span> <span class="o">=</span> <span class="n">curr_node</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">selector</span><span class="p">]</span>  <span class="c1"># go one way around the circle</span>
 <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>Here is more detailed information for the specific motion functions. Vist the <span class="xref std std-doc">../api_reference.rst</span> API Reference section of the documentation for more information</p>
 </div>
-</div>
-<div class="section" id="module-scripts.arm_master_main">
-<span id="arm-master-main-functions"></span><h2>arm_master_main Functions<a class="headerlink" href="#module-scripts.arm_master_main" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="scripts.arm_master_main.check_dropped">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">check_dropped</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.check_dropped" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if brick is dropped</p>
-<p>Calls holding_brick service which checks the width of gripper and compares it to the expected width</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if gripper closer together then expect (means brick has fallen). False otherwise.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.close_gripper">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">close_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.close_gripper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Closes robot gripper</p>
-<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
-grip width to <em>/franka/gripper_width</em> topic.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.connect_srv">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">connect_srv</code><span class="sig-paren">(</span><em>name</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.connect_srv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Function to connect to services</p>
-<p>Connects to service with queried name. Will wait for service to be available and print status updates</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> (<em>str</em>) – name of service.</li>
-<li><strong>msg_type</strong> (<em>str</em>) – msg_type of the service.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">returns function object which wraps requested service</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">func</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.gen_brick">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">gen_brick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.gen_brick" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generates brick in Gazebo. See Spawn Manager Package for more details</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.get_brick_pos">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_brick_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_brick_pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries location to pick up brick</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.get_goal_pos">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_goal_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_goal_pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries location to place brick</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.get_home_pos">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_home_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_home_pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries home location to return too</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.get_num_bricks">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_num_bricks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_num_bricks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Queries number of bricks panda should place</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.go_to">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">go_to</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.go_to" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move end effector to pos location in a straight line</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.move_arm">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move arm to queried position</p>
-<p>This function calls the move arm service defined in move_arm_server.py. Arm will move following a cartesian path between its current
-position and the desired position.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of wether it was succesful enough.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.move_arm_curve">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm_curve</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm_curve" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move end effector to queried position</p>
-<p>This function calls the move arm curved service defined in move_arm_server.py. The Arm will execute a RRT planner to
-determine a path from its current position to the desired location. Helpful when as it does not</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z].</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of whether it was successful or not.</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.move_towards">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_towards</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>round_way_points</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_towards" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move arm towards end location following way points around a virtual circle centered on the robot</p>
-<p>Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
-Important, to avoid moving arm into the robot as moveit compute cartesian path does not account for joint limits.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector way point close to the current position of robot.</li>
-<li><strong>end</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.</li>
-<li><strong>round_way_points</strong> (<em>dict</em>) – dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:</li>
-<li><strong>=</strong><strong> [</strong><strong>x_pos</strong><strong>, </strong><strong>y_pos</strong><strong>, </strong><strong>z_pos</strong><strong>]</strong><strong>, </strong><strong>neighbour =</strong><strong> [</strong><strong>left_id</strong><strong>, </strong><strong>right_id</strong><strong>]</strong><strong> Intermediate points to travel between start and end.</strong> (<em>pos</em>) – </li>
-<li><strong>check</strong> (<em>bool</em>) – Set true to check if robot has dropped the brick during movement.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The return value. True for success, False otherwise.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.open_gripper">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">open_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.open_gripper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Opens robot gripper</p>
-<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
-grip width to <em>/franka/gripper_width</em> topic.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.orientation_correct">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">orientation_correct</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.orientation_correct" title="Permalink to this definition">¶</a></dt>
-<dd><p>Corrections so that the end effector is aligned as expect. New default is facing downwards
-with gripper opening along y-axis</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.pick_up">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">pick_up</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.pick_up" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pick up brick at target location</p>
-<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
-to target and closes the gripper. Finally moves arm back up to offset location.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
-<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_master_main.place_down">
-<code class="descclassname">scripts.arm_master_main.</code><code class="descname">place_down</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.place_down" title="Permalink to this definition">¶</a></dt>
-<dd><p>Place down brick at target location</p>
-<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
-to target and opens the gripper. Finally moves arm back up to offset location.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
-<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-scripts.move_arm_server">
-<span id="move-arm-server-functions"></span><h2>move_arm_server Functions<a class="headerlink" href="#module-scripts.move_arm_server" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="scripts.move_arm_server.execute">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">execute</code><span class="sig-paren">(</span><em>plan</em>, <em>freq=100</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>Executes plan on gazebo robot</p>
-<p>Uses <code class="docutils literal notranslate"><span class="pre">rospy.Publisher('/franka/joint1_position_controller/command')</span></code> to send desired joint positions to gazebo robot.
-Publishers publish at the <code class="docutils literal notranslate"><span class="pre">freq</span></code> rate</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>Args:</dt>
-<dd>plan (RobotTrajectory): Standard ROS message type from moveit_msgs.msg
-freq (int): Rate at which to publish desired joint angles</dd>
-</dl>
-</div></blockquote>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.move_arm_server.move_arm_a_to_b">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_a_to_b</code><span class="sig-paren">(</span><em>goal</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_a_to_b" title="Permalink to this definition">¶</a></dt>
-<dd><p>Move the arm from the current position to goal position</p>
-<p>This function generates cartesian waypoints between the robots current position in move it and its desired
-goal location.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>goal</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</li>
-<li><strong>resolution</strong> (<em>int</em>) – Nodes per meter of circular path. Describes density of the waypoints</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="docutils literal notranslate"><span class="pre">[[pos1,</span> <span class="pre">pos2,</span> <span class="pre">pos3,...]]</span></code>. Returns list with intepolated end effector positions</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.move_arm_server.move_arm_curve_handler">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_curve_handler</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_curve_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plans and executes path to requested end effector position</p>
-<p>Plans path using rrt algorithm to desired end effector position. This is then exectued in moveit. <code class="docutils literal notranslate"><span class="pre">set_max_acceleration_scaling_factor</span></code> and
-<code class="docutils literal notranslate"><span class="pre">set_max_velocity_scaling_factor</span></code> scale the speed of the movement. Code is blocked until motion completes</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>req</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when done, regardless if succesful or not</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.move_arm_server.move_arm_handler">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_handler</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_handler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Moves end effector in straight line to request position</p>
-<p>This handlers performs the necessary work to move the arm to pick up a brick. <code class="docutils literal notranslate"><span class="pre">set_goal_position_tolerance</span></code> are set to ensure that the arm doesn’t stop
-moving until it has completly reached the <cite>req</cite> position. If using real robot, then <code class="docutils literal notranslate"><span class="pre">group.execute(plan,</span> <span class="pre">wait=True)</span></code> is called (you wait for the moveit to finish, beacuse it is
-mirror the real robot). If using gazebo, then <code class="docutils literal notranslate"><span class="pre">group.execute(plan,</span> <span class="pre">wait=False)</span></code> is used. Here gazebo and moveit run completly independetly, so you do not want to wait for the
-moveit robot to finish its motion before calling <code class="docutils literal notranslate"><span class="pre">execute(plan)</span></code> to move the gazebo robot.</p>
-<p>Note that when using gazebo it is important that the MoveIt robot finishes first. To ensure this, lower the freqeuncy that messages are published in <code class="docutils literal notranslate"><span class="pre">execute()</span></code> and/or further slow
-down the trajectory in <code class="docutils literal notranslate"><span class="pre">slow_down()</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>req</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. End effector goal location</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion is completed, regardless of success</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.move_arm_server.plan_cartesian_path">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">plan_cartesian_path</code><span class="sig-paren">(</span><em>goal</em>, <em>resolution=1</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.plan_cartesian_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sample points between current pose and goal pos at set resolution</p>
-<p>This function generates cartesian waypoints between the robots current position in move it and its desired
-goal location.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>goal</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</li>
-<li><strong>resolution</strong> (<em>int</em>) – Nodes per meter of circular path. Describes density of the waypoints</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="docutils literal notranslate"><span class="pre">[[pos1,</span> <span class="pre">pos2,</span> <span class="pre">pos3,...]]</span></code>. Returns list with intepolated end effector positions</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.move_arm_server.slow_down">
-<code class="descclassname">scripts.move_arm_server.</code><code class="descname">slow_down</code><span class="sig-paren">(</span><em>traj</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.slow_down" title="Permalink to this definition">¶</a></dt>
-<dd><p>Slows down an exiting move it carestian path trajectory</p>
-<p>Slows down a moveit trajectory by a factor defined in <code class="docutils literal notranslate"><span class="pre">spd</span></code>. Iterates through all points in trajectory and scales the following
-variables: <code class="docutils literal notranslate"><span class="pre">time_from_start</span></code>, <code class="docutils literal notranslate"><span class="pre">accelerations</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>traj</strong> (<em>RobotTrajectory</em>) – Standard ROS message type from moveit_msgs.msg</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">identical but slow downed RobotTrajectory object</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">RobotTrajectory</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-scripts.arm_server_functions">
-<span id="arm-server-functions-functions"></span><h2>arm_server_functions Functions<a class="headerlink" href="#module-scripts.arm_server_functions" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="scripts.arm_server_functions.get_via_points">
-<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">get_via_points</code><span class="sig-paren">(</span><em>start</em>, <em>goal</em>, <em>res=5</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.get_via_points" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns sampled points between two end effector positions</p>
-<p>Via points functions to further discretize a tracjectory. It first calculates the diplacement vector between
-points <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">goal</span></code>. It then samples along that vector direction an amount defined by <code class="docutils literal notranslate"><span class="pre">res</span></code></p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>start</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Starting end effector position</li>
-<li><strong>end</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Goal end effector position</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns list of end effector poses between the two desired location. The number of entries in the list
-is given by <code class="docutils literal notranslate"><span class="pre">res</span></code>.</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_server_functions.point2quat">
-<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">point2quat</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.point2quat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts end effector position in euler to quaterion domain</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_server_functions.pose_e2array">
-<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">pose_e2array</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.pose_e2array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts euluer end effector position to a list</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_server_functions.pose_q2array">
-<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">pose_q2array</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.pose_q2array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts quaterion end effector position to a list</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="scripts.arm_server_functions.quat2point">
-<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">quat2point</code><span class="sig-paren">(</span><em>q</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.quat2point" title="Permalink to this definition">¶</a></dt>
-<dd><p>Converts end effector position in quaterion to euler domain</p>
-</dd></dl>
-
-<p>In python scripts:</p>
-<p>Installation</p>
-<p>testing a random code block:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">x</span><span class="p">:</span>
-  <span class="n">z</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="k">else</span><span class="p">:</span>
-  <span class="k">pass</span>
-<span class="n">x</span> <span class="o">=</span> <span class="kc">True</span>
-</pre></div>
-</div>
-<p>arm_master is a ros package which provides the nessecary control flow functions for controlling the panada arm.
-Let me see how this deals with spaces. I am interested
-to be honest
-Very Interested</p>
-<p>At the command line:</p>
-<p>easy_install crawler</p>
-<p>Or, if you have pip installed:</p>
-<p>pip install crawler</p>
-<p><em>italics</em>
-<strong>boldface</strong></p>
-<p><code class="docutils literal notranslate"><span class="pre">code</span> <span class="pre">sample</span></code></p>
-<ul class="simple">
-<li>bullet 1.</li>
-<li>bullet 2.</li>
-</ul>
-<ol class="arabic simple">
-<li>num List</li>
-<li>num list</li>
-<li>One List</li>
-</ol>
-<blockquote>
-<div><ol class="arabic simple">
-<li>nested</li>
-</ol>
-</div></blockquote>
-</div>
-<div class="section" id="cool-section">
-<span id="reference-name"></span><h2>Cool section<a class="headerlink" href="#cool-section" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference internal" href="#reference-name"><span class="std std-ref">Cool section</span></a></p>
 </div>
 </div>
 

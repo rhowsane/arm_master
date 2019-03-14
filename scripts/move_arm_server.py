@@ -262,7 +262,7 @@ if __name__ == '__main__':
     grasping_group = 'hand'
 
     # ----------------------------------------------
-    real_panda = True  # Are you using the real robot?
+    real_panda = False  # Are you using the real robot?
     # ----------------------------------------------
 
     if not real_panda:  # If not using real_panda then you need to publish joint angles to gazebo. Create the publishers to do this

@@ -347,7 +347,7 @@ if __name__ == '__main__':
     circle_points = get_round_points()
 
     # ----------------------------------------------
-    real_panda = True
+    real_panda = False
     # ----------------------------------------------
 
     # Set up connections with services and topics
