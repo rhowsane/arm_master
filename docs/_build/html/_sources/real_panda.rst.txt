@@ -263,11 +263,6 @@ Launches interface to panda gripper
 Runs the project main code
 
 
-General Points to Improve Performance
----------------------------------------
-
-Also made changes to the discretization. and vibration from overconstraining the path.
-
 .. _franka_ros: https://github.com/de3-robo/franka_ros
 .. _lib_franka: https://github.com/frankaemika/libfranka
 .. _Franka documentation site: https://frankaemika.github.io/docs/installation.html

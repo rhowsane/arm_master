@@ -17,7 +17,7 @@ rather then simulated robot. Unfortunately this is not the case with the Panda p
 .. note::
 
     For this part of the project you will need to run on the computer in the robotics lab. It is connected to a *real time
-    kernal* which allows its to communicate with the panda arm at an extremely high frequency.
+    kernal* which allows it to communicate with the panda arm at an extremely high frequency.
 
 You may find that a workspace is already setup. In that case simply pull the ROS packages mentioned in the **Setup** section
 of the the documentation into the ``src``. directory and build using what ever convention is used. (could potentially be ``catkin_make``).
@@ -39,7 +39,7 @@ Installation instructions for these two packages are described on the `Franka do
 
 
 As described in the `Franka documentation site`_ there are a number of options for interfacing with the real Panda. Ultimately what worked
-for us was using doing the control through moveit. Included in the ``franka_ros`` package is already the code for making this work,
+for us was doing the control through *MoveIt*. Included in the ``franka_ros`` package is already the code for making this work,
 which greatly simplifies the process and means that you do not need to write a custom c++ controller or deal directly with
 ``lib_franka``.
 
@@ -48,35 +48,56 @@ Changing Code
 ---------------------------------------
 
 
-The code is written such that only two variables need to be changed to switch from running on Gazebo to running on the real robot.
+Our source code is written such that only two variables need to be changed to switch from running on *Gazebo* to running on the real robot.
 In ``arm__master_main.py`` and ``move_arm_server.py`` changed::
 
     real_panda = True
 
 This has a number of knock on effects which are automatically controlled by ``if`` statements in the code.
 
-In ``arm__master_main.py``, the node no longer waits for the ``/gen_brick`` service which is only relevant to Gazebo::
+In ``arm__master_main.py``, the node no longer waits for the ``/gen_brick`` service which is only relevant to *Gazebo*::
 
      if not real_panda:
             gen_brick_wrapper = connect_srv('/gen_brick', Trigger)
 
 
-and behaviour in the ``pick_up()`` and ``place_down()`` function changes from publishing to a topic which is read by the simulated Gazebo robot,
-to calling a action server which is exposed by the actually Panda robot.
+and behaviour in the ``open_gripper()`` and ``close_gripper()`` function changes from publishing to a topic which is read by the simulated Gazebo robot,
+to calling a action server which is exposed by the actually Panda robot::
 
-   .. literalinclude:: ../scripts/arm_master_main.py
-      :lines: 50-69
+   def open_gripper():
 
-In ``move_arm_server.py``, you no longer create the joint angle publishers for the Gazebo robot and instead you connect directly to the moveit move_group which is
-in sync with the real robot.
+    if real_panda:
+        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
+        client.wait_for_server()
+        goal = MoveGoal(width = 0.08, speed = 0.04)
+        client.send_goal(goal)
+        client.wait_for_result(rospy.Duration.from_sec(5.0))
+    else:
+        pub_gripper.publish(0.12)
+        rospy.sleep(2)
+    return True
 
- .. literalinclude:: ../scripts/move_arm_server.py
-      :lines: 50-69
 
-The most important difference is in the ``move_arm_handler()`` function. When running on the real panda, you execute trajectories on moveit and wait until it completes. This is because
-moveit deals with the control of the robot. As the robot in moveit moves, so does the real robot. On the gazebo robot, there where separate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consistency between the
+In ``move_arm_server.py``, you no longer create the joint angle publishers for the Gazebo robot and instead you connect directly to the *MoveIt* move_group which is
+in sync with the real robot::
+
+     if not real_panda:  # If not using real_panda then you need to publish joint angles to gazebo. Create the publishers to do this
+        moveit_commander.roscpp_initialize(sys.argv)
+        robot = moveit_commander.RobotCommander()
+        scene = moveit_commander.PlanningSceneInterface()
+        group_name = "panda_arm"
+        group = moveit_commander.MoveGroupCommander(group_name)
+        # To publish joint states directly
+        publishers = [rospy.Publisher('/franka/joint{}_position_controller/command'.format(i), Float64, queue_size=1)
+                      for i in range(1, 8)]
+
+     else:  # Otherwise connect to the moveit move group which has control over the robot
+        rospy.wait_for_message('move_group/status', GoalStatusArray)
+        group = MoveGroupCommander('panda_arm')
+
+The most important difference is in the ``move_arm_handler()`` function. When running on the real panda, you execute trajectories on *MoveIt* and wait until it completes. This is because
+*MoveIt* deals with the control of the robot. As the robot in *MoveIt* moves, so does the real robot. On the *Gazebo* robot, there where separate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consistency between the
 Gazebo and Moveit robot, but we do not wait for the Moveit robot to finish its path before then moving the simulated robot::
-
 
      if not real_panda:
             group.execute(plan, wait=False)
@@ -262,11 +283,6 @@ Launches interface to panda gripper
 
 Runs the project main code
 
-
-General Points to Improve Performance
----------------------------------------
-
-Also made changes to the discretization. and vibration from overconstraining the path.
 
 .. _franka_ros: https://github.com/de3-robo/franka_ros
 .. _lib_franka: https://github.com/frankaemika/libfranka
