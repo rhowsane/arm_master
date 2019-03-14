@@ -250,7 +250,8 @@ In 3 separate terminals *copy-paste* the following commands:
 Additional Resources
 -----------------------------
 
-Great `intro to ROS`_ by ETHz Automous Systems Lab:
+Great `intro to ROS`_ by ETHz Automous Systems Lab
+
 API reference for `python movegroup interface`_, (has all the useful command you need for using MoveIt with python):
 
 .. _intro to ROS: http://www.rsl.ethz.ch/education-students/lectures/ros.html
