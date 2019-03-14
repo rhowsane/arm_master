@@ -50,12 +50,7 @@ Presentation
 Team Members
 -------------
 
-Rowan Dixon
-Justice Duru
-Keith Li
-Samuel Willis
-Zachary Yamaoka
-Daniel Yin
+Rowan Dixon, Justice Duru, Keith Li, Samuel Willis, Zachary Yamaoka, Daniel Yin
 
 .. _team git repo: https://github.com/de3-robo
 .. _arm_master: https://github.com/de3-robo/arm_master
