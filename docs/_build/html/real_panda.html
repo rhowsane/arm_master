@@ -84,6 +84,7 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Running on Real Panda</a><ul>
@@ -213,11 +214,7 @@ In <code class="docutils literal notranslate"><span class="pre">arm__master_main
 <p>and behaviour in the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> and <code class="docutils literal notranslate"><span class="pre">place_down()</span></code> function changes from publishing to a topic which is read by the simulated Gazebo robot,
 to calling a action server which is exposed by the actually Panda robot.</p>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="k">def</span> <span class="nf">gen_brick</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Generates brick in Gazebo. See Spawn Manager Package for more details&quot;&quot;&quot;</span>
-
-    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
 
 
 <span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
@@ -233,16 +230,17 @@ to calling a action server which is exposed by the actually Panda robot.</p>
     <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
 
+
+<span class="k">def</span> <span class="nf">get_brick_pos</span><span class="p">(</span><span class="n">placed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Queries location to pick up brick&quot;&quot;&quot;</span>
+
 </pre></div>
 </div>
 </div></blockquote>
 <p>In <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>, you no longer create the joint angle publishers for the Gazebo robot and instead you connect directly to the moveit move_group which is
 in sync with the real robot.</p>
 <blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">waypoints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">wpose</span><span class="p">))</span>
-
-    <span class="c1">#Get current Position in in roll,pitch,yaw</span>
-
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">pose_q2array</span><span class="p">(</span><span class="n">wpose</span><span class="p">)</span>
     <span class="n">curr_pos</span> <span class="o">=</span> <span class="n">quat2point</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">via_points</span> <span class="o">=</span> <span class="n">get_via_points</span><span class="p">(</span><span class="n">curr_pos</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">res</span><span class="o">=</span><span class="n">resolution</span><span class="p">)</span>
@@ -258,6 +256,9 @@ in sync with the real robot.</p>
 <span class="s2">    Args:</span>
 <span class="s2">        goal (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Desired end effector goal</span>
 <span class="s2">        resolution (int): Nodes per meter of circular path. Describes density of the waypoints</span>
+
+<span class="s2">    Returns:</span>
+<span class="s2">        list: ``[[pos1, pos2, pos3,...]]``. Returns list with intepolated end effector positions</span>
 
 </pre></div>
 </div>

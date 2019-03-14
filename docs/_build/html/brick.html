@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Brick Manager Server &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Spawn Manager Package" href="spawn_doc.html" />
+    <link rel="prev" title="Arm Master Package" href="arm_master.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DE3-Panda-Wall
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Brick Manager Server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-a-new-brick">Retrieving a new brick</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wall-building-fuctions">Wall-building fuctions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-first-function-goal-manager-server">The First Function: goal_manager_server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-second-function-goal-manager-server2">The Second Function: goal_manager_server2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-third-function-goal-manager-server3">The Third Function: goal_manager_server3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">AR Interface for wall-building</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DE3-Panda-Wall</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Brick Manager Server</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/brick.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="brick-manager-server">
+<h1>Brick Manager Server<a class="headerlink" href="#brick-manager-server" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">Brick_Manager</span></code> is the <em>ROS Package</em> which tells the Panda arm executing the script <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> where it should be retrieving a new brick, and where each of the bricks should be placed. As a brief summary,
+the function being used asks for the number of the brick being placed, finds the coordinates and orientation the end effector needs to place that brick and
+sends it back to Arm Master.</p>
+<p>This package is run from the python file <code class="docutils literal notranslate"><span class="pre">brick_manager_server.py</span></code> and this will be the focus of explanation. There is, however, a second script that was not implemented in the end,
+<code class="docutils literal notranslate"><span class="pre">SamRowan.py</span></code> and this will also be briefly covered.</p>
+<div class="section" id="file-structure">
+<h2>File Structure<a class="headerlink" href="#file-structure" title="Permalink to this headline">¶</a></h2>
+<p>The core of the package files are structure as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>brick_manager
+├── docs
+└── scripts
+    ├── brick_manager_server.py
+    └── samrowan.py
+├── CMakeLists.txt
+└── package.xml
+</pre></div>
+</div>
+<p>The package itself is incredibly simple. Within the <em>scripts</em> section only two Python scripts exist, <code class="docutils literal notranslate"><span class="pre">brick_manager_serve.py</span></code> and <code class="docutils literal notranslate"><span class="pre">samrowan.py</span></code>; both of these will be discussed later on.</p>
+</div>
+<div class="section" id="retrieving-a-new-brick">
+<h2>Retrieving a new brick<a class="headerlink" href="#retrieving-a-new-brick" title="Permalink to this headline">¶</a></h2>
+<p>The first function, <code class="docutils literal notranslate"><span class="pre">brick_manager_server</span></code>, is the intermediary service between Arm Master and Brick Manager. This function essentially
+returns the end effector position that Panda arm needs to move to in order to retrieve a new brick, by using the message type
+<code class="docutils literal notranslate"><span class="pre">QueryBrickLoc</span></code> as inputs and outputs (this message typed is defined within the <code class="docutils literal notranslate"><span class="pre">de_msgs</span></code> package. This function can be seen below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">brick_manager_server</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+    <span class="c1">#num = req.num #change req to req.num to do placed iteration thing</span>
+    <span class="n">resp</span> <span class="o">=</span> <span class="n">QueryBrickLocResponse</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.116</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span> <span class="c1"># z+0.2?</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wx</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wy</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wz</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">p</span>
+</pre></div>
+</div>
+<p>A similar input and output process is used by the three other functions to give the Panda arm end effector positions of where to place bricks - these are described below.</p>
+</div>
+<div class="section" id="wall-building-fuctions">
+<h2>Wall-building fuctions<a class="headerlink" href="#wall-building-fuctions" title="Permalink to this headline">¶</a></h2>
+<p>Within <code class="docutils literal notranslate"><span class="pre">brick_manager_server.py</span></code> there are three functions which could be used to generate the brick’s ‘goal positions’. In summary the first of these runs from a hardcoded list of positions
+whilst the second and third generate the wall based on a predefined base width and number of bricks.</p>
+</div>
+<div class="section" id="the-first-function-goal-manager-server">
+<h2>The First Function: goal_manager_server<a class="headerlink" href="#the-first-function-goal-manager-server" title="Permalink to this headline">¶</a></h2>
+<p>This first set of brick positions was generated so that the other packages could be tested whilst this one was developed. In essence it is a pre-defined set of
+positions which gets run through in increments of one, as each brick is successfully placed. This ‘brick number’ is iterated through in the main loop of Arm Master and received through a service in Brick Manager.</p>
+<p>The function will be discussed in two halves; the start which has an if statement to return the correct brick positions, and the end which uses <a href="#id1"><span class="problematic" id="id2">``</span></a>brick_manager_server``and returns the values to Arm Manager.
+The start is as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">goal_manager_server</span><span class="p">(</span><span class="n">req</span><span class="p">):</span>
+
+    <span class="n">num</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">num</span>                                   <span class="c1"># establishing which number was requested</span>
+
+    <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>                                    <span class="c1"># if statement to iterate through brick positions</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.116</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.116</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.2</span><span class="o">+</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.116</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.176</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">num</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.18</span><span class="p">,</span> <span class="mf">0.176</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.57</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The above code is an extract of the function initialisation and the first few brick positions. As you can see, the function receives a value, which is the ‘place number’
+from Arm Master. This is evaluated as a number in line 3 of the extract and the if statement proceeds to select the correct coordinate position.</p>
+<p>The second halve, and end of the function, uses the previously discussed brick_manager_server content and creates an output that will be sent back
+to the Arm Master main code via the defined message type, which is <code class="docutils literal notranslate"><span class="pre">QueryBrickLoc()</span></code>. <code class="docutils literal notranslate"><span class="pre">get_pick_loc</span></code> and <code class="docutils literal notranslate"><span class="pre">get_place_loc</span></code> are what Arm Master is
+calling for and is what allows the position to be returned to Arm Master.</p>
+<p>Finally, <code class="docutils literal notranslate"><span class="pre">rospy.spin()</span></code> prevents the python script from closing and allows the packages to continue running. The code can be seen below:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">resp</span> <span class="o">=</span> <span class="n">QueryBrickLocResponse</span><span class="p">()</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wx</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wy</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">resp</span><span class="o">.</span><span class="n">wz</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">resp</span>
+
+<span class="n">brick_manager_s</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;get_pick_loc&#39;</span><span class="p">,</span> <span class="n">QueryBrickLoc</span><span class="p">,</span> <span class="n">brick_manager_server</span><span class="p">)</span>
+<span class="n">goal_manager_s</span> <span class="o">=</span> <span class="n">rospy</span><span class="o">.</span><span class="n">Service</span><span class="p">(</span><span class="s1">&#39;get_place_loc&#39;</span><span class="p">,</span> <span class="n">QueryBrickLoc</span><span class="p">,</span> <span class="n">goal_manager_server</span><span class="p">)</span>
+
+<span class="n">rospy</span><span class="o">.</span><span class="n">spin</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="the-second-function-goal-manager-server2">
+<h2>The Second Function: goal_manager_server2<a class="headerlink" href="#the-second-function-goal-manager-server2" title="Permalink to this headline">¶</a></h2>
+<p>The second function works much the same way as the first; it receives the brick number from Arm Master and returns the positions in the same way.
+However, this code generates it’s positions based off an algorithm instead of pre-defined locations.</p>
+<p>This section will simply talk about the generation algorithm, since the implementation is the same. The first section of the algorithm is shown bellow:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#pose of first brick in wall, cornerstone</span>
+<span class="n">xstart</span><span class="o">=</span><span class="mi">1</span>
+<span class="n">ystart</span><span class="o">=-</span><span class="mf">0.8</span>
+<span class="n">zstart</span><span class="o">=</span><span class="mf">0.116</span>
+<span class="n">xtheta</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">ytheta</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">ztheta</span><span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span>
+
+<span class="c1">#geometry of the brick</span>
+<span class="n">blength</span> <span class="o">=</span> <span class="mf">0.2</span>
+<span class="n">bwidth</span> <span class="o">=</span> <span class="mf">0.09</span>
+<span class="n">bheight</span> <span class="o">=</span> <span class="mf">0.06</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="n">pi</span><span class="o">/</span><span class="mi">2</span>  <span class="c1">#90 degree rotation</span>
+
+<span class="c1">#puts pose into the list</span>
+<span class="n">bstart</span><span class="o">=</span><span class="p">[</span><span class="n">xstart</span><span class="p">,</span><span class="n">ystart</span><span class="p">,</span><span class="n">zstart</span><span class="p">,</span><span class="n">xtheta</span><span class="p">,</span><span class="n">ytheta</span><span class="p">,</span><span class="n">ztheta</span><span class="p">]</span>
+
+<span class="c1">#initiates list that will contain all the brick poses</span>
+<span class="n">pos_list</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1">#initate the list</span>
+
+<span class="n">input_nos</span> <span class="o">=</span> <span class="mi">15</span>                  <span class="c1">#input the number of bricks in wall</span>
+<span class="n">input_width</span> <span class="o">=</span> <span class="mi">5</span>                 <span class="c1">#input the number of bricks long the wall will be</span>
+<span class="n">brick_number</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_nos</span><span class="p">)</span>
+<span class="n">width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">input_width</span><span class="p">)</span>
+<span class="n">width1</span><span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">width</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">shift1</span><span class="o">=</span><span class="p">(</span><span class="n">blength</span><span class="o">+</span><span class="n">bwidth</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">shift2</span><span class="o">=</span><span class="p">(</span><span class="n">blength</span><span class="o">-</span><span class="n">bwidth</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">round_up</span> <span class="o">=</span> <span class="n">brick_number</span>
+
+<span class="c1">#initating counters to help design the wall</span>
+<span class="n">xnos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">znos</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">round_up</span> <span class="o">=</span> <span class="n">brick_number</span>
+
+<span class="c1">#adding tolerances to the wall design</span>
+<span class="n">tol</span> <span class="o">=</span> <span class="mf">0.02</span>
+<span class="n">blength</span> <span class="o">=</span> <span class="n">blength</span> <span class="o">+</span> <span class="n">tol</span>
+<span class="n">bheight</span> <span class="o">=</span> <span class="n">bheight</span> <span class="o">+</span> <span class="n">tol</span>
+</pre></div>
+</div>
+<p>This section of code could have been broken into smaller chunks to explain, but it is in essence incredibly simple. All this section does
+is set the definitions for a start position, the geometry of the brick, establish the brick start position as an array, initiate an empty list to be built upon,
+establish the size the wall will be built to and give tolerances to the brick positions so they do not touch and will therefore not interfere when placed. Whilst
+this does sound like a lot it is all simply definitions for the generative alogorithm.</p>
+</div>
+<div class="section" id="the-third-function-goal-manager-server3">
+<h2>The Third Function: goal_manager_server3<a class="headerlink" href="#the-third-function-goal-manager-server3" title="Permalink to this headline">¶</a></h2>
+<p>The final function, <code class="docutils literal notranslate"><span class="pre">goal_manager_server3</span></code> works in the same way as <code class="docutils literal notranslate"><span class="pre">goal_manager_server2</span></code> in the sense it generates the wall coordinates as it goes.
+This section will simply talk about the differences in generation technique and the resulting shape.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="spawn_doc.html" class="btn btn-neutral float-right" title="Spawn Manager Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="arm_master.html" class="btn btn-neutral float-left" title="Arm Master Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Zachary Yamaoka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

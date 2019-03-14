@@ -2,8 +2,6 @@
 
 # Import standard libs.
 import rospy
-import time
-import numpy as np
 import copy
 
 # Import action lib.
@@ -12,8 +10,6 @@ import actionlib
 # Import standard msgs/srvs
 from std_msgs.msg import Float64
 from std_srvs.srv import Trigger, TriggerRequest
-from sensor_msgs.msg import JointState
-from franka_gripper.msg import MoveGoal, MoveAction
 from franka_gripper.msg import GraspAction, GraspGoal, MoveGoal, MoveAction
 
 # Import custom srv defined in de_msgs

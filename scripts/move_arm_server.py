@@ -3,14 +3,11 @@
 # Import standard libraries
 import sys
 import copy
-import numpy as np
-from math import pi
 
 #Import ROS libraries
 import rospy
 import moveit_commander
 import tf
-from moveit_commander.conversions import pose_to_list
 
 # Import standard messages
 import moveit_msgs.msg
