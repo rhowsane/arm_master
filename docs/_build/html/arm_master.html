@@ -82,6 +82,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Arm Master Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
@@ -319,9 +320,9 @@ functions are called. Additional motion functions also available in <code class=
 <p>It is queried using a target end effector position of where the pick up will happen (defined by a
 <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list) and a <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter which determines how high the above the brick it travels before
 lowering and picking it up.</p>
-<p>Pictorially the function of <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">IMAGE</span><span class="o">**</span>
-</pre></div>
+<p>Pictorially the function of <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like:</p>
+<div class="figure align-center">
+<img alt="_images/pick_up.jpg" src="_images/pick_up.jpg" />
 </div>
 <p>first <code class="docutils literal notranslate"><span class="pre">move_arm(via_point)</span></code> is called. This calls the function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">move_arm</span><span class="p">(</span><span class="n">pos</span><span class="p">):</span>
@@ -374,8 +375,8 @@ the <code class="docutils literal notranslate"><span class="pre">move_arm_handle
 `` plan_cartesian_path(goal,resolution = 1)`` which then calls <code class="docutils literal notranslate"><span class="pre">get_via_points(curr_pos,goal,res=resolution)</span></code>. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> is function
 defined in the <code class="docutils literal notranslate"><span class="pre">arm_server_functions.py</span></code> files. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> essentially determines the dispalcment vector between the start and goal
 position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">IMAGE</span><span class="o">**</span>
-</pre></div>
+<div class="figure align-center">
+<img alt="_images/get_via_points.jpg" src="_images/get_via_points.jpg" />
 </div>
 <p>While much of this sampling computation can be accomplished using the the <code class="docutils literal notranslate"><span class="pre">compute_cartesian_path()</span></code>, it gives up addtional flexibility and control over the positon
 of waypoints, and always use to break up the movment into smaller chunkcs. Once <code class="docutils literal notranslate"><span class="pre">via_points</span></code> have been obtained, it time to plan a path through the determined points.
@@ -443,9 +444,10 @@ a desired gripper width to a topic that is being read by a controller on the fra
 <div class="section" id="move-towards">
 <h3>Move towards<a class="headerlink" href="#move-towards" title="Permalink to this headline">¶</a></h3>
 <p>Move towards is the other main motion function called in <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>. The mechanics through which it moves remain the same as described previously. After a few layer of functions,
-it calls the exact same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function. The difference in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is how the way points are selected. Pictorall what happens when you call the function is as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">**</span><span class="n">INSERT</span> <span class="n">DIAGRAM</span> <span class="n">OF</span> <span class="n">MOVE</span> <span class="n">TOWARDS</span><span class="o">**</span>
-</pre></div>
+it calls the exact same <code class="docutils literal notranslate"><span class="pre">move_arm()</span></code> function. The difference in <code class="docutils literal notranslate"><span class="pre">move_towards()</span></code> is how the way points are selected.
+Pictorall what happens when you call the function is as follows:</p>
+<div class="figure align-center">
+<img alt="_images/move_towards.jpg" src="_images/move_towards.jpg" />
 </div>
 <p>Stepping through the function you will see exactly this behaviour implemented. First the closest points on the circular
 to the goal and start location are determined. These will become the entry and exit points to the circle:</p>

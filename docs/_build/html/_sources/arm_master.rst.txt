@@ -133,9 +133,10 @@ It is queried using a target end effector position of where the pick up will hap
 ``[x, y, z, rot_x, rot_y, rot_z]`` list) and a ``via_offset`` parameter which determines how high the above the brick it travels before
 lowering and picking it up.
 
-Pictorially the function of ``pick_up()`` looks like ::
+Pictorially the function of ``pick_up()`` looks like:
 
-**INSERT IMAGE**
+.. figure::  imgs/pick_up.jpg
+   :align:   center
 
 first ``move_arm(via_point)`` is called. This calls the function::
 
@@ -190,10 +191,10 @@ Depdning on wether your running on the real robot or gazebo, how the plan is exe
 First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
 `` plan_cartesian_path(goal,resolution = 1)`` which then calls ``get_via_points(curr_pos,goal,res=resolution)``. ``get_via_points()`` is function
 defined in the ``arm_server_functions.py`` files. ``get_via_points()`` essentially determines the dispalcment vector between the start and goal
-position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows::
+position and then samples vectors along the same direction at various resolutions. Pictorally the operation is as follows:
 
-**INSERT IMAGE**
-
+.. figure::  imgs/get_via_points.jpg
+   :align:   center
 
 While much of this sampling computation can be accomplished using the the ``compute_cartesian_path()``, it gives up addtional flexibility and control over the positon
 of waypoints, and always use to break up the movment into smaller chunkcs. Once ``via_points`` have been obtained, it time to plan a path through the determined points.
@@ -271,9 +272,12 @@ Move towards
 +++++++++++++++
 
 Move towards is the other main motion function called in ``arm_master_main.py``. The mechanics through which it moves remain the same as described previously. After a few layer of functions,
-it calls the exact same ``move_arm()`` function. The difference in ``move_towards()`` is how the way points are selected. Pictorall what happens when you call the function is as follows::
+it calls the exact same ``move_arm()`` function. The difference in ``move_towards()`` is how the way points are selected.
+Pictorall what happens when you call the function is as follows:
 
-**INSERT DIAGRAM OF MOVE TOWARDS**
+.. figure::  imgs/move_towards.jpg
+   :align:   center
+
 
 Stepping through the function you will see exactly this behaviour implemented. First the closest points on the circular
 to the goal and start location are determined. These will become the entry and exit points to the circle::

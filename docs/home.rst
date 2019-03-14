@@ -2,7 +2,7 @@
 DE3 Robotics Project
 ========================
 
-.. figure::  arm_with_brick.jpg
+.. figure::  imgs/arm_with_brick.jpg
    :align:   center
 
 This Robotics project took place at the Dyson School of Engineering at the start of 2019.
@@ -42,6 +42,12 @@ future, advanced robot programming techniques such as using AR will become more 
 
 `Setting up and running code`_
 
+Presentation
+-------------
+
+`Robot demo presentation slides`_
+
+
 
 .. _team git repo: https://github.com/de3-robo
 .. _arm_master: https://github.com/de3-robo/arm_master
@@ -53,3 +59,4 @@ future, advanced robot programming techniques such as using AR will become more 
 .. _Robot building wall in simulation: https://github.com/de3-robo/brick_manager
 .. _Robot building wall in real-life: https://github.com/de3-robo/spawn_mnger
 .. _Setting up and running code: https://github.com/de3-robo/de_msgs
+.. _Robot demo presentation slides: https://github.com/de3-robo/de_msgs
