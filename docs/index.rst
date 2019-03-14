@@ -9,6 +9,7 @@ Welcome to DE3-Panda-Wall's documentation!
    home
    getting_start
    arm_master
+   brick
    spawn_doc
    gazebo_problems
    real_panda
