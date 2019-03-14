@@ -113,11 +113,11 @@ Gazebo and Moveit robot, but we do not wait for the Moveit robot to finish its p
 Getting our code to run on the real robot was a trial and error process. Here we outline some of the changes and learnings we made in the hope that you will not
 have to make the same mistakes.
 
-More tweaks in franka_ros
+More Tweaks in franka_ros
 ---------------------------------------
 
 A number of tweaks where made in order enable to panda arm to move successfully. Straight out of the box, the robot was performing extremely sub-optimally.
-It's motion was extremely slow, yet it was still returning ``acceleration discontinuity`` errors because supposedly it was moving to fast. This initial testing was done using the provided
+Its motion was extremely slow, yet it was still returning ``acceleration discontinuity`` errors because supposedly it was moving to fast. This initial testing was done using the provided
 ``joint_position_example_controller.cpp``.
 
 We then switched to using the ``joint_velocity_example_controller.cpp`` and made small modifications to the file. The robot moved noticeably faster. This gave us hope that the current robot limitations where programmatic
@@ -134,7 +134,7 @@ Ultimately the most meaningful change was in ``franka_hw/src/franka_hw.cpp``. He
     auto cutoff_frequency = get_cutoff_frequency_()*10;
 
 
-During initial testing, this seemed to actually let the panda robot to move without the controllers dying. In final testing, we noticed the Panda PID would often begin to randomly diverge.
+During initial testing, this seemed to actually let the panda robot move without the controllers dying. In final testing, however, we noticed the Panda PID would often begin to randomly diverge.
 While we kept these changes in our deployed code, in hindsight, the PID problem was probably caused by these changes.
 
 .. warning::

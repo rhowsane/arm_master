@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Brick Manager Server &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  <title>Brick Manager Package &mdash; DE3-Panda-Wall 1.0 documentation</title>
   
 
   
@@ -84,18 +84,18 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Brick Manager Server</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Brick Manager Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#file-structure">File Structure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#retrieving-a-new-brick">Retrieving a new brick</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#wall-building-functions">Wall-building functions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-first-function-goal-manager-server">The First Function: goal_manager_server()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-second-function-goal-manager-server2">The Second Function: goal_manager_server2()</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#the-third-function-goal-manager-server3">The Third Function: goal_manager_server3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-third-function-goal-manager-server3">The Third Function: goal_manager_server3()</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#samrowan-py">SamRowan.py</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">de_msgs Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">De_Msgs Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -145,7 +145,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Brick Manager Server</li>
+      <li>Brick Manager Package</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,8 +164,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="brick-manager-server">
-<h1>Brick Manager Server<a class="headerlink" href="#brick-manager-server" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="brick-manager-package">
+<h1>Brick Manager Package<a class="headerlink" href="#brick-manager-package" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">Brick_Manager</span></code> is the <em>ROS Package</em> which tells the Panda arm executing the script <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code> where it should be retrieving a new brick, and where each of the bricks should be placed. As a brief summary,
 the function being used asks for the number of the brick being placed, finds the coordinates and orientation the end effector needs to place that brick and
 sends it back to Arm Master.</p>
@@ -306,7 +306,7 @@ establish the size the wall will be built to and give tolerances to the brick po
 this does sound like a lot it is all simply definitions for the generative alogorithm.</p>
 </div>
 <div class="section" id="the-third-function-goal-manager-server3">
-<h2>The Third Function: goal_manager_server3<a class="headerlink" href="#the-third-function-goal-manager-server3" title="Permalink to this headline">¶</a></h2>
+<h2>The Third Function: goal_manager_server3()<a class="headerlink" href="#the-third-function-goal-manager-server3" title="Permalink to this headline">¶</a></h2>
 <p>The final function, <code class="docutils literal notranslate"><span class="pre">goal_manager_server3()</span></code> works in the same way as <code class="docutils literal notranslate"><span class="pre">goal_manager_server2()</span></code> in the sense it generates the wall coordinates as it goes.
 This section will simply talk about the differences in generation technique and the resulting shape.</p>
 <p>The generative for loop is shown below:</p>
