@@ -92,7 +92,7 @@ def move_arm_a_to_b(goal): #move very short distance
     group.set_planning_time(4)
     (plan, fraction) = group.compute_cartesian_path(
                                        waypoints,   # waypoints to follow
-                                       0.02,        # eef_step
+                                       0.001,        # eef_step - LOWER THIS WHEN using GAZEBO ROBOT
                                        2)         # jump_threshold
     # rospy.loginfo(goal)
 
@@ -153,7 +153,7 @@ def slow_down(traj):
     n_joints = len(traj.joint_trajectory.joint_names)
     n_points = len(traj.joint_trajectory.points)
 
-    spd = 0.8
+    spd = 0.2 # Lower this when using the Gazebo Robot
 
     for i in range(n_points):
         new_traj.joint_trajectory.points[i].time_from_start = traj.joint_trajectory.points[i].time_from_start / spd
@@ -220,7 +220,7 @@ def move_arm_handler(req):
 
             execute(plan)
         else: #Running on real panada
-            # plan = slow_down(plan)
+            plan = slow_down(plan)
             print("EXECUTING PLAN ON REAL ROBOT")
 
             group.execute(plan, wait=True)
@@ -230,7 +230,7 @@ def move_arm_handler(req):
 
     return True
 
-def execute(plan, freq=100): #freq in hz
+def execute(plan, freq=140): #freq in hz
     """Executes plan on gazebo robot
 
       Uses ``rospy.Publisher('/franka/joint1_position_controller/command')`` to send desired joint positions to gazebo robot.
