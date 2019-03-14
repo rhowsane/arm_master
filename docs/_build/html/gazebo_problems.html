@@ -93,6 +93,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">Welcome to DE3-Panda-Wall’s documentation!</a></li>
 </ul>
 
             
@@ -182,9 +183,18 @@ in the menu on the left hand side.</p>
 using the <code class="docutils literal notranslate"><span class="pre">rqt_reconfigure</span></code> window. It soon became clear that this would be impractical for tuning all 7 joints.</p>
 <p>We decided to take a more disciplined approach and tune each joint in isolation. For this process we worked from the end effector down to the robot
 base. To start we locked all the joints bellow the joint in question and set the joints <em>PID</em> constants to zero. We would then send a joint signal in a characteristic square wave to visually
-characterize the joint behavior to perturbations. <em>P</em> would be increased until the joint had minimal overshoot and small oscillations. We would then add
+characterize the joint behavior to perturbations:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sq_wave</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">const</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">f</span> <span class="o">*</span> <span class="n">t</span>
+    <span class="n">delta_angle</span> <span class="o">=</span> <span class="p">(</span><span class="mi">4</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">const</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">const</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="n">const</span><span class="p">)</span><span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">7</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">7</span><span class="o">*</span><span class="n">const</span><span class="p">))</span>
+    <span class="c1"># delta_angle = np.sin(np.pi*f*t)</span>
+    <span class="k">return</span> <span class="n">delta_angle</span>
+</pre></div>
+</div>
+<p><em>P</em> would be increased until the joint had minimal overshoot and small oscillations. We would then add
 sufficient <em>D</em> till the joint was critically damped. This worked for the first 2 joints but the maximum <em>P</em> constant in the
-dynamic tuning window was limited and were not able to continue increasing <em>P</em> to a suitable level. The reason for requiring such a high <em>P</em> was most likely
+dynamic tuning window was limited and were not able to continue increasing <em>P</em> to a suitable level for the lower larger joints. The reason for requiring such a high <em>P</em> was most likely
 due to modelling errors in the physical simulation</p>
 <p>Ultimately we returned to the default values found in <code class="docutils literal notranslate"><span class="pre">franka_gazebo</span></code> package. Using these values as a starting point we added a small amount of
 <em>I</em> gain because we noticed that the end effector had trouble converging on the commanded position. The resulting performance was sufficiently to accurate
@@ -219,27 +229,27 @@ its grip effectively.</p>
 </pre></div>
 </div>
 <p>We increased <code class="docutils literal notranslate"><span class="pre">&lt;mu&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;mu2&gt;</span></code> parameters. These are the static friction co-efficients used by the physics engine.</p>
-<p>We increased <code class="docutils literal notranslate"><span class="pre">&lt;kp&gt;</span></code> to increase the stiffness of the collision and increased <code class="docutils literal notranslate"><span class="pre">&lt;kd&gt;</span></code> to add dampening. I</p>
+<p>We increased <code class="docutils literal notranslate"><span class="pre">&lt;kp&gt;</span></code> to increase the stiffness of the collision and increased <code class="docutils literal notranslate"><span class="pre">&lt;kd&gt;</span></code> to add dampening.</p>
 <p>Perhaps most importantly we set <code class="docutils literal notranslate"><span class="pre">&lt;max_vel&gt;</span></code> to a value larger then 0, and <code class="docutils literal notranslate"><span class="pre">&lt;min_depth&gt;</span></code> to a reasonable value. All bodies in Gazebo are soft, so when they collide there is
 always some penetration past the surface boundary line. This is motion is counteracted a spring force. <code class="docutils literal notranslate"><span class="pre">&lt;max_vel&gt;</span></code> is the maximum velocity that an object can reach as
 a result of that spring force. In earlier testing when we had wrongly tuned this parameter to zero, bricks would sink through the floor and continuing to vibrate indefinitely
-upon being dropped.</p>
+upon being dropped. This <em>unrealistic</em> value seems to break the physics engine.</p>
 <p>The total sum of these improvements allowed the brick to be grasped more effectively, and were less likely to slip from Panda’s
 gripper.</p>
 </div>
 <div class="section" id="gripper-friction-friction-issues">
 <h2>Gripper Friction friction issues<a class="headerlink" href="#gripper-friction-friction-issues" title="Permalink to this headline">¶</a></h2>
-<p>Friction is a function of both surfaces in contact. It wasn’t enough to just fix the brick, we also needed to consider the gripper.</p>
-<p>Before considering fiction we first addressed the fact that the gripper didn’t open wide enough to pick up the brick. We fixed this by editing the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file in the
+<p>Friction is a function of both surfaces in contact. Thus it wasn’t enough to just fix the brick, we also needed to consider the gripper.</p>
+<p>Before considering fiction, however, we first addressed the fact that the gripper didn’t open wide enough to pick up the brick. We fixed this by editing the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file in the
 <code class="docutils literal notranslate"><span class="pre">franka_gazebo</span></code> package. Here we increased the maximum joint limit to give the gripper a 0.12 m span:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">limit</span> <span class="n">effort</span><span class="o">=</span><span class="s2">&quot;400&quot;</span> <span class="n">lower</span><span class="o">=</span><span class="s2">&quot;-0.001&quot;</span> <span class="n">upper</span><span class="o">=</span><span class="s2">&quot;0.06&quot;</span> <span class="n">velocity</span><span class="o">=</span><span class="s2">&quot;0.1&quot;</span><span class="o">/&gt;</span>
 </pre></div>
 </div>
 <p>Knowing that friction is a function of normal force, we increased the maximum allowable effort here as well. Never the less, while the gripper could
-now open wide enough to pick up the brick, it wasn’t enough friction to hold on.</p>
+now open wide enough to pick up the brick, there wasn’t enough friction to hold on.</p>
 <p>Specifically we noticed that the gripper seemed to lack torsional friction. When it picked up the brick directly around the center of mass, the brick would
 stay in longer. However, when it pick it up at an offset it would quickly rotate out.</p>
-<p>In order to fix this issue we changed the torsion friction parameters of the gripper. Agian in the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file we added the following code to
+<p>In order to fix this issue we changed the torsion friction parameters of the gripper. Again in the <code class="docutils literal notranslate"><span class="pre">hand.xacro</span></code> file we added the following code to
 overwrite the default:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;gazebo reference=&quot;${ns}_leftfinger&quot;&gt;
   &lt;mu1&gt;100&lt;/mu1&gt;
@@ -256,10 +266,9 @@ overwrite the default:</p>
         &lt;surface_radius&gt;0.1&lt;/surface_radius&gt;
 </pre></div>
 </div>
-<p>While we extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistent pick up the brick.
-While these changes didn’t necessary reflect reality, we felt validated as we knew in practice, the brick would not fall out of the gripper. This belief was
+<p>While extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistently pick up the brick.
+These changes didn’t necessary reflect reality, but we felt validated as we knew in practice the brick would not fall out of the gripper. This belief was
 eventually confirmed when we ran our simulated robot on the real Franka Panda.</p>
-<p>Issues with publishing, so we needed to add namespaces.</p>
 </div>
 </div>
 

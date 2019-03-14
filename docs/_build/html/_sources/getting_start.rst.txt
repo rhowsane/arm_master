@@ -87,8 +87,8 @@ You should now see in addition to your ``src`` folder, ``build``, ``devel`` and 
     development you will not need to re-source your workspace, especially when writing python scripts. You are required,
     however to re-source your workspace when creating new packages or messages.
 
-    As a rule of thumb, if ROS commands like ``roscd`` aren't working, and your getting ``module not found`` errors when
-    you try to import custom messages: also re-source your workspace.
+    As a rule of thumb, if ROS commands like ``roscd`` aren't working, and you are getting ``module not found`` errors when
+    you try to import custom messages, try and also re-source your workspace.
 
 .. note::
     In the setup we added the following code to your ``.bashrc``
@@ -102,7 +102,7 @@ You should now see in addition to your ``src`` folder, ``build``, ``devel`` and 
     and ROS will update it self. If you decide to continue working in the same terminal session, however, you will need to run the aforementioned code.
 
 
-Congrats, you have created and built your ROS workspace. In the ``src`` folder is where you now will install all relevant ROS packages.
+Congrats, you have created and built your ROS workspace! In the ``src`` folder is where you now will install all relevant ROS packages.
 
 .. _documentation: https://catkin-tools.readthedocs.io/en/latest/installing.html
 
@@ -144,7 +144,7 @@ to make sure its working
 
      catkin build
 
-If it worked, Great job!
+If it worked, great job!
 
 
 Installing 3rd Party Packages
@@ -205,12 +205,20 @@ Download the code from the following `table repo`_ into your computer:
 * Move file ``wall_table_world.launch`` into ``/opt/ros/kinetic/share/gazebo_ros/launch`` directory. Make sure to enter in your correct ROS version.
 * Move file ``wall_table.world`` into ``/usr/share/gazebo-9/worlds`` directory.
 
-If you made it this far your doing great! Lets run the code now
+If you made it this far, you're doing great! Lets run the code now.
 
-Running the Code
--------------------
+Running the Code in Gazebo simulation
+---------------------------------------
 
-All the code can be run by 3 launch files located in the ``arm_master`` package. Make sure to run the code in order listed.
+.. warning::
+
+    This assumes that you already have Gazebo installed within Ubuntu / virtual machine.
+
+We will now go through how to launch the actual simulation in Gazebo, which is a virtual simulation with laws of physics
+applied to objects within the environment, such as the Panda arm and bricks. This allows for the code to be safely tested
+in an environment with no risk of physical damage, before it is actually run on a real robot.
+
+All the code can be run by 3 launch files located in the ``arm_master`` package. **Make sure to run the code in order listed.**
 In 3 separate terminals *copy-paste* the following commands:
 
 .. code-block:: bash
@@ -250,7 +258,7 @@ In 3 separate terminals *copy-paste* the following commands:
 Additional Resources
 -----------------------------
 
-Great `intro to ROS`_ by ETHz Automous Systems Lab
+Great `intro to ROS`_ by ETHz Autonomous Systems Lab
 
 API reference for `python movegroup interface`_, (has all the useful command you need for using MoveIt with python):
 
