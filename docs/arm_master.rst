@@ -290,7 +290,7 @@ The ``move_arm_a_to_b()`` function utilises *MoveIt* to solve IK along the desir
  wpose = group.get_current_pose().pose
 
 It then reads the desired end effector position, passed in as ``goal``, which is defined with euler angles (``[x, y, z, roll, pitch, yaw]``), and changes it to a quaternion representation
-(``[x, y, z, X, Y, Z, W]``). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 separate rotations around
+(``[x, y, z, X, Y, Z, W]``). The quaternion representation is equivalent to the euler angles, but rather than represent a rotation with 3 separate rotations around
 linearly independent axis, a 4D vector is used. This 4D vector has advantages in that it doesn't degenerate and reach singularities in certain rotation sequences, and
 thus can be seen as more general. That said, it is not intuitive to work with quaternion's. All poses in our code-base are encoded with the Euler description and transformed to
 a quaternion at the last moment using the ``tf.transformations`` function.
