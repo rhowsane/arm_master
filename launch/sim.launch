@@ -1,10 +1,9 @@
 <launch>
-  <!-- <include file="$(find gazebo_ros)/launch/wall_table_world.launch"/>  -->
-  <!--wall_table_world file is not on Zach's Computer so use empty world-->
-  <include file="$(find gazebo_ros)/launch/wall_table_world.launch">
-    <!-- <arg name="use_sim_time" value="true"/> -->
-  </include>
+
+  <include file="$(find gazebo_ros)/launch/wall_table_world.launch"/>
+
   <include file="$(find franka_gazebo)/launch/panda_arm_hand.launch"/>
+
   <node name="gen_brick" pkg="spawn_mnger" type="spawn.py" output="screen"/>
 
 </launch>

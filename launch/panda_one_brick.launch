@@ -1,17 +1,5 @@
 <launch>
-  <!-- <group ns="move_sim"> -->
-  <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch"/> -->
+
   <include file="$(find panda_moveit_config)/launch/demo.launch"/>
-  <!-- </group> -->
-
-  <!-- <include file="$(find franka_gazebo)/launch/panda_arm_hand.launch"/> -->
-
-  <!-- <node name="move_arm_server" pkg="arm_master" type="move_arm_server.py" output="screen"/> -->
-  <!-- <node name="move_brick" pkg="move_one_brick" type="move_brick_server.py" output="screen"/> -->
-  <!-- <node name="main" pkg="move_one_brick" type="main.py" output="screen"/> -->
-
-  <!-- <node name="gripper" pkg="franka_gazebo" type="gripper_publisher.py" output="screen"/> -->
-  <!-- <node name="move_it_to_gazebo" pkg="arm_master" type="panda_publisher.py" output="screen"/> -->
-
 
 </launch>

@@ -1,14 +1,8 @@
 <launch>
 
-
-  <!-- <group ns="move_sim"> -->
     <node name="move_arm_server" pkg="arm_master" type="move_arm_server.py" output="screen"/>
     <node name="main" pkg="arm_master" type="arm_master_main.py" output="screen"/>
-    <node name="brick_manager_server" pkg="arm_master" type="brick_manager_server.py" output="screen"/>
+    <node name="brick_manager_server" pkg="brick_manager" type="brick_manager_server.py" output="screen"/>
     <node name="check_dropped" pkg="arm_master" type="dropped_checker_server.py" output="screen"/>
-
-  <!-- </group> -->
-  <!-- <node name="panda_publisher" pkg="arm_master" type="panda_publisher.py" output="screen"/> -->
-
 
 </launch>

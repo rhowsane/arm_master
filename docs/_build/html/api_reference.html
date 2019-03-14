@@ -1,0 +1,629 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to DE3-Panda-Wall’s documentation! &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DE3-Panda-Wall
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DE3-Panda-Wall</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Welcome to DE3-Panda-Wall’s documentation!</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api_reference.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="welcome-to-de3-panda-wall-s-documentation">
+<h1>Welcome to DE3-Panda-Wall’s documentation!<a class="headerlink" href="#welcome-to-de3-panda-wall-s-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Here is more detailed information for the specific motion functions. Vist the <span class="xref std std-doc">../api_reference.rst</span> API Reference section of the documentation for more information</p>
+<div class="section" id="module-scripts.arm_master_main">
+<span id="arm-master-main-functions"></span><h2>arm_master_main Functions<a class="headerlink" href="#module-scripts.arm_master_main" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scripts.arm_master_main.check_dropped">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">check_dropped</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.check_dropped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if brick is dropped</p>
+<p>Calls holding_brick service which checks the width of gripper and compares it to the expected width</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True if gripper closer together then expect (means brick has fallen). False otherwise.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.close_gripper">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">close_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.close_gripper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes robot gripper</p>
+<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
+grip width to <em>/franka/gripper_width</em> topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.connect_srv">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">connect_srv</code><span class="sig-paren">(</span><em>name</em>, <em>msg_type</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.connect_srv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function to connect to services</p>
+<p>Connects to service with queried name. Will wait for service to be available and print status updates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) – name of service.</li>
+<li><strong>msg_type</strong> (<em>str</em>) – msg_type of the service.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">returns function object which wraps requested service</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">func</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.gen_brick">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">gen_brick</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.gen_brick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates brick in Gazebo. See Spawn Manager Package for more details</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_brick_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_brick_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_brick_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries location to pick up brick</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_goal_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_goal_pos</code><span class="sig-paren">(</span><em>placed</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_goal_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries location to place brick</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_home_pos">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_home_pos</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_home_pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries home location to return too</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.get_num_bricks">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">get_num_bricks</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.get_num_bricks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries number of bricks panda should place</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.go_to">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">go_to</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.go_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move end effector to pos location in a straight line</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_arm">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move arm to queried position</p>
+<p>This function calls the move arm service defined in move_arm_server.py. Arm will move following a cartesian path between its current
+position and the desired position.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of wether it was succesful enough.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_arm_curve">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_arm_curve</code><span class="sig-paren">(</span><em>pos</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_arm_curve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move end effector to queried position</p>
+<p>This function calls the move arm curved service defined in move_arm_server.py. The Arm will execute a RRT planner to
+determine a path from its current position to the desired location. Helpful when as it does not</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pos</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z].</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion of arm completes, regardless of whether it was successful or not.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.move_towards">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">move_towards</code><span class="sig-paren">(</span><em>start</em>, <em>end</em>, <em>round_way_points</em>, <em>check=False</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.move_towards" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move arm towards end location following way points around a virtual circle centered on the robot</p>
+<p>Moves end effector towards a desired goal position by following circular way points along circle centered at panda base.
+Important, to avoid moving arm into the robot as moveit compute cartesian path does not account for joint limits.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector way point close to the current position of robot.</li>
+<li><strong>end</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. Desired end effector pose.</li>
+<li><strong>round_way_points</strong> (<em>dict</em>) – dict[point_id] = (pos, neighbour). pos and neighbour are of the following form:</li>
+<li><strong>=</strong><strong> [</strong><strong>x_pos</strong><strong>, </strong><strong>y_pos</strong><strong>, </strong><strong>z_pos</strong><strong>]</strong><strong>, </strong><strong>neighbour =</strong><strong> [</strong><strong>left_id</strong><strong>, </strong><strong>right_id</strong><strong>]</strong><strong> Intermediate points to travel between start and end.</strong> (<em>pos</em>) – </li>
+<li><strong>check</strong> (<em>bool</em>) – Set true to check if robot has dropped the brick during movement.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">The return value. True for success, False otherwise.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.open_gripper">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">open_gripper</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.open_gripper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Opens robot gripper</p>
+<p>If using <code class="docutils literal notranslate"><span class="pre">real_panda</span></code> then call move gripper action server. If using gazebo then publish desired
+grip width to <em>/franka/gripper_width</em> topic.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">returns True when done.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.orientation_correct">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">orientation_correct</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.orientation_correct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Corrections so that the end effector is aligned as expect. New default is facing downwards
+with gripper opening along y-axis</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.pick_up">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">pick_up</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.3</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.pick_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pick up brick at target location</p>
+<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
+to target and closes the gripper. Finally moves arm back up to offset location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
+<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_master_main.place_down">
+<code class="descclassname">scripts.arm_master_main.</code><code class="descname">place_down</code><span class="sig-paren">(</span><em>target</em>, <em>via_offset=0.05</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_master_main.place_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Place down brick at target location</p>
+<p>First moves the arm to a way point a set offset above the target location (set by <code class="docutils literal notranslate"><span class="pre">via_offset</span></code>). Then lowers end-effector
+to target and opens the gripper. Finally moves arm back up to offset location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>target</strong> (<em>list</em>) – [x, y, z, rot_x, rot_y, rot_z]. End effector target position</li>
+<li><strong>via_offset</strong> (<em>float</em>) – z-offset for way point to reach before going to target location</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True when motion of arm completes, regardless of whether it was successful or not.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scripts.move_arm_server">
+<span id="move-arm-server-functions"></span><h2>move_arm_server Functions<a class="headerlink" href="#module-scripts.move_arm_server" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scripts.move_arm_server.execute">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">execute</code><span class="sig-paren">(</span><em>plan</em>, <em>freq=140</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes plan on gazebo robot</p>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">rospy.Publisher('/franka/joint1_position_controller/command')</span></code> to send desired joint positions to gazebo robot.
+Publishers publish at the <code class="docutils literal notranslate"><span class="pre">freq</span></code> rate</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>Args:</dt>
+<dd>plan (RobotTrajectory): Standard ROS message type from moveit_msgs.msg
+freq (int): Rate at which to publish desired joint angles</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.move_arm_server.move_arm_a_to_b">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_a_to_b</code><span class="sig-paren">(</span><em>goal</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_a_to_b" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the arm from the current position to goal position</p>
+<p>This function generates cartesian waypoints between the robots current position in move it and its desired
+goal location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>goal</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</li>
+<li><strong>resolution</strong> (<em>int</em>) – Nodes per meter of circular path. Describes density of the waypoints</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="docutils literal notranslate"><span class="pre">[[pos1,</span> <span class="pre">pos2,</span> <span class="pre">pos3,...]]</span></code>. Returns list with intepolated end effector positions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.move_arm_server.move_arm_curve_handler">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_curve_handler</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_curve_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plans and executes path to requested end effector position</p>
+<p>Plans path using rrt algorithm to desired end effector position. This is then exectued in moveit. <code class="docutils literal notranslate"><span class="pre">set_max_acceleration_scaling_factor</span></code> and
+<code class="docutils literal notranslate"><span class="pre">set_max_velocity_scaling_factor</span></code> scale the speed of the movement. Code is blocked until motion completes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>req</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when done, regardless if succesful or not</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.move_arm_server.move_arm_handler">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">move_arm_handler</code><span class="sig-paren">(</span><em>req</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.move_arm_handler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves end effector in straight line to request position</p>
+<p>This handlers performs the necessary work to move the arm to pick up a brick. <code class="docutils literal notranslate"><span class="pre">set_goal_position_tolerance</span></code> are set to ensure that the arm doesn’t stop
+moving until it has completly reached the <cite>req</cite> position. If using real robot, then <code class="docutils literal notranslate"><span class="pre">group.execute(plan,</span> <span class="pre">wait=True)</span></code> is called (you wait for the moveit to finish, beacuse it is
+mirror the real robot). If using gazebo, then <code class="docutils literal notranslate"><span class="pre">group.execute(plan,</span> <span class="pre">wait=False)</span></code> is used. Here gazebo and moveit run completly independetly, so you do not want to wait for the
+moveit robot to finish its motion before calling <code class="docutils literal notranslate"><span class="pre">execute(plan)</span></code> to move the gazebo robot.</p>
+<p>Note that when using gazebo it is important that the MoveIt robot finishes first. To ensure this, lower the freqeuncy that messages are published in <code class="docutils literal notranslate"><span class="pre">execute()</span></code> and/or further slow
+down the trajectory in <code class="docutils literal notranslate"><span class="pre">slow_down()</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>req</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. End effector goal location</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True when motion is completed, regardless of success</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">bool</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.move_arm_server.plan_cartesian_path">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">plan_cartesian_path</code><span class="sig-paren">(</span><em>goal</em>, <em>resolution=1</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.plan_cartesian_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample points between current pose and goal pos at set resolution</p>
+<p>This function generates cartesian waypoints between the robots current position in move it and its desired
+goal location.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>goal</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Desired end effector goal</li>
+<li><strong>resolution</strong> (<em>int</em>) – Nodes per meter of circular path. Describes density of the waypoints</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><code class="docutils literal notranslate"><span class="pre">[[pos1,</span> <span class="pre">pos2,</span> <span class="pre">pos3,...]]</span></code>. Returns list with intepolated end effector positions</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.move_arm_server.slow_down">
+<code class="descclassname">scripts.move_arm_server.</code><code class="descname">slow_down</code><span class="sig-paren">(</span><em>traj</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.move_arm_server.slow_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slows down an exiting move it carestian path trajectory</p>
+<p>Slows down a moveit trajectory by a factor defined in <code class="docutils literal notranslate"><span class="pre">spd</span></code>. Iterates through all points in trajectory and scales the following
+variables: <code class="docutils literal notranslate"><span class="pre">time_from_start</span></code>, <code class="docutils literal notranslate"><span class="pre">accelerations</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>traj</strong> (<em>RobotTrajectory</em>) – Standard ROS message type from moveit_msgs.msg</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">identical but slow downed RobotTrajectory object</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">RobotTrajectory</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scripts.arm_server_functions">
+<span id="arm-server-functions-functions"></span><h2>arm_server_functions Functions<a class="headerlink" href="#module-scripts.arm_server_functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="scripts.arm_server_functions.get_via_points">
+<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">get_via_points</code><span class="sig-paren">(</span><em>start</em>, <em>goal</em>, <em>res=5</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.get_via_points" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sampled points between two end effector positions</p>
+<p>Via points functions to further discretize a tracjectory. It first calculates the diplacement vector between
+points <code class="docutils literal notranslate"><span class="pre">start</span></code> and <code class="docutils literal notranslate"><span class="pre">goal</span></code>. It then samples along that vector direction an amount defined by <code class="docutils literal notranslate"><span class="pre">res</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>start</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Starting end effector position</li>
+<li><strong>end</strong> (<em>list</em>) – <code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code>. Goal end effector position</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Returns list of end effector poses between the two desired location. The number of entries in the list
+is given by <code class="docutils literal notranslate"><span class="pre">res</span></code>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">list</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_server_functions.point2quat">
+<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">point2quat</code><span class="sig-paren">(</span><em>p</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.point2quat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts end effector position in euler to quaterion domain</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_server_functions.pose_e2array">
+<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">pose_e2array</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.pose_e2array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts euluer end effector position to a list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_server_functions.pose_q2array">
+<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">pose_q2array</code><span class="sig-paren">(</span><em>pose</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.pose_q2array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts quaterion end effector position to a list</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="scripts.arm_server_functions.quat2point">
+<code class="descclassname">scripts.arm_server_functions.</code><code class="descname">quat2point</code><span class="sig-paren">(</span><em>q</em><span class="sig-paren">)</span><a class="headerlink" href="#scripts.arm_server_functions.quat2point" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts end effector position in quaterion to euler domain</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Zachary Yamaoka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -20,8 +20,84 @@ Returns:
 
 """
 
+``[x, y, z, rot_x, rot_y, rot_z]``
+
+
 """
 roslaunch franka_gripper franka_gripper.launch robot_ip:=192.168.0.88
 roslaunch move_to_start.launch robot_ip:=192.168.0.88
 
 """
+
+
++ finish documenting source code 15
++ write up 30
++ get it all on read the docs 15
+
+y detailed documentation,
+describing all theoretic and
+implementation aspects of the
+project. Includes not only
+explanations about the successful
+achievements, but also about the
+failed attempts during the project
+(i.e. what worked and what didn’t
+work).
+
+
+
+
+
++ make graphics for pages
++ format
++running on gazebo
++ talk about the namespace issue with rqt_graph
++ film video
++ friction set up
+
+
+
+Go through and format code and publish/push - Do this so I set up the team who will be getting up soon.
+
+
+
+more content (1hr)
+rest (1hr)
+run()
+Add dropped checked to documentation
+
+
++ go through and format all pages and add photos ect.... of going through the process and off your own screen
+
+
+
+OVER ALL PLAN:
+
+- Film setup with Gazebo all the way throug
+- Finish up and content what is existing (run on real robot and arm amster main)
+
+- Write part about testing on Gazebo
+
+- Get team mates to write comments on code
+- Check links on front page
+- share github with team mates and get them to proof read each one and then push back
+
+
+
+
+
+
+
+
+
+
++ IN SCHOOL TOMMROW GET MOST RECENT PANDA MOVE IT CONFIG AND PUSH IT TO YOUR CODE
+
+
+
+
+- Edited documentation
+- Video on running code
+- Getting Code working on gazebo
+- Automated API calls in documentation
+

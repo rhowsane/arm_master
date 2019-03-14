@@ -6,9 +6,10 @@ Welcome to DE3-Panda-Wall's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   home
+   getting_start
    arm_master
-   spawn_manager_test
-
+   real_panda
 
 Indices and tables
 ==================

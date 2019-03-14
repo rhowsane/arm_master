@@ -4,6 +4,7 @@
 import rospy
 import time
 import numpy as np
+import copy
 
 # Import action lib.
 import actionlib
@@ -20,7 +21,6 @@ from de_msgs.srv import QueryNextPos, MoveArm, QueryBrickLoc, QueryBrickLocReque
 
 # Import custom helper functions
 from arm_utils import *
-from round_path import *
 from arm_master_functions import *
 
 # Services for Moving arm
@@ -125,7 +125,7 @@ def move_arm(pos):
     position and the desired position.
 
     Args:
-        pos (list): [x, y, z, rot_x, rot_y, rot_z].
+        pos (list): ``[x, y, z, rot_x, rot_y, rot_z]``.
 
     Returns:
         bool: True when motion of arm completes, regardless of wether it was succesful enough.
@@ -347,7 +347,7 @@ if __name__ == '__main__':
     circle_points = get_round_points()
 
     # ----------------------------------------------
-    real_panda = True
+    real_panda = False
     # ----------------------------------------------
 
     # Set up connections with services and topics
@@ -372,14 +372,6 @@ if __name__ == '__main__':
 
     # Service for checking if brick fell out of panda's hand
     holding_brick_wrapper = connect_srv('check_if_dropped', Trigger)
-
-    # Only run this Code if your using the real robot
-    if real_panda:
-        client_open = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-        client = actionlib.SimpleActionClient('/franka_gripper/move', MoveAction)
-
-        rospy.loginfo("Connectining")
-        client.wait_for_server()
 
     rate = rospy.Rate(1)
 
