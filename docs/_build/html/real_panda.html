@@ -84,9 +84,9 @@
 <li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">de_msgs Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">De_Msgs Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Running on Real Panda</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#changing-code">Changing Code</a></li>
@@ -177,7 +177,7 @@ rather then simulated robot. Unfortunately this is not the case with the Panda p
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">For this part of the project you will need to run on the computer in the robotics lab. It is connected to a <em>real time
-kernal</em> which allows its to communicate with the panda arm at an extremely high frequency.</p>
+kernal</em> which allows it to communicate with the panda arm at an extremely high frequency.</p>
 </div>
 <p>You may find that a workspace is already setup. In that case simply pull the ROS packages mentioned in the <strong>Setup</strong> section
 of the the documentation into the <code class="docutils literal notranslate"><span class="pre">src</span></code>. directory and build using what ever convention is used. (could potentially be <code class="docutils literal notranslate"><span class="pre">catkin_make</span></code>).</p>
@@ -195,76 +195,57 @@ If you want to have the identical setup to that used in this project, we recomme
 of <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> available on our repo. Changes made to the source code will be further described bellow.</p>
 </div>
 <p>As described in the <a class="reference external" href="https://frankaemika.github.io/docs/installation.html">Franka documentation site</a> there are a number of options for interfacing with the real Panda. Ultimately what worked
-for us was using doing the control through moveit. Included in the <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> package is already the code for making this work,
+for us was doing the control through <em>MoveIt</em>. Included in the <code class="docutils literal notranslate"><span class="pre">franka_ros</span></code> package is already the code for making this work,
 which greatly simplifies the process and means that you do not need to write a custom c++ controller or deal directly with
 <code class="docutils literal notranslate"><span class="pre">lib_franka</span></code>.</p>
 <div class="section" id="changing-code">
 <h2>Changing Code<a class="headerlink" href="#changing-code" title="Permalink to this headline">¶</a></h2>
-<p>The code is written such that only two variables need to be changed to switch from running on Gazebo to running on the real robot.
+<p>Our source code is written such that only two variables need to be changed to switch from running on <em>Gazebo</em> to running on the real robot.
 In <code class="docutils literal notranslate"><span class="pre">arm__master_main.py</span></code> and <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code> changed:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">real_panda</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </div>
 <p>This has a number of knock on effects which are automatically controlled by <code class="docutils literal notranslate"><span class="pre">if</span></code> statements in the code.</p>
-<p>In <code class="docutils literal notranslate"><span class="pre">arm__master_main.py</span></code>, the node no longer waits for the <code class="docutils literal notranslate"><span class="pre">/gen_brick</span></code> service which is only relevant to Gazebo:</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">arm__master_main.py</span></code>, the node no longer waits for the <code class="docutils literal notranslate"><span class="pre">/gen_brick</span></code> service which is only relevant to <em>Gazebo</em>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>
        <span class="n">gen_brick_wrapper</span> <span class="o">=</span> <span class="n">connect_srv</span><span class="p">(</span><span class="s1">&#39;/gen_brick&#39;</span><span class="p">,</span> <span class="n">Trigger</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>and behaviour in the <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> and <code class="docutils literal notranslate"><span class="pre">place_down()</span></code> function changes from publishing to a topic which is read by the simulated Gazebo robot,
-to calling a action server which is exposed by the actually Panda robot.</p>
-<blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    <span class="n">gen_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
+<p>and behaviour in the <code class="docutils literal notranslate"><span class="pre">open_gripper()</span></code> and <code class="docutils literal notranslate"><span class="pre">close_gripper()</span></code> function changes from publishing to a topic which is read by the simulated Gazebo robot,
+to calling a action server which is exposed by the actually Panda robot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">open_gripper</span><span class="p">():</span>
 
-
-<span class="k">def</span> <span class="nf">check_dropped</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Checks if brick is dropped</span>
-
-<span class="sd">    Calls holding_brick service which checks the width of gripper and compares it to the expected width</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        bool: True if gripper closer together then expect (means brick has fallen). False otherwise.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">asn</span> <span class="o">=</span> <span class="n">holding_brick_wrapper</span><span class="p">(</span><span class="n">TriggerRequest</span><span class="p">())</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="s2">&quot;ANSWERS: &quot;</span><span class="p">)</span>
-    <span class="n">rospy</span><span class="o">.</span><span class="n">loginfo</span><span class="p">(</span><span class="n">asn</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">asn</span><span class="o">.</span><span class="n">success</span>
-
-
-<span class="k">def</span> <span class="nf">get_brick_pos</span><span class="p">(</span><span class="n">placed</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Queries location to pick up brick&quot;&quot;&quot;</span>
-
+ <span class="k">if</span> <span class="n">real_panda</span><span class="p">:</span>
+     <span class="n">client</span> <span class="o">=</span> <span class="n">actionlib</span><span class="o">.</span><span class="n">SimpleActionClient</span><span class="p">(</span><span class="s1">&#39;/franka_gripper/move&#39;</span><span class="p">,</span> <span class="n">MoveAction</span><span class="p">)</span>
+     <span class="n">client</span><span class="o">.</span><span class="n">wait_for_server</span><span class="p">()</span>
+     <span class="n">goal</span> <span class="o">=</span> <span class="n">MoveGoal</span><span class="p">(</span><span class="n">width</span> <span class="o">=</span> <span class="mf">0.08</span><span class="p">,</span> <span class="n">speed</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">)</span>
+     <span class="n">client</span><span class="o">.</span><span class="n">send_goal</span><span class="p">(</span><span class="n">goal</span><span class="p">)</span>
+     <span class="n">client</span><span class="o">.</span><span class="n">wait_for_result</span><span class="p">(</span><span class="n">rospy</span><span class="o">.</span><span class="n">Duration</span><span class="o">.</span><span class="n">from_sec</span><span class="p">(</span><span class="mf">5.0</span><span class="p">))</span>
+ <span class="k">else</span><span class="p">:</span>
+     <span class="n">pub_gripper</span><span class="o">.</span><span class="n">publish</span><span class="p">(</span><span class="mf">0.12</span><span class="p">)</span>
+     <span class="n">rospy</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+ <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-</div></blockquote>
-<p>In <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>, you no longer create the joint angle publishers for the Gazebo robot and instead you connect directly to the moveit move_group which is
-in sync with the real robot.</p>
-<blockquote>
-<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">pose_q2array</span><span class="p">(</span><span class="n">wpose</span><span class="p">)</span>
-    <span class="n">curr_pos</span> <span class="o">=</span> <span class="n">quat2point</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-    <span class="n">via_points</span> <span class="o">=</span> <span class="n">get_via_points</span><span class="p">(</span><span class="n">curr_pos</span><span class="p">,</span><span class="n">goal</span><span class="p">,</span><span class="n">res</span><span class="o">=</span><span class="n">resolution</span><span class="p">)</span>
-    <span class="c1">#all code needed</span>
+<p>In <code class="docutils literal notranslate"><span class="pre">move_arm_server.py</span></code>, you no longer create the joint angle publishers for the Gazebo robot and instead you connect directly to the <em>MoveIt</em> move_group which is
+in sync with the real robot:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>  <span class="c1"># If not using real_panda then you need to publish joint angles to gazebo. Create the publishers to do this</span>
+   <span class="n">moveit_commander</span><span class="o">.</span><span class="n">roscpp_initialize</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+   <span class="n">robot</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">RobotCommander</span><span class="p">()</span>
+   <span class="n">scene</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">PlanningSceneInterface</span><span class="p">()</span>
+   <span class="n">group_name</span> <span class="o">=</span> <span class="s2">&quot;panda_arm&quot;</span>
+   <span class="n">group</span> <span class="o">=</span> <span class="n">moveit_commander</span><span class="o">.</span><span class="n">MoveGroupCommander</span><span class="p">(</span><span class="n">group_name</span><span class="p">)</span>
+   <span class="c1"># To publish joint states directly</span>
+   <span class="n">publishers</span> <span class="o">=</span> <span class="p">[</span><span class="n">rospy</span><span class="o">.</span><span class="n">Publisher</span><span class="p">(</span><span class="s1">&#39;/franka/joint</span><span class="si">{}</span><span class="s1">_position_controller/command&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">Float64</span><span class="p">,</span> <span class="n">queue_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">)]</span>
 
-    <span class="k">return</span> <span class="n">via_points</span>
-<span class="k">def</span> <span class="nf">move_arm_a_to_b</span><span class="p">(</span><span class="n">goal</span><span class="p">):</span> <span class="c1">#move very short distance</span>
-    <span class="s2">&quot;&quot;&quot;Move the arm from the current position to goal position</span>
-
-<span class="s2">    This function generates cartesian waypoints between the robots current position in move it and its desired</span>
-<span class="s2">    goal location.</span>
-
-<span class="s2">    Args:</span>
-<span class="s2">        goal (list): ``[x, y, z, rot_x, rot_y, rot_z]``. Desired end effector goal</span>
-<span class="s2">        resolution (int): Nodes per meter of circular path. Describes density of the waypoints</span>
-
-<span class="s2">    Returns:</span>
-<span class="s2">        list: ``[[pos1, pos2, pos3,...]]``. Returns list with intepolated end effector positions</span>
-
+<span class="k">else</span><span class="p">:</span>  <span class="c1"># Otherwise connect to the moveit move group which has control over the robot</span>
+   <span class="n">rospy</span><span class="o">.</span><span class="n">wait_for_message</span><span class="p">(</span><span class="s1">&#39;move_group/status&#39;</span><span class="p">,</span> <span class="n">GoalStatusArray</span><span class="p">)</span>
+   <span class="n">group</span> <span class="o">=</span> <span class="n">MoveGroupCommander</span><span class="p">(</span><span class="s1">&#39;panda_arm&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div></blockquote>
-<p>The most important difference is in the <code class="docutils literal notranslate"><span class="pre">move_arm_handler()</span></code> function. When running on the real panda, you execute trajectories on moveit and wait until it completes. This is because
-moveit deals with the control of the robot. As the robot in moveit moves, so does the real robot. On the gazebo robot, there where separate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consistency between the
+<p>The most important difference is in the <code class="docutils literal notranslate"><span class="pre">move_arm_handler()</span></code> function. When running on the real panda, you execute trajectories on <em>MoveIt</em> and wait until it completes. This is because
+<em>MoveIt</em> deals with the control of the robot. As the robot in <em>MoveIt</em> moves, so does the real robot. On the <em>Gazebo</em> robot, there where separate virtual PID controllers for moving the robot. Thus we simply run the code on moveit for consistency between the
 Gazebo and Moveit robot, but we do not wait for the Moveit robot to finish its path before then moving the simulated robot:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">real_panda</span><span class="p">:</span>
        <span class="n">group</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">plan</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>

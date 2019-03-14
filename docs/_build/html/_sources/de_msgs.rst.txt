@@ -1,4 +1,4 @@
-de_msgs Package
+De_Msgs Package
 ========================
 
 *“Honestly, if everyone likes what you say something is wrong with your message.”*

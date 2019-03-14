@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Brick Manager Server" href="brick.html" />
+    <link rel="next" title="Brick Manager Package" href="brick.html" />
     <link rel="prev" title="Getting Started" href="getting_start.html" /> 
 </head>
 
@@ -95,9 +95,9 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
-<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">de_msgs Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">De_Msgs Package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -432,7 +432,7 @@ This is done using the <code class="docutils literal notranslate"><span class="p
 </pre></div>
 </div>
 <p>It then reads the desired end effector position, passed in as <code class="docutils literal notranslate"><span class="pre">goal</span></code>, which is defined with euler angles (<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">roll,</span> <span class="pre">pitch,</span> <span class="pre">yaw]</span></code>), and changes it to a quaternion representation
-(<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">W]</span></code>). The quaternion representation is equivalent to the euler angles, but rather then represent a rotation with 3 separate rotations around
+(<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">X,</span> <span class="pre">Y,</span> <span class="pre">Z,</span> <span class="pre">W]</span></code>). The quaternion representation is equivalent to the euler angles, but rather than represent a rotation with 3 separate rotations around
 linearly independent axis, a 4D vector is used. This 4D vector has advantages in that it doesn’t degenerate and reach singularities in certain rotation sequences, and
 thus can be seen as more general. That said, it is not intuitive to work with quaternion’s. All poses in our code-base are encoded with the Euler description and transformed to
 a quaternion at the last moment using the <code class="docutils literal notranslate"><span class="pre">tf.transformations</span></code> function.</p>
@@ -583,7 +583,7 @@ is used:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="brick.html" class="btn btn-neutral float-right" title="Brick Manager Server" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="brick.html" class="btn btn-neutral float-right" title="Brick Manager Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="getting_start.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
