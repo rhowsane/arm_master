@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def get_LR_ind(i, res=1): # Make this not hard coded

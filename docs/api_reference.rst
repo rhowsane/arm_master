@@ -1,20 +1,15 @@
 API Reference
 ==========================================
 
+This is additional API reference material for ROS free python scripts. Please refer to source code for more detailed descriptions of all functions.
 
-arm_master_main Functions
+Arm Master Functions
 -----------------------------------
 
-.. automodule:: scripts.arm_master_main
+.. automodule:: scripts.arm_master_functions
     :members:
 
-move_arm_server Functions
------------------------------------
-
-.. automodule:: scripts.move_arm_server
-    :members:
-
-arm_server_functions Functions
+Arm Server Functions
 -----------------------------------
 
 .. automodule:: scripts.arm_server_functions
