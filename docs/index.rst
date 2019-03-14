@@ -9,6 +9,8 @@ Welcome to DE3-Panda-Wall's documentation!
    home
    getting_start
    arm_master
+   spawn_doc
+   gazebo_problems
    real_panda
 
 Indices and tables
