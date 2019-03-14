@@ -185,7 +185,7 @@ The pick up function in full is::
 
 
 It is queried using a target end effector position, set to the location and rotation of the brick to be picked up (defined by a
-``[x, y, z, rot_x, rot_y, rot_z]`` list). The second ``via_offset`` parameter determines how high the above the brick the end effector will first travel before
+``[x, y, z, rot_x, rot_y, rot_z]`` list). The second ``via_offset`` parameter determines how high above the brick the end effector will first travel before
 lowering and picking up the brick.
 
 Pictorially the function ``pick_up()`` looks like:
@@ -242,7 +242,7 @@ the ``move_arm_handler(req)`` function defined inside ``move_arm_server.py`` is 
 
 
 
-Depending on whether your running on the real robot or *Gazebo*, how the plan is executed changes, but the fundamental planning of the path doesn't.
+Depending on whether you're running on the real robot or *Gazebo*, how the plan is executed changes, but the fundamental planning of the path doesn't.
 
 First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
 `` plan_cartesian_path()`` which then calls ``get_via_points()``. ``get_via_points()`` is a function

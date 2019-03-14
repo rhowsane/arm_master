@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>de_msgs Package &mdash; DE3-Panda-Wall 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Running on Gazebo" href="gazebo_problems.html" />
+    <link rel="prev" title="Spawn Manager Package" href="spawn_doc.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> DE3-Panda-Wall
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="home.html">DE3 Robotics Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_start.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="arm_master.html">Arm Master Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Server</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">de_msgs Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inside-the-de-msgs-package">Inside the de_msgs package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-cmakelist-txt">Updating CMakeList.txt</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-package-xml">Updating package.xml</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interface.html">AR Interface for wall-building</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">DE3-Panda-Wall</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>de_msgs Package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/de_msgs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="de-msgs-package">
+<h1>de_msgs Package<a class="headerlink" href="#de-msgs-package" title="Permalink to this headline">¶</a></h1>
+<p><em>“Honestly, if everyone likes what you say something is wrong with your message.”</em></p>
+<p><em>― Ashley Ormon</em></p>
+<dl class="docutils">
+<dt>Arm_Master, Spawn_Manager and Brick_Manager are all nodes that communicate using de_msgs services. Spawn Manager was built</dt>
+<dd>by Keith Li and Justice Duruanyanwu, Arm Master was built by Zachary Gen and Brick Manager was built by Rowan Dixon and Samuel Willis</dd>
+</dl>
+<div class="section" id="inside-the-de-msgs-package">
+<h2>Inside the de_msgs package<a class="headerlink" href="#inside-the-de-msgs-package" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">de_msgs</span></code> is a package that contains 4 custom <code class="docutils literal notranslate"><span class="pre">.srv</span></code> files that are imported into <code class="docutils literal notranslate"><span class="pre">arm_master_main.py</span></code>:</p>
+<ul class="simple">
+<li>QueryNextPos</li>
+<li>MoveArm,</li>
+<li>QueryBrickLoc</li>
+<li>QueryBricklocRequest</li>
+</ul>
+<p>ROS uses a simplified service description language for describing ROS service types.
+This builds on the ROS msg format to enable a request-response communication between nodes. Service descriptions are stored
+in the srv directory of a package. srv files consist of a request and a response msg type separated by a three dash line.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Code to import message types:</p>
+<div class="last highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">de_msgs.srv</span> <span class="k">import</span> <span class="n">QueryNextPos</span><span class="p">,</span> <span class="n">MoveArm</span><span class="p">,</span> <span class="n">QueryBrickLoc</span><span class="p">,</span> <span class="n">QueryBrickLocRequest</span>
+</pre></div>
+</div>
+</div>
+<p>QueryNextPos requests the brick number as “num” in the format of float64. Float64 is a 64 bit number that can only have
+four kinds of values: real numbers, positive infinity, negative infinity and NaN. The service responds with 6 float64
+values as “x”, “y”, “z”, “wx”, “wy”, “wz” which correspond to the pose of the brick specified by “num”.</p>
+<p>Euler angles were chosen over the quaternion to communicate the orientation of the robot between nodes as it is more
+human understandable which is very important when there are multiple people working on different parts of the project.
+In addition to this, Euler angles only require 3 values to completely express all rotations whereas the quaternion require 4 values
+to express all rotations. This means messages using Euler angles are smaller, and save on memory space:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">float64</span> <span class="n">num</span>
+<span class="o">---</span>
+<span class="n">float64</span> <span class="n">x</span>
+<span class="n">float64</span> <span class="n">y</span>
+<span class="n">float64</span> <span class="n">z</span>
+<span class="n">float64</span> <span class="n">wx</span>
+<span class="n">float64</span> <span class="n">wy</span>
+<span class="n">float64</span> <span class="n">wz</span>
+</pre></div>
+</div>
+<p>MoveArm requests the pose of the end effector as 6 float64 values as “x”, “y”, “z”, “wx”, “wy”, “wz”. The service responds with bool success which indicates successful run of the triggered service.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">float64</span> <span class="n">x</span>
+<span class="n">float64</span> <span class="n">y</span>
+<span class="n">float64</span> <span class="n">z</span>
+<span class="n">float64</span> <span class="n">rot_x</span>
+<span class="n">float64</span> <span class="n">rot_y</span>
+<span class="n">float64</span> <span class="n">rot_z</span>
+<span class="o">---</span>
+<span class="nb">bool</span> <span class="n">success</span>
+</pre></div>
+</div>
+<p>QueryBrickLoc requests the brick number as “num” in the format of float64. The service responds with 6 float64 values as “x”, “y”, “z”, “wx”, “wy”, “wz” which correspond to the pose of the brick specified by “num”.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">float64</span> <span class="n">num</span>
+<span class="o">---</span>
+<span class="n">float64</span> <span class="n">x</span>
+<span class="n">float64</span> <span class="n">y</span>
+<span class="n">float64</span> <span class="n">z</span>
+<span class="n">float64</span> <span class="n">wx</span>
+<span class="n">float64</span> <span class="n">wy</span>
+<span class="n">float64</span> <span class="n">wz</span>
+</pre></div>
+</div>
+<p>ROS automatically generates the QueryBrickLocRequest and QueryBrickLocResponse from the QueryBrickLoc service.</p>
+</div>
+<div class="section" id="updating-cmakelist-txt">
+<h2>Updating CMakeList.txt<a class="headerlink" href="#updating-cmakelist-txt" title="Permalink to this headline">¶</a></h2>
+<p>The CMakeList.txt must be updated so that the srv files can be called as services in the arm_master_main loop.
+The custom service names must be added to the add_service_files function. Message_generation must also be added to the find_package function.:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">find_package</span><span class="p">(</span><span class="n">catkin</span> <span class="n">REQUIRED</span>
+<span class="n">COMPONENTS</span>
+<span class="n">roscpp</span>
+<span class="n">rospy</span>
+<span class="n">std_msgs</span>
+<span class="n">message_generation</span><span class="p">)</span>
+
+
+<span class="n">add_service_files</span><span class="p">(</span>
+<span class="n">FILES</span>
+<span class="n">QueryNextPos</span><span class="o">.</span><span class="n">srv</span>
+<span class="n">QueryPPBrick</span><span class="o">.</span><span class="n">srv</span>
+<span class="n">QueryBrickLoc</span><span class="o">.</span><span class="n">srv</span>
+<span class="n">MoveArm</span><span class="o">.</span><span class="n">srv</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-package-xml">
+<h2>Updating package.xml<a class="headerlink" href="#updating-package-xml" title="Permalink to this headline">¶</a></h2>
+<p>Ensure the following two lines are uncommented from the code to allow the sending of messages
+Line 40:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">build_depend</span><span class="o">&gt;</span><span class="n">message_generation</span><span class="o">&lt;/</span><span class="n">build_depend</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Line 46:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">exec_depend</span><span class="o">&gt;</span><span class="n">message_runtime</span><span class="o">&lt;/</span><span class="n">exec_depend</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gazebo_problems.html" class="btn btn-neutral float-right" title="Running on Gazebo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="spawn_doc.html" class="btn btn-neutral float-left" title="Spawn Manager Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Zachary Yamaoka
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -97,6 +97,9 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="brick.html">Brick Manager Server</a></li>
 <li class="toctree-l1"><a class="reference internal" href="spawn_doc.html">Spawn Manager Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html">de_msgs Package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html#updating-cmakelist-txt">Updating CMakeList.txt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="de_msgs.html#updating-package-xml">Updating package.xml</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gazebo_problems.html">Running on Gazebo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="real_panda.html">Running on Real Panda</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api_reference.html">API Reference</a></li>
@@ -334,7 +337,7 @@ The main loop for our project implementation was implemented as follows:</p>
 </pre></div>
 </div>
 <p>It is queried using a target end effector position, set to the location and rotation of the brick to be picked up (defined by a
-<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list). The second <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter determines how high the above the brick the end effector will first travel before
+<code class="docutils literal notranslate"><span class="pre">[x,</span> <span class="pre">y,</span> <span class="pre">z,</span> <span class="pre">rot_x,</span> <span class="pre">rot_y,</span> <span class="pre">rot_z]</span></code> list). The second <code class="docutils literal notranslate"><span class="pre">via_offset</span></code> parameter determines how high above the brick the end effector will first travel before
 lowering and picking up the brick.</p>
 <p>Pictorially the function <code class="docutils literal notranslate"><span class="pre">pick_up()</span></code> looks like:</p>
 <div class="figure align-center">
@@ -386,7 +389,7 @@ the <code class="docutils literal notranslate"><span class="pre">move_arm_handle
     <span class="k">return</span> <span class="kc">True</span>
 </pre></div>
 </div>
-<p>Depending on whether your running on the real robot or <em>Gazebo</em>, how the plan is executed changes, but the fundamental planning of the path doesn’t.</p>
+<p>Depending on whether you’re running on the real robot or <em>Gazebo</em>, how the plan is executed changes, but the fundamental planning of the path doesn’t.</p>
 <p>First a set of end_effector via_points are determined between the current robot position and the goal position. This is done by calling
 `` plan_cartesian_path()`` which then calls <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code>. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> is a function
 defined in the <code class="docutils literal notranslate"><span class="pre">arm_server_functions.py</span></code> file. <code class="docutils literal notranslate"><span class="pre">get_via_points()</span></code> essentially determines the displacement vector between the start and goal

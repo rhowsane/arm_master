@@ -11,6 +11,7 @@ Welcome to DE3-Panda-Wall's documentation!
    arm_master
    brick
    spawn_doc
+   de_msgs
    gazebo_problems
    real_panda
    api_reference
