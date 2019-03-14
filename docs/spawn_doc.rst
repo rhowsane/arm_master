@@ -7,7 +7,7 @@ Gazebo during a simulation. Running this code would be more practical than using
 interface within Gazebo, as during simulations spawning can be automated at pre-determined locations,
 which is especially applicable for having a repeatable 'brick-pickup' procedure in this project.
 
-`spawn.py`_ contains the main code, and defines the ROS service that is called in the `arm_master_main.py`_ main loop.
+`spawn.py` contains the main code, and defines the ROS service that is called in the `arm_master_main.py` main loop.
 
 Setup
 ----------
