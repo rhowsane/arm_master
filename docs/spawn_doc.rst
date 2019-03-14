@@ -1,5 +1,5 @@
 =========================================
-Documentation on spawn_mnger ROS package
+Spawn Manager Package
 =========================================
 
 The main purpose of the `spawn_mnger` *ROS package* is to interface with Gazebo, and spawn objects within
@@ -8,6 +8,7 @@ interface within Gazebo, as during simulations spawning can be automated at pre-
 which is especially applicable for having a repeatable 'brick-pickup' procedure in this project.
 
 `spawn.py` contains the main code, and defines the ROS service that is called in the `arm_master_main.py` main loop.
+This is explained below:
 
 Setup
 ----------
