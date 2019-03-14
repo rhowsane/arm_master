@@ -1,9 +1,14 @@
 Running on Gazebo
 ===============================
 
-Before testing our code on the real Panda robot, we must be able to run it within a digital simulation first, proving
-that it works. Otherwise, having a physically moving robot with unknown risks / movements that have not been tested
-would be a major risk. Here were the main problems that were encountered by the team when attempting to perform simulations in Gazebo.
+*"Failing to plan is planning to fail"*
+
+*- Alan Lakein*
+
+Before testing our code on the real Panda robot, we ran it on on a digital simulation, to validate that it would function
+as expected. This was incredibly helpful as using a physically moving robot with unknown risks / movements would be a major risk.
+
+In theory simulation works well, but in practice there were many problems that were encountered by the team when attempting to perform simulations in Gazebo.
 
 Arm experiencing vibration / 'jittering'
 ----------------------------------------
@@ -23,6 +28,22 @@ in the menu on the left hand side.
 .. figure:: _static/gazebo_pid_interface.png
     :align: center
     :figclass: align-center
+
+In order to fix this issue we took a number of approaches. In the first case we simply let the robot run and visually tuned the PID values
+using the ``rqt_reconfigure`` window. It soon became clear that this would be impractical for tuning all 7 joints.
+
+We decided to take a more disciplined approach and tune each joint in isolation. For this process we worked from the end effector down to the robot
+base. To start we locked all the joints bellow the joint in question and set the joints *PID* constants to zero. We would then send a joint signal in a characteristic square wave to visually
+characterize the joint behavior to perturbations. *P* would be increased until the joint had minimal overshoot and small oscillations. We would then add
+sufficient *D* till the joint was critically damped. This worked for the first 2 joints but the maximum *P* constant in the
+dynamic tuning window was limited and were not able to continue increasing *P* to a suitable level. The reason for requiring such a high *P* was most likely
+due to modelling errors in the physical simulation
+
+
+Ultimately we returned to the default values found in ``franka_gazebo`` package. Using these values as a starting point we added a small amount of
+*I* gain because we noticed that the end effector had trouble converging on the commanded position. The resulting performance was sufficiently to accurate
+build a 5 high wall.
+
 
 Brick model friction issues
 --------------------------------------
@@ -55,6 +76,56 @@ With the model file ``model-1_4.sdf``, the following were changed::
           </contact>
         </surface>
 
-These improved parameters allowed the brick to be grasped more effectively, and were less likely to slip from Panda's
+We increased ``<mu>`` and ``<mu2>`` parameters. These are the static friction co-efficients used by the physics engine.
+
+We increased ``<kp>`` to increase the stiffness of the collision and increased ``<kd>`` to add dampening. I
+
+Perhaps most importantly we set ``<max_vel>`` to a value larger then 0, and ``<min_depth>`` to a reasonable value. All bodies in Gazebo are soft, so when they collide there is
+always some penetration past the surface boundary line. This is motion is counteracted a spring force. ``<max_vel>`` is the maximum velocity that an object can reach as
+a result of that spring force. In earlier testing when we had wrongly tuned this parameter to zero, bricks would sink through the floor and continuing to vibrate indefinitely
+upon being dropped.
+
+The total sum of these improvements allowed the brick to be grasped more effectively, and were less likely to slip from Panda's
 gripper.
+
+Gripper Friction friction issues
+--------------------------------------
+
+Friction is a function of both surfaces in contact. It wasn't enough to just fix the brick, we also needed to consider the gripper.
+
+Before considering fiction we first addressed the fact that the gripper didn't open wide enough to pick up the brick. We fixed this by editing the ``hand.xacro`` file in the
+``franka_gazebo`` package. Here we increased the maximum joint limit to give the gripper a 0.12 m span::
+
+      <limit effort="400" lower="-0.001" upper="0.06" velocity="0.1"/>
+
+Knowing that friction is a function of normal force, we increased the maximum allowable effort here as well. Never the less, while the gripper could
+now open wide enough to pick up the brick, it wasn't enough friction to hold on.
+
+Specifically we noticed that the gripper seemed to lack torsional friction. When it picked up the brick directly around the center of mass, the brick would
+stay in longer. However, when it pick it up at an offset it would quickly rotate out.
+
+In order to fix this issue we changed the torsion friction parameters of the gripper. Agian in the ``hand.xacro`` file we added the following code to
+overwrite the default::
+
+    <gazebo reference="${ns}_leftfinger">
+      <mu1>100</mu1>
+        <mu2>100</mu2>
+        <kp>100000</kp>
+        <!-- <fdir1>0 0 0</fdir1> -->
+        <collision name="${ns}__leftfinger_collision">
+      <surface>
+        <friction>
+          <torsional>
+            <coefficient>100</coefficient>
+            <use_patch_radius>true</use_patch_radius>
+            <patch_radius>0.1</patch_radius>
+            <surface_radius>0.1</surface_radius>
+
+
+While we extremely optimistic with the values we set for the torsional friction - after this change, the gripper was able to consistent pick up the brick.
+While these changes didn't necessary reflect reality, we felt validated as we knew in practice, the brick would not fall out of the gripper. This belief was
+eventually confirmed when we ran our simulated robot on the real Franka Panda.
+
+Issues with publishing, so we needed to add namespaces.
+
 
