@@ -1,7 +1,9 @@
-Problems encountered in Gazebo
+Running on Gazebo
 ===============================
 
-Here were the main problems that were encountered by the team when attempting to perform simulations in Gazebo.
+Before testing our code on the real Panda robot, we must be able to run it within a digital simulation first, proving
+that it works. Otherwise, having a physically moving robot with unknown risks / movements that have not been tested
+would be a major risk. Here were the main problems that were encountered by the team when attempting to perform simulations in Gazebo.
 
 Arm experiencing vibration / 'jittering'
 ----------------------------------------
