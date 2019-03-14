@@ -150,7 +150,7 @@ is set the definitions for a start position, the geometry of the brick, establis
 establish the size the wall will be built to and give tolerances to the brick positions so they do not touch and will therefore not interfere when placed. Whilst
 this does sound like a lot it is all simply definitions for the generative alogorithm.
 
-The Third Function: goal_manager_server3
+The Third Function: goal_manager_server3()
 -----------------------------------
 
 The final function, ``goal_manager_server3()`` works in the same way as ``goal_manager_server2()`` in the sense it generates the wall coordinates as it goes.
