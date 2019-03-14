@@ -1,4 +1,4 @@
-Brick Manager Server
+Brick Manager Package
 ========================
 
 ``Brick_Manager`` is the *ROS Package* which tells the Panda arm executing the script ``arm_master_main.py`` where it should be retrieving a new brick, and where each of the bricks should be placed. As a brief summary,
