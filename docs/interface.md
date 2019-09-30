@@ -1,22 +1,25 @@
-# AR Interface for wall-building
+AR Interface for wall-building
+================================
 
 This section describes making an interface in augmented reality (AR) that was designed to build a wall structure with bricks.
 The Microsoft Hololens was used to implement this, and demonstration videos can be found in the home page.
 
-## Interaction Helper
+Interaction Helper
+-------------------
 
-.. figure::  _static/virtual.png
-   :align:   center
+![Screenshot_3](_static/virtual.png)
 
-## Introduction
+Introduction
+-------------
 
 The Interaction Helper C# script sits at the core of the Hololens experience. It is attached to the user's main camera, which governs everything they see.
 
 The script sets up the user's interaction with the virtual world from ground up. Starting from defining a ray casting straight out of the center of the user's camera, it listens to the user's gestures and voice, spawns and controls the rigid body behavior of bricks and finally places, freezes and tells the networking helper and write text helper to post the brick coordinates to a simple http server and save a text file locally. The coordinates can then either be directly used by the Franka Panda robot on the other end of the server, or modified in the text file for neater designs.
 
-## Gaze - Selecting and Controlling a Brick
+Gaze - Selecting and Controlling a Brick
+------------------------------------------
 
-First, instantiate a ray cast starting from the origin of the main camera and going forward, simulating viewer's line of sight (Gaze). The update method runs at 30-60fps depending on performance.::
+First, instantiate a ray cast starting from the origin of the main camera and going forward, simulating viewer's line of sight (Gaze). The update method runs at 30-60fps depending on performance.:
 
 ```csharp
 void Update()
@@ -27,7 +30,7 @@ void Update()
 	}
 ```
 
-Detect objects by collision with the ray cast, determine a change in object by checking for a change in object's mesh renderer component. To visualize this selection process, material of the currently looked at object will change.::
+Detect objects by collision with the ray cast, determine a change in object by checking for a change in object's mesh renderer component. To visualize this selection process, material of the currently looked at object will change.:
 
 ```csharp
 void Update()
@@ -78,7 +81,7 @@ void Update()
 }
 ```
 
-Finally, create a path relative to the gaze's vector and assigning the rigid body component of the active brick to it, so the active brick is controlled by the camera.::
+Finally, create a path relative to the gaze's vector and assigning the rigid body component of the active brick to it, so the active brick is controlled by the camera.:
 
 ```csharp
 void FixedUpdate()
@@ -95,9 +98,10 @@ void FixedUpdate()
     }
 ```
 
-## Gesture Listener - Spawning and Placing Bricks
+Gesture Listener - Spawning and Placing Bricks
+-----------------------------------------------
 
-First, initialize the gesture listener to listen to single taps, GestureRecognizer() is a built-in Unity method.::
+First, initialize the gesture listener to listen to single taps, GestureRecognizer() is a built-in Unity method.:
 
 ```csharp
 void Start()
@@ -111,7 +115,7 @@ void Start()
     }
 ```
 
-On a tap event, if it's an even tap, stop gesture recognition, activate the object's gravity and nolonger have it follow the camera. The brick will drop to the workspace floor.::
+On a tap event, if it's an even tap, stop gesture recognition, activate the object's gravity and nolonger have it follow the camera. The brick will drop to the workspace floor.:
 
 ```csharp
 private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -134,7 +138,7 @@ private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCoun
 }
 ```
 
-Define a freeze method to freeze all 6 DoFs of the placed brick and reactivate gesture listener.::
+Define a freeze method to freeze all 6 DoFs of the placed brick and reactivate gesture listener.:
 
 ```csharp
 private void _freeze()
@@ -145,7 +149,7 @@ private void _freeze()
     }
 ```
 
-Activate the freeze method after 0.5 seconds, so the brick has enough time to fall.::
+Activate the freeze method after 0.5 seconds, so the brick has enough time to fall.:
 
 ```csharp
 private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -157,7 +161,7 @@ private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCoun
         }
 ```
 
-Alternatively, if the tap was odd numbered, instantiate a new brick game object, with the same properties as the previous ones. Initialize it's rigid body properies and make it active so it follows the camera right away.::
+Alternatively, if the tap was odd numbered, instantiate a new brick game object, with the same properties as the previous ones. Initialize it's rigid body properies and make it active so it follows the camera right away.:
 
 ```csharp
 private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -192,9 +196,10 @@ private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCoun
     }
 ```
 
-## Voice Listener - Resetting a Brick
+Voice Listener - Resetting a Brick
+-----------------------------------
 
-Set up a voice listener to listen to phrase "reset", KeywordRecognizer is a built in unity function.::
+Set up a voice listener to listen to phrase "reset", KeywordRecognizer is a built in unity function.:
 
 ```csharp
 void start(){
@@ -207,7 +212,7 @@ void start(){
 }
 ```
 
-On calling "reset", reset the last brick's position and make it follow the camera again.::
+On calling "reset", reset the last brick's position and make it follow the camera again.:
 
 ```csharp
  private void ResetRecognizer_OnPhraseRecognized(PhraseRecognizedEventArgs args)
@@ -227,9 +232,10 @@ On calling "reset", reset the last brick's position and make it follow the camer
     }
 ```
 
-## Sending the Messages
+Sending the Messages
+---------------------
 
-First, Initialize string objects at start.::
+First, Initialize string objects at start.:
 
 ```csharp
 void start(){
@@ -244,7 +250,7 @@ void start(){
 }
 ```
 
-Create a method that reads the position and rotation of only the most recent brick, assign them to the string objects. We also created a virtual in-app text mesh that displays the coordinates of the brick real-time.::
+Create a method that reads the position and rotation of only the most recent brick, assign them to the string objects. We also created a virtual in-app text mesh that displays the coordinates of the brick real-time.:
 
 ```csharp
 public void UpdateText()
@@ -278,7 +284,7 @@ public void UpdateText()
     }
 ```
 
-Start a clock at start for running the previous update text method at a slow 2fps to reduce computation.::
+Start a clock at start for running the previous update text method at a slow 2fps to reduce computation.:
 
 ```csharp
 void start(){
@@ -288,7 +294,7 @@ void start(){
 }
 ```
 
-Finally, to send the data through to the http server, run MainAsync(data) after the 0.5 seconds Invoke freeze function which finalizes brick placement. Doe the same with WriteString() which records the data on a local text file. Both of these functions are modularized and written seperately in the scripts: "NetworkingHelper.cs" and "WriteTextHelper.cs".::
+Finally, to send the data through to the http server, run MainAsync(data) after the 0.5 seconds Invoke freeze function which finalizes brick placement. Doe the same with WriteString() which records the data on a local text file. Both of these functions are modularized and written seperately in the scripts: "NetworkingHelper.cs" and "WriteTextHelper.cs".:
 
 ```csharp
 private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -317,10 +323,10 @@ private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCoun
 }
 ```
 
-## Networking Helper
+Networking Helper
+------------------
 
-.. figure::  _static/python_console.png
-   :align:   center
+![Screenshot_3](_static/python_console.png)
 
 The above image is a screenshot of data received in the python server console during the communication between the HoloLens client and the python server.
 
@@ -328,7 +334,7 @@ The white text the 6 coordinates data of frozen bricks.
 
 In order to let the program in HoloLens transmit coordinate data via HTTP request, a helper class `NetworkingHelper` has been implemented to enable the HoloLens communicate with a server by granting access to post requests on specified IP, the server is a simple HTTP server running on python3.
 
-Firstly, we instantiate the HTTP client for life time in the class at the very beginning::
+Firstly, we instantiate the HTTP client for life time in the class at the very beginning:
 
 ```csharp
 private static readonly HttpClient client = new HttpClient();
@@ -336,23 +342,22 @@ private static readonly HttpClient client = new HttpClient();
 
 During the development, two networking methods using different modules have been tested each with:
 
-- Unity default networking module::
+- Unity default networking module:
 
-  ```Csharp
-  UnityEngine.Networking
-  ```
+    ```Csharp
+    UnityEngine.Networking
+    ```
 
-- Asynchronous programming in .NET development::
+- Asynchronous programming in .NET development:
 
-  ```Csharp
-  using System.Net.Http;
-  using System.Threading.Tasks;
-  
-  ```
+    ```Csharp
+    using System.Net.Http;
+    using System.Threading.Tasks;
+    ```
 
 In order to obtain a more robust and stable communication, the method utilising .Net has been eventually used in the``InteractionHelper`` main function:
 
-The function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordinates data retrieved from the ``InteractionHelper`` main function::
+The function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordinates data retrieved from the ``InteractionHelper`` main function:
 
 ```csharp
 public async void MainAsync(
@@ -364,10 +369,9 @@ public async void MainAsync(
     string string6) {
     ...
 }
-
 ```
 
-Then, Dictionary Key-Value pairs format has been used for standard Non-JSON HTTP request content::
+Then, Dictionary Key-Value pairs format has been used for standard Non-JSON HTTP request content:
 
 ```csharp
 var values = new Dictionary<string, string> {
@@ -378,54 +382,49 @@ var values = new Dictionary<string, string> {
     {"5", string5},
     {"6", string6}
 }
-
 ```
 
-After that, we encode the content into the standard format for HTTP request::
+After that, we encode the content into the standard format for HTTP request:
 
 ```csharp
 var content = new FormUrlEncodedContent(values);
-
 ```
 
-Lastly, we create the post request::
+Lastly, we create the post request:
 
 ```csharp
 var result = await client.PostAsync("http://192.168.0.154:3000", content);
 string resultContent = await result.Content.ReadAsStringAsync();
 Console.WriteLine(resultContent);
-
 ```
 
 `await` keyword has been used to force the current thread to wait until the asynchronous operation has completed.
 
-## Write Text Helper
+Write Text Helper
+-------------------
 
 Apart from transmitting data between a server and Hololens client, the functionality storing data to local text file has also been implemented in helper class `WriteTextHelper`
 
-The Method utilised the `IO` module::
+The Method utilised the `IO` module:
 
 ```csharp
 using System.IO;
-
 ```
 
-The path of the file has been defined in the main `InteractionHelper` helper class, in order to retrieve that, we cached the reference by creating a instance of the `InteractionHelper` class::
+The path of the file has been defined in the main `InteractionHelper` helper class, in order to retrieve that, we cached the reference by creating a instance of the `InteractionHelper` class:
 
 ```csharp
 private InteractionHelper interactionHelper = new InteractionHelper();
-
 ```
 
-Then we assign the path value in the `WriteString` function::
+Then we assign the path value in the `WriteString` function:
 
 ```csharp
 // need to re-assign the path variable or otherwise will encounter ArgumentNullException
 interactionHelper.path = "C:/Users/HRK/Documents/DanRoboticsBricks/test.txt";
-
 ```
 
-Once again, like the Networking functions, the function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordination data retrieved from the `InteractionHelper` main function::
+Once again, like the Networking functions, the function has been initiated with 6 arguments corresponding to the 3 position and 3 rotation coordination data retrieved from the `InteractionHelper` main function:
 
 ```csharp
 public void WriteString(
@@ -437,16 +436,15 @@ public void WriteString(
     string string6) {
     ...
 }
-
 ```
 
-For the purpose of enabling the writing functionality within the function, a writer object instance has been created::
+For the purpose of enabling the writing functionality within the function, a writer object instance has been created:
 
 ```csharp
 StreamWriter writer = new StreamWriter(interactionHelper.path, true);
 ```
 
-Then, write the 6 strings separating using `,`::
+Then, write the 6 strings separating using `,`:
 
 ```csharp
 writer.WriteLine(
@@ -458,7 +456,7 @@ writer.WriteLine(
     string6 + ",");
 ```
 
-Eventually, close the writing functionality to free memory::
+Eventually, close the writing functionality to free memory:
 
 ```csharp
 writer.Close();
@@ -466,16 +464,15 @@ writer.Close();
 
 After all the steps done, open the txt file and the data of the bricks will promptly show up:
 
-.. figure::  _static/txt_file.png
-   :align:   center
+![Screenshot_3](_static/txt_file.png)
 
-Every time initiate the program, a clear functionality will be triggered in the `InteractionHelper` main class to wipe all the content before loading new data into it::
+Every time initiate the program, a clear functionality will be triggered in the `InteractionHelper` main class to wipe all the content before loading new data into it:
 
 ```csharp
 File.WriteAllText(path, String.Empty);
 ```
 
-Below is another more robust way of implementation, where the `stream` has been created before the writer::
+Below is another more robust way of implementation, where the `stream` has been created before the writer:
 
 ```csharp
 // create the stream before making the writer
