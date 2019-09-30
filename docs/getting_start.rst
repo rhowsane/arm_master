@@ -1,10 +1,6 @@
 Getting Started
 ========================
 
-*"The secret of getting ahead is getting started."*
-
-*- Mark Twain*
-
 At a high level, to install and run this projects code on your computer or VM involves:
 
 1. Pulling the 3 main packages (*arm_master*, *brick_manager*, *spawn_manager*) from github and building them
