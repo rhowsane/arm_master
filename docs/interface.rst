@@ -39,7 +39,7 @@ First, instantiate a ray cast starting from the origin of the main
 camera and going forward, simulating viewer's line of sight (Gaze). The
 update method runs at 30-60fps depending on performance.:
 
-.. code:: csharp
+.. code:: cs
 
     void Update()
         {
@@ -53,7 +53,7 @@ object by checking for a change in object's mesh renderer component. To
 visualize this selection process, material of the currently looked at
 object will change.:
 
-.. code:: csharp
+.. code:: cs
 
     void Update()
         {
@@ -106,7 +106,7 @@ Finally, create a path relative to the gaze's vector and assigning the
 rigid body component of the active brick to it, so the active brick is
 controlled by the camera.:
 
-.. code:: csharp
+.. code:: cs
 
     void FixedUpdate()
         {
@@ -127,7 +127,7 @@ Gesture Listener - Spawning and Placing Bricks
 First, initialize the gesture listener to listen to single taps,
 GestureRecognizer() is a built-in Unity method.:
 
-.. code:: csharp
+.. code:: cs
 
     void Start()
         {
@@ -143,7 +143,7 @@ On a tap event, if it's an even tap, stop gesture recognition, activate
 the object's gravity and nolonger have it follow the camera. The brick
 will drop to the workspace floor.:
 
-.. code:: csharp
+.. code:: cs
 
     private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
@@ -167,7 +167,7 @@ will drop to the workspace floor.:
 Define a freeze method to freeze all 6 DoFs of the placed brick and
 reactivate gesture listener.:
 
-.. code:: csharp
+.. code:: cs
 
     private void _freeze()
         {
@@ -179,7 +179,7 @@ reactivate gesture listener.:
 Activate the freeze method after 0.5 seconds, so the brick has enough
 time to fall.:
 
-.. code:: csharp
+.. code:: cs
 
     private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
@@ -194,7 +194,7 @@ object, with the same properties as the previous ones. Initialize it's
 rigid body properies and make it active so it follows the camera right
 away.:
 
-.. code:: csharp
+.. code:: cs
 
     private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
@@ -233,7 +233,7 @@ Voice Listener - Resetting a Brick
 Set up a voice listener to listen to phrase "reset", KeywordRecognizer
 is a built in unity function.:
 
-.. code:: csharp
+.. code:: cs
 
     void start(){
         ...
@@ -247,7 +247,7 @@ is a built in unity function.:
 On calling "reset", reset the last brick's position and make it follow
 the camera again.:
 
-.. code:: csharp
+.. code:: cs
 
      private void ResetRecognizer_OnPhraseRecognized(PhraseRecognizedEventArgs args)
         {
@@ -270,7 +270,7 @@ Sending the Messages
 
 First, Initialize string objects at start.:
 
-.. code:: csharp
+.. code:: cs
 
     void start(){
         ...
@@ -288,7 +288,7 @@ recent brick, assign them to the string objects. We also created a
 virtual in-app text mesh that displays the coordinates of the brick
 real-time.:
 
-.. code:: csharp
+.. code:: cs
 
     public void UpdateText()
         {
@@ -323,7 +323,7 @@ real-time.:
 Start a clock at start for running the previous update text method at a
 slow 2fps to reduce computation.:
 
-.. code:: csharp
+.. code:: cs
 
     void start(){
         ...
@@ -338,7 +338,7 @@ the data on a local text file. Both of these functions are modularized
 and written seperately in the scripts: "NetworkingHelper.cs" and
 "WriteTextHelper.cs".:
 
-.. code:: csharp
+.. code:: cs
 
     private void TapRecognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
         {
@@ -386,7 +386,7 @@ running on python3.
 Firstly, we instantiate the HTTP client for life time in the class at
 the very beginning:
 
-.. code:: csharp
+.. code:: cs
 
     private static readonly HttpClient client = new HttpClient();
 
@@ -395,13 +395,13 @@ have been tested each with:
 
 -  Unity default networking module:
 
-   .. code:: Csharp
+   .. code:: cs
 
        UnityEngine.Networking
 
 -  Asynchronous programming in .NET development:
 
-   .. code:: Csharp
+   .. code:: cs
 
        using System.Net.Http;
        using System.Threading.Tasks;
@@ -414,7 +414,7 @@ The function has been initiated with 6 arguments corresponding to the 3
 position and 3 rotation coordinates data retrieved from the
 ``InteractionHelper`` main function:
 
-.. code:: csharp
+.. code:: cs
 
     public async void MainAsync(
         string string1,
@@ -429,7 +429,7 @@ position and 3 rotation coordinates data retrieved from the
 Then, Dictionary Key-Value pairs format has been used for standard
 Non-JSON HTTP request content:
 
-.. code:: csharp
+.. code:: cs
 
     var values = new Dictionary<string, string> {
         {"1", string1},
@@ -443,13 +443,13 @@ Non-JSON HTTP request content:
 After that, we encode the content into the standard format for HTTP
 request:
 
-.. code:: csharp
+.. code:: cs
 
     var content = new FormUrlEncodedContent(values);
 
 Lastly, we create the post request:
 
-.. code:: csharp
+.. code:: cs
 
     var result = await client.PostAsync("http://192.168.0.154:3000", content);
     string resultContent = await result.Content.ReadAsStringAsync();
@@ -467,7 +467,7 @@ in helper class ``WriteTextHelper``
 
 The Method utilised the ``IO`` module:
 
-.. code:: csharp
+.. code:: cs
 
     using System.IO;
 
@@ -475,13 +475,13 @@ The path of the file has been defined in the main ``InteractionHelper``
 helper class, in order to retrieve that, we cached the reference by
 creating a instance of the ``InteractionHelper`` class:
 
-.. code:: csharp
+.. code:: cs
 
     private InteractionHelper interactionHelper = new InteractionHelper();
 
 Then we assign the path value in the ``WriteString`` function:
 
-.. code:: csharp
+.. code:: cs
 
     // need to re-assign the path variable or otherwise will encounter ArgumentNullException
     interactionHelper.path = "C:/Users/HRK/Documents/DanRoboticsBricks/test.txt";
@@ -491,7 +491,7 @@ initiated with 6 arguments corresponding to the 3 position and 3
 rotation coordination data retrieved from the ``InteractionHelper`` main
 function:
 
-.. code:: csharp
+.. code:: cs
 
     public void WriteString(
         string string1,
@@ -506,13 +506,13 @@ function:
 For the purpose of enabling the writing functionality within the
 function, a writer object instance has been created:
 
-.. code:: csharp
+.. code:: cs
 
     StreamWriter writer = new StreamWriter(interactionHelper.path, true);
 
 Then, write the 6 strings separating using ``,``:
 
-.. code:: csharp
+.. code:: cs
 
     writer.WriteLine(
         string1 + "," +
@@ -524,7 +524,7 @@ Then, write the 6 strings separating using ``,``:
 
 Eventually, close the writing functionality to free memory:
 
-.. code:: csharp
+.. code:: cs
 
     writer.Close();
 
@@ -540,14 +540,14 @@ will promptly show up:
    in the ``InteractionHelper`` main class to wipe all the content before
    loading new data into it:
 
-.. code:: csharp
+.. code:: cs
 
     File.WriteAllText(path, String.Empty);
 
 Below is another more robust way of implementation, where the ``stream``
 has been created before the writer:
 
-.. code:: csharp
+.. code:: cs
 
     // create the stream before making the writer
     using (var stream = new FileStream(interactionHelper.path, FileMode.OpenOrCreate, FileAccess.Write)) {
