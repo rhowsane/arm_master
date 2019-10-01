@@ -1,10 +1,10 @@
-AR Interface for wall-building
+AR Sandbox Interface for wall-building
 ==============================
 
 .. note::
 
    This section describes making an interface in augmented reality (AR)
-   that was designed to build a wall structure with bricks. The Microsoft
+   that was designed to freely build any structure with the given bricks. Microsoft
    Hololens was used to implement this, and demonstration videos can be
    found in the home page.
 
