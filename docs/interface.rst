@@ -10,9 +10,9 @@ Interaction Helper
 ------------------
 
 .. figure:: _static/virtual.png
-   :alt: Screenshot\_3
+   :alt: AR virtual space displaying the robotic arm's workspace.
 
-   Screenshot\_3
+   AR virtual space displaying the robotic arm's workspace.
 Introduction
 ------------
 
