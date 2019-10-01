@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.abspath('../scripts/'))
 # -- Project information -----------------------------------------------------
 
 project = 'DE3-Panda-Wall'
-copyright = '2019, Zachary Yamaoka'
+copyright = '2019'
 author = 'Zachary Yamaoka, Keith Li, Justice Duruanyanwu, Rowan Dixon, Samuel Willis, Daniel Yin'
 # The short X.Y version
 version = ''
