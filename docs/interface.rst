@@ -1,12 +1,13 @@
-AR Sandbox Interface for wall-building
+AR Sandbox Interface and Routing
 ==============================
 
 .. note::
 
-   This section describes making an interface in augmented reality (AR)
-   that was designed to freely build any structure with the given bricks. Microsoft
-   Hololens was used to implement this, and demonstration videos can be
-   found in the home page.
+   This section describes making an interface in augmented reality (AR) which communicates
+   with the robotic arm. This allows users to freely build any structure with the given bricks
+   within the virtual sandbox and transmit the files so that it can be built in the real world. 
+   Microsoft Hololens was used to implement this, and demonstrative videos can be found in the
+   home page.
 
 Interaction Helper
 ------------------
