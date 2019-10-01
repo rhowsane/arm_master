@@ -136,7 +136,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'DE3-Panda-Wall.tex', 'DE3-Panda-Wall Documentation',
-     'Zachary Yamaoka', 'manual'),
+     'DE3 Wall Team', 'manual'),
 ]
 
 
