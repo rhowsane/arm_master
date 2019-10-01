@@ -369,7 +369,6 @@ Networking Helper
 .. figure:: _static/python_console.png
    :alt: Screenshot\_3
 
-   Screenshot\_3
 The above image is a screenshot of data received in the python server
 console during the communication between the HoloLens client and the
 python server.
@@ -533,7 +532,6 @@ will promptly show up:
 .. figure:: _static/txt_file.png
    :alt: Screenshot\_3
 
-   Screenshot\_3
 Every time initiate the program, a clear functionality will be triggered
 in the ``InteractionHelper`` main class to wipe all the content before
 loading new data into it:
