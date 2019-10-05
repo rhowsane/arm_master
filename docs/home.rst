@@ -2,9 +2,6 @@
 AR Robotic Sandbox
 ========================
 
-.. figure::  imgs/Screenshot_12.png
-   :align:   center
-
 .. figure::  imgs/Screenshot_16.png
    :align:   center
 
