@@ -1,5 +1,5 @@
 
-DE3 Robotics Project
+Robotic Sandbox
 ========================
 
 .. figure::  imgs/arm_with_brick.jpg
@@ -47,10 +47,10 @@ Presentation
 
 `Robot demo presentation slides`_
 
-Team Members
+Main Contributors
 -------------
 
-Rowan Dixon, Justice Duru, Keith Li, Samuel Willis, Zachary Yamaoka, Daniel Yin
+Keith Li, Daniel Yin, Zachary Yamaoka
 
 .. _team git repo: https://github.com/de3-robo
 .. _arm_master: https://github.com/de3-robo/arm_master
