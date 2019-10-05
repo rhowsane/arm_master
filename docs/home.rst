@@ -1,6 +1,9 @@
 
-Robotic Sandbox
+AR Robotic Sandbox
 ========================
+
+.. figure::  imgs/arm_with_brick.jpg
+   :align:   center
 
 .. figure::  imgs/arm_with_brick.jpg
    :align:   center
