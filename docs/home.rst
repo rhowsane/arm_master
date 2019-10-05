@@ -2,10 +2,10 @@
 AR Robotic Sandbox
 ========================
 
-.. figure::  imgs/arm_with_brick.jpg
+.. figure::  imgs/Screenshot_12.png
    :align:   center
 
-.. figure::  imgs/arm_with_brick.jpg
+.. figure::  imgs/Screenshot_16.png
    :align:   center
 
 This Robotics project took place at the Dyson School of Engineering at the start of 2019.
