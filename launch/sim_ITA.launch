@@ -1,0 +1,16 @@
+<launch>
+
+  <include file="$(find gazebo_ros)/launch/wall_table_world.launch"/>
+
+  <include file="$(find franka_gazebo)/launch/panda_arm_hand.launch"/>
+
+  <node name="gen_caisse" pkg="spawn_mnger" type="spawnITA_caisse.py" output="screen"/>
+
+  <node name="gen_mobile" pkg="spawn_mnger" type="spawnITA_mobile.py" output="screen"/>
+
+  <node name="gen_chargeur" pkg="spawn_mnger" type="spawnITA_chargeur.py" output="screen"/>
+
+  <node name="gen_couverture" pkg="spawn_mnger" type="spawnITA_couverture.py" output="screen"/>
+
+
+</launch>
